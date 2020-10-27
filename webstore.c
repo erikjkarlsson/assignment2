@@ -2,6 +2,8 @@
 #include <stdlib.h>
 #include <string.h>
 #include "hash_table.h"
+#include "db.c"
+#include "utils.h"
 
 typedef struct merch merch_t;
 struct merch
