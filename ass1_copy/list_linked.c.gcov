@@ -1,0 +1,373 @@
+        -:    0:Source:list_linked.c
+        -:    1:#include <stdio.h>
+        -:    2:#include <stdlib.h>
+        -:    3:#include <string.h>
+        -:    4:#include "assert.h"
+        -:    5:#include "common.h"
+        -:    6:#include "list_linked.h"
+        -:    7:
+        -:    8:struct link 
+        -:    9:{
+        -:   10:  elem_t element;
+        -:   11:  ioopm_link_t *next;
+        -:   12:};
+        -:   13:
+        -:   14:struct list 
+        -:   15:{
+        -:   16:    ioopm_link_t *first;
+        -:   17:    ioopm_link_t *last;
+        -:   18:    size_t size;
+        -:   19:    ioopm_eq_function func;
+        -:   20:};
+        -:   21:
+        -:   22:  
+        -:   23://// ioopm_catch_error(element)
+        -:   24:// Pass through a value, if it is
+        -:   25:// marked as an error, throw the
+        -:   26:// error message and vexit.
+        -:   27:
+        -:   28:
+     3290:   29:bool ioopm_elem_cmp(elem_t fst, elem_t snd){
+     6412:   30:  return ((fst.i == snd.i) ||
+     3122:   31:	  (fst.u == snd.u) ||
+     3122:   32:	  (fst.b == snd.b) ||
+     9534:   33:	  (fst.f == snd.f) ||
+     3122:   34:	  (fst.p == snd.p));
+        -:   35:}
+        -:   36:
+       14:   37:ioopm_list_t *ioopm_linked_list_create(ioopm_eq_function func)
+        -:   38:{
+        -:   39:  /// Allocate Memory for a list and return the structure.
+       14:   40:  ioopm_list_t *linked_list= calloc(1, sizeof(ioopm_list_t));
+       14:   41:  linked_list->size = 0;
+       14:   42:  linked_list->func = func;
+       14:   43:  return linked_list;
+        -:   44:}
+        -:   45:
+       14:   46:void ioopm_clear_list(ioopm_list_t *list) // Internal
+        -:   47:{
+       14:   48:    ioopm_link_t *index = list->first;
+        -:   49:
+        -:   50:    /// Iterate through whole List
+      236:   51:    while(index != NULL)
+        -:   52:    {
+        -:   53:      /// Save next Linked Entry
+      222:   54:      ioopm_link_t *next = index->next;
+        -:   55:      /// Free Linked Entry
+      222:   56:      free(index);
+        -:   57:      /// Iterate
+      222:   58:      index = next;        
+        -:   59:    }
+       14:   60:}
+        -:   61:
+       14:   62:void ioopm_linked_list_destroy(ioopm_list_t *list) // External
+        -:   63:{
+        -:   64:  /// Free the allocated memory of the linked list.
+       14:   65:  ioopm_clear_list(list);
+       14:   66:  free(list);
+       14:   67:}
+        -:   68:
+      202:   69:ioopm_link_t *create_link(elem_t value, ioopm_link_t *next) // Internal
+        -:   70:{
+        -:   71:  /// Allocate memory the size of the linked entry.   
+      202:   72:  ioopm_link_t *link = calloc(1, sizeof(ioopm_link_t));
+        -:   73:  /// Set the values and the (following) linked entry.
+      202:   74:  link->element = value;
+      202:   75:  link->next    = next;
+        -:   76:  
+      202:   77:  return link;
+        -:   78:}
+        -:   79:
+       18:   80:void ioopm_linked_list_append(ioopm_list_t *list, elem_t value) // External
+        -:   81:{
+       18:   82:    ioopm_link_t *new_entry = create_link(value, NULL);
+        -:   83:
+       18:   84:    if (list->size == 0){
+        -:   85:      /// First and Last entry is the one appended
+        4:   86:      list->first = new_entry;
+        4:   87:      list->last = new_entry;	
+        -:   88:    }
+        -:   89:    
+        -:   90:    else{
+        -:   91:      /// Get Last entry and append the new
+        -:   92:      /// as the next entry to the last
+        -:   93:      /// and update the last as the one inserted.
+       14:   94:      ioopm_link_t *last_entry = list->last;
+       14:   95:      last_entry->next = new_entry;
+       14:   96:      list->last = new_entry;      
+        -:   97:    }    
+       18:   98:    (list->size)++;    
+       18:   99:}
+        -:  100:
+        2:  101:void ioopm_linked_list_prepend (ioopm_list_t *list, elem_t value){
+        2:  102:  if (list->size == 0){
+        -:  103:      /// If inserting into empty list,
+        -:  104:      /// the first and last value becomes
+        -:  105:      /// the new entry.
+        -:  106:      
+    #####:  107:      ioopm_link_t *new_entry = create_link(value, NULL);
+    #####:  108:      list->first = new_entry;
+    #####:  109:      list->last  = new_entry;
+        -:  110:    }
+        -:  111:    else{
+        -:  112:      /// If inserting into a non-empty list
+        -:  113:      /// the new entry is linked to the first,
+        -:  114:      /// not changing the last.
+        -:  115:      
+        2:  116:      ioopm_link_t *first_entry = list->first;
+        2:  117:      ioopm_link_t *new_entry = create_link(value, first_entry);
+        2:  118:      list->first = new_entry;
+        -:  119:    }
+        -:  120:
+        -:  121:  /// Update size
+        2:  122:  (list->size)++;    
+        2:  123:}
+        -:  124:
+        -:  125:
+        -:  126:
+      182:  127:void ioopm_insert_at_index(ioopm_list_t *list, size_t index, elem_t value)
+        -:  128:{
+        -:  129:
+      182:  130:  ioopm_link_t *new_entry = create_link(value, NULL);
+        -:  131:     
+        -:  132:  //  insert->element = value;
+        -:  133:
+      182:  134:  ioopm_link_t *cursor = list->first;
+        -:  135:  
+      182:  136:  if (list->first == NULL) {
+        -:  137:    // First element, set list "flag-links"
+        6:  138:    list->first = new_entry;
+        6:  139:    list->last  = new_entry;
+        -:  140:    
+      176:  141:  }else if (index == 0){
+        -:  142:    // If index is zero
+        -:  143:    // just prepend    
+       18:  144:    new_entry->next = list->first;
+       18:  145:    list->first = new_entry;
+        -:  146:    
+        -:  147:  }else{
+        -:  148:
+     3122:  149:    for (size_t i = 1; i < index; ++i){
+        -:  150:      // Move forward from first
+        -:  151:      // entry
+     2964:  152:      cursor = cursor->next;
+        -:  153:    }
+        -:  154:    // Replace the entry "cursor"
+        -:  155:    // with new_entry
+      158:  156:    new_entry->next = cursor->next;
+        -:  157:
+        -:  158:    // If new_entryed element is the
+        -:  159:    // last, set last flag 
+      158:  160:    if (cursor->next == NULL)
+      156:  161:      list->last = new_entry;
+        -:  162:
+        -:  163:    // Inject the entry inbetween
+        -:  164:    // cursor and its linked next
+      158:  165:    cursor->next = new_entry;
+        -:  166:
+        -:  167:  }
+      182:  168:  list->size++;
+      182:  169:}
+        -:  170:    
+        -:  171:
+        -:  172:
+        -:  173:/* F2IXME: /!\  Needs better ERROR-Handeling /!\ 
+        -:  174: */
+      182:  175:void ioopm_linked_list_insert(ioopm_list_t *list, size_t index, elem_t value)
+        -:  176:  {
+      182:  177:    ioopm_insert_at_index(list, index, value);
+      182:  178:}
+        -:  179:
+    #####:  180: elem_t ioopm_linked_list_remove(ioopm_list_t *list, size_t index)
+        -:  181: { 
+        -:  182:   elem_t save;
+        -:  183:
+        -:  184:   /// Only remove if in bounds
+    #####:  185:   if ((list->size != 0) || (index > list->size)){
+        -:  186:     
+    #####:  187:     ioopm_link_t *after   = list->first;
+    #####:  188:     ioopm_link_t *before  = list->first;     
+        -:  189:
+        -:  190:     /// Iterate up to the entry to be removed    
+    #####:  191:     for (size_t i = 1; i <= index; i++){
+    #####:  192:       before = after;
+    #####:  193:       after = after->next;
+        -:  194:     };
+    #####:  195:     save = after->element;
+        -:  196:     
+    #####:  197:     before->next = after->next;     
+        -:  198:
+    #####:  199:     free(after);
+        -:  200:
+    #####:  201:     list->size--;
+        -:  202:              
+    #####:  203:     return save;
+        -:  204:   }
+        -:  205:
+    #####:  206:   return (elem_t) {.error = true};
+        -:  207: }
+        -:  208:
+        -:  209:
+       30:  210:elem_t ioopm_linked_list_get(ioopm_list_t *list, size_t index)
+        -:  211:{  
+        -:  212:
+       30:  213:  ioopm_link_t *cursor = list->first;
+       30:  214:  elem_t elem = list->first->element;
+        -:  215:
+        -:  216:  
+       30:  217:  if (list->first == NULL) {
+        -:  218:    /// Error when the index provided was out of bounds
+        -:  219:    
+    #####:  220:    printf("NULL\n");
+        -:  221:        
+       30:  222:  }else if (index > list->size){
+        -:  223:    // If index is zero
+    #####:  224:    printf("BOUNDS\n");
+        -:  225:   
+        -:  226:  }else{
+      154:  227:    for (size_t i = 0; i  < index; i++){
+        -:  228:      // Move forward from first entry
+      124:  229:      cursor = cursor->next;
+        -:  230:    }  
+        -:  231:  
+       30:  232:  if (cursor != NULL) {
+        -:  233:    // Replace the element
+        -:  234:    // with the iterated entries element    
+       30:  235:    elem  = cursor->element;
+        -:  236:    
+        -:  237:  }else {
+    #####:  238:    elem = (elem_t) {.error = true};
+    #####:  239:    printf("NULL");
+        -:  240:  }
+        -:  241:  }
+        -:  242:
+       30:  243:  return elem;
+        -:  244:}
+        -:  245:  
+      166:  246:bool ioopm_linked_list_contains(ioopm_list_t *list, elem_t value)
+        -:  247:{
+      166:  248:  if (list->size == 0) false;
+        -:  249:  
+      166:  250:  ioopm_link_t *link = list->first;
+        -:  251:
+     3288:  252:  while (link != NULL)
+        -:  253:    {
+        -:  254:      /// Iterate through the list until a value
+        -:  255:      /// equal to the searched is found (return True)
+        -:  256:      /// if not, then (return False).
+        -:  257:      
+     3288:  258:      if ((list->func(link->element, value)))
+        -:  259:	/// A Match is found, hence list
+        -:  260:	/// contains the value.
+      166:  261:	return true;
+        -:  262:
+        -:  263:      else{
+        -:  264:	/// Iterate
+     3122:  265:	link = link->next;
+        -:  266:      }
+        -:  267:
+        -:  268:    }
+        -:  269:
+        -:  270:
+    #####:  271:    return false;
+        -:  272:}
+        -:  273:
+        -:  274:/*int ioopm_linked_list_size (ioopm_list_t *list)
+        -:  275:{   int counter;
+        -:  276:    ioopm_link_t *link = list->first;
+        -:  277:    while (link !=NULL)
+        -:  278:    {   link = link->next;
+        -:  279:        counter++;
+        -:  280:    }
+        -:  281:    
+        -:  282:    return counter;
+        -:  283:}*/
+        -:  284:
+        -:  285://OR
+        -:  286:
+    #####:  287:size_t ioopm_linked_list_size(ioopm_list_t *list)
+        -:  288:{
+    #####:  289:    return list->size;
+        -:  290:}
+        -:  291:
+    #####:  292:bool ioopm_linked_list_is_empty(ioopm_list_t *list) 
+        -:  293:{
+    #####:  294:    return (ioopm_linked_list_size(list) == 0);
+        -:  295:}
+        -:  296:
+        -:  297:
+    #####:  298:bool ioopm_linked_list_all(ioopm_list_t *list, ioopm_char_predicate prop, void *extra)
+        -:  299:{
+    #####:  300:  ioopm_link_t *index = list->first;
+        -:  301:  //int listsize = ioopm_linked_list_size(list);
+        -:  302:
+        -:  303:  /// Iterate though all linked entries of the list
+        -:  304:  /// and (return true) iif all applications of function
+        -:  305:  /// is true, and false if not.
+        -:  306:  /// where function := prop  
+    #####:  307:  for (int i = 0; i < list->size; i++)
+        -:  308:    {
+    #####:  309:      if (prop(index->element, extra)){
+        -:  310:	/// If (function(entry) == true) then continue
+        -:  311:	/// to iterate through list 
+    #####:  312:	index = index->next;
+        -:  313:      }
+        -:  314:        
+        -:  315:      else{
+        -:  316:       	/// If (function(entry) == false) then stop
+        -:  317:	/// and return false
+    #####:  318:	return false;
+        -:  319:      }          
+        -:  320:    }
+        -:  321:  /// If all applications of function(list[i]) from 0 to (size of list)
+        -:  322:  /// are equal to true, then return true
+    #####:  323:  return true;
+        -:  324:}
+        -:  325:
+        -:  326:/// @brief Test if a supplied property holds for any element in a list.
+        -:  327:/// The function returns as soon as the return value can be determined.
+        -:  328:/// @param list the linked list
+        -:  329:/// @param prop the property to be tested
+        -:  330:/// @param extra an additional argument (may be NULL) that will be passed to all internal calls of prop
+        -:  331:/// @return true if prop holds for any elements in the list, else false
+    #####:  332:bool ioopm_linked_list_any(ioopm_list_t *list, ioopm_char_predicate prop, void *extra)
+        -:  333:{
+    #####:  334:  ioopm_link_t *index = list->first;
+        -:  335:  ///int listsize = ioopm_linked_list_size(list);
+        -:  336:
+        -:  337:  /// Iterate through the list and apply prop to each
+        -:  338:  /// entry. If the application equals true immediatly
+        -:  339:
+        -:  340:  /// return true. Else return false. 
+    #####:  341:    for (int i = 0; i < list->size; i++)
+        -:  342:      {
+    #####:  343:        if (prop(index->element, extra)){
+        -:  344:	  /// If prop applied to the current entry is true,
+        -:  345:	  /// return true.
+    #####:  346:	  return true;
+        -:  347:        }
+        -:  348:        
+        -:  349:        else{
+        -:  350:	  /// If prop applied on the current entry is false
+        -:  351:	  /// continue to iterate.
+    #####:  352:	  index = index->next;
+        -:  353:        }
+        -:  354:      }         
+        -:  355:    /// If all applications of prop are false, then the function
+        -:  356:    /// will return false.
+    #####:  357:    return false;
+        -:  358:}
+        -:  359:
+        -:  360:
+    #####:  361:void ioopm_linked_apply_to_all(ioopm_list_t *list, ioopm_apply_char_function prop, void *extra)
+        -:  362:{
+    #####:  363:    ioopm_link_t *index = list->first;
+        -:  364:    // int listsize   = ioopm_linked_list_size(list);
+        -:  365:
+        -:  366:    /// For all entries in list, 
+        -:  367:
+    #####:  368:    for (int i = 0; i < list->size; i++){
+    #####:  369:        prop(&index->element, extra);
+    #####:  370:        index = index->next;
+        -:  371:    }
+    #####:  372:}

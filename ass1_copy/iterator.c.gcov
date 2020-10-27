@@ -1,0 +1,211 @@
+        -:    0:Source:iterator.c
+        -:    1:#include "iterator.h"
+        -:    2:#include "assert.h"
+        -:    3:#include "common.h"
+        -:    4:#include "list_linked.h"
+        -:    5:#include <stdio.h>
+        -:    6:#include <stdlib.h>
+        -:    7:#include <string.h>
+        -:    8:
+        -:    9:#define ERROR                                                                  \
+        -:   10:  (elem_t) { .error = true }
+        -:   11:#define PINT_ELEM(E) printf("Elem: %d\n", E.i)
+        -:   12:/// @brief Create an iterator for a given list
+        -:   13:/// @param the list to be iterated over
+        -:   14:/// @return an iteration positioned at the start of list
+        -:   15:
+        4:   16:ioopm_list_iterator_t *ioopm_list_iterator(ioopm_list_t *list) {
+        4:   17:  ioopm_list_iterator_t *iter = calloc(1, sizeof(ioopm_list_iterator_t));
+        -:   18:  // Current List Element
+        4:   19:  iter->current = list->first;
+        -:   20:  // Full List
+        4:   21:  iter->list = list;
+        4:   22:  return iter;
+        -:   23:}
+        -:   24:
+       40:   25:ioopm_link_t *create_link_(elem_t value, ioopm_link_t *next) // Internal
+        -:   26:{
+        -:   27:  /// Allocate memory the size of the linked entry.
+       40:   28:  ioopm_link_t *link = calloc(1, sizeof(ioopm_link_t));
+        -:   29:  /// Set the values and the (following) linked entry.
+       40:   30:  link->element = value;
+       40:   31:  link->next = next;
+        -:   32:
+       40:   33:  return link;
+        -:   34:}
+        -:   35:
+       38:   36:bool ioopm_iterator_has_next(ioopm_list_iterator_t *iter) {
+        -:   37:  // Can continue if there is a following element.
+       38:   38:  return (iter->current->next != NULL);
+        -:   39:}
+        -:   40:
+       18:   41:elem_t ioopm_iterator_next(ioopm_list_iterator_t *iter){
+        -:   42:
+       18:   43:  if((!ioopm_iterator_has_next(iter))) {
+    #####:   44:    errno = EINVAL;
+    #####:   45:    return ptr_elem(NULL);
+        -:   46:  }
+        -:   47:  // Save value
+       18:   48:  elem_t value = (iter->current)->next->element;
+        -:   49:  // Move forward
+       18:   50:  iter->current = iter->current->next;
+       18:   51:  Successful();
+       18:   52:  return value;
+        -:   53:
+        -:   54:
+        -:   55:
+        -:   56:}
+        -:   57:
+        -:   58: //////////////Föregående/////////////////
+        -:   59:/*elem_t ioopm_iterator_next(ioopm_list_iterator_t *iter) {
+        -:   60:
+        -:   61:  // Save value
+        -:   62:  elem_t value = (iter->current)->next->element;
+        -:   63:
+        -:   64:  // Move forward
+        -:   65:  iter->current = iter->current->next;
+        -:   66:
+        -:   67:  return value;
+        -:   68:}
+        -:   69:*/
+        -:   70:/// @brief Remove the current element from the underlying list
+        -:   71:/// @param iter the iterator
+        -:   72:/// @return the removed element
+       20:   73:elem_t ioopm_iterator_remove(ioopm_list_iterator_t *iter) {
+        -:   74:
+        -:   75:  // Get the element before the current one
+       20:   76:  ioopm_link_t *replacer = iter->list->first;
+       20:   77:  ioopm_link_t *next = iter->current->next;
+        -:   78:
+       20:   79:  elem_t e = iter->current->element;
+        -:   80:
+       20:   81:  if (iter->current == iter->list->first) {
+        -:   82:    // If first entry is removed, then there is
+        -:   83:    // no need to find the previous one.
+       20:   84:    iter->list->first = next;
+       20:   85:    free(iter->current);
+       20:   86:    iter->current = next;
+       20:   87:    iter->list->size--;
+        -:   88:
+       20:   89:    return e;
+        -:   90:  }
+        -:   91:
+    #####:   92:  while (replacer->next != iter->current) {
+        -:   93:    // Move forward from first entry
+        -:   94:    // towards the current.
+    #####:   95:    replacer = replacer->next;
+        -:   96:  }
+        -:   97:
+    #####:   98:  if (iter->current == iter->list->last) {
+        -:   99:    // If the last is removed, the new last
+        -:  100:    // should be updated in the linked list
+        -:  101:    // structure
+        -:  102:
+    #####:  103:    iter->list->last = replacer;
+    #####:  104:    free(iter->current);
+    #####:  105:    iter->current = iter->list->last;
+        -:  106:
+        -:  107:  } else {
+        -:  108:    // If not the last, or first then just
+        -:  109:    // link the previous entry to the next,
+        -:  110:    // and remove the current.
+        -:  111:
+    #####:  112:    replacer->next = iter->current->next;
+    #####:  113:    free(iter->current);
+    #####:  114:    iter->current = replacer->next;
+        -:  115:  }
+        -:  116:
+    #####:  117:  iter->list->size--;
+    #####:  118:  return e;
+        -:  119:}
+        -:  120:
+        -:  121:/*
+        -:  122:elem_t ioopm_iterator_remove(ioopm_list_iterator_t *iter)
+        -:  123:{
+        -:  124:  // Get the element before the current one
+        -:  125:  ioopm_link_t *replacer = iter->list->first;
+        -:  126:  ioopm_link_t *next = NULL;
+        -:  127:  elem_t e = iter->current->element;
+        -:  128:
+        -:  129:  for (;;) {
+        -:  130:    // Move forward from first entry to the current
+        -:  131:
+        -:  132:    if (replacer->next == iter->current)
+        -:  133:      break;
+        -:  134:    if (replacer->next == NULL)
+        -:  135:      break;
+        -:  136:    replacer = replacer->next;
+        -:  137:  }
+        -:  138:
+        -:  139:  next = iter->current->next;
+        -:  140:
+        -:  141:  if (iter->current == iter->list->last) {
+        -:  142:    iter->list->last = replacer;
+        -:  143:    next = NULL;
+        -:  144:  } else if (iter->current == iter->list->first) {
+        -:  145:    iter->list->first = replacer;
+        -:  146:  }
+        -:  147:
+        -:  148:  free(iter->current);
+        -:  149:  replacer->next = next;
+        -:  150:  iter->current = replacer;
+        -:  151:
+        -:  152:  iter->list->size--;
+        -:  153:  return e;
+        -:  154:}
+        -:  155:*/
+        -:  156:/// @brief Insert a new element into the underlying list making the current
+        -:  157:/// element it's next
+        -:  158:/// @param iter the iterator
+        -:  159:/// @param element the element to be inserted
+       40:  160:void ioopm_iterator_insert(ioopm_list_iterator_t *iter, elem_t element) {
+        -:  161:
+        -:  162:  // Get the element before the current one
+       40:  163:  ioopm_link_t *precurrent = iter->list->first;
+       40:  164:  ioopm_link_t *current = NULL;
+        -:  165:
+       40:  166:  if (iter->list->size == 0) {
+        -:  167:
+        4:  168:    iter->current = create_link_(element, NULL);
+        4:  169:    iter->list->first = iter->current;
+        4:  170:    iter->list->last = iter->current;
+        -:  171:
+       36:  172:  } else if (precurrent->next == NULL) {
+        -:  173:
+        -:  174:    // Link the previous items to
+        -:  175:    // a new (last) element
+        4:  176:    current = create_link_(element, iter->current);
+        4:  177:    iter->list->first = current;
+        -:  178:
+        -:  179:  } else {
+        -:  180:    for (;;) {
+        -:  181:      // Move forward from first entry to the current
+      144:  182:      if (precurrent->next == iter->current)
+       32:  183:        break;
+      112:  184:      precurrent = precurrent->next;
+        -:  185:    }
+        -:  186:
+        -:  187:    // Link the previous items
+        -:  188:    // with a new which in turn
+        -:  189:    // is linked with the ones after
+       32:  190:    current = create_link_(element, iter->current);
+       32:  191:    precurrent->next = current;
+        -:  192:  }
+        -:  193:
+       40:  194:  iter->list->size++;
+       40:  195:}
+        -:  196:
+        8:  197:void ioopm_iterator_reset(ioopm_list_iterator_t *iter) {
+        -:  198:  // Reset the current element (as the first)
+        8:  199:  iter->current = iter->list->first;
+        8:  200:}
+        -:  201:
+        2:  202:elem_t ioopm_iterator_current(ioopm_list_iterator_t *iter) {
+        -:  203:  // Get the current element
+        2:  204:  return iter->current->element;
+        -:  205:}
+        -:  206:
+        4:  207:void ioopm_iterator_destroy(ioopm_list_iterator_t *iter) {
+        -:  208:  // Free up the iterator
+        4:  209:  free(iter);
+        4:  210:}
