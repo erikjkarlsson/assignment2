@@ -1,0 +1,308 @@
+        -:    0:Source:common.c
+        -:    1:#include <stdarg.h>
+        -:    2:#include <stdio.h>
+        -:    3:#include <stdlib.h>
+        -:    4:
+        -:    5:#include "common.h"
+        -:    6:#include <CUnit/Automated.h>
+        -:    7:#include <CUnit/Basic.h>
+        -:    8:#include <CUnit/CUnit.h>
+        -:    9:#include <CUnit/Console.h>
+        -:   10:
+        -:   11:#define STR_EQ(STR1, STR2) (!strcmp(STR2, STR1))
+        -:   12:#define EXP(DO, X)                                                             \
+        -:   13:  if (X) {                                                                     \
+        -:   14:    DO;                                                                        \
+        -:   15:  }
+        -:   16:
+       10:   17:void putc_str(char *str, char *color, bool nl) {
+      10*:   18:  printf("%s%s%s%s", color, str, NO_COLOR, nl ? "\n" : "");
+       10:   19:}
+        -:   20:
+    #####:   21:void putc_int(int num, char *color) { printf("%s%d%s", color, num, NO_COLOR); }
+        -:   22:
+    #####:   23:void print_cont(char *prefix, char *container, char *arrow, elem_t new_elem,
+        -:   24:                int index, int list_size) {
+    #####:   25:  printf("%s%s%s %s%s%s[%s%d/%d%s] %s%s%s %s%d%s\n", GREEN, prefix, NO_COLOR,
+        -:   26:         BLUE, container, NO_COLOR, RED, index, list_size, NO_COLOR, BLUE,
+        -:   27:         NO_COLOR, arrow, RED, new_elem.i, NO_COLOR);
+    #####:   28:}
+        -:   29:
+    #####:   30:int abs(int number) { return (number > 0) ? number : -number; }
+        -:   31:
+    #####:   32:bool elem_cmp(elem_t fst, elem_t snd) {
+    #####:   33:  return ((fst.i == snd.i) || (fst.u == snd.u) || (fst.b == snd.b) ||
+    #####:   34:          (fst.f == snd.f) || (fst.p == snd.p));
+        -:   35:}
+        -:   36:
+    #####:   37:void list_active_tests(arg_opt_t *opt) {
+    #####:   38:  for (int i = 0; i < opt->subtest_length_max; i++)
+    #####:   39:    if (test_active(i, opt))
+    #####:   40:      printf("Test Number: %d\nStatus: Active\n", i);
+    #####:   41:}
+        -:   42:
+        3:   43:arg_opt_t *create_arg_opt() {
+        3:   44:  arg_opt_t *opt = calloc(1, sizeof(arg_opt_t));
+        3:   45:  opt->subtest = calloc(SUBTEST_LEN, sizeof(int));
+        -:   46:
+     6003:   47:  for (int i = 0; i < LIST_LEN; i++) {
+     6000:   48:    opt->list[i] = 0;
+        -:   49:  }
+        3:   50:  opt->list_length = 10;
+        -:   51:
+       63:   52:  for (int i = 0; i < SUBTEST_LEN; i++) {
+       60:   53:    opt->subtest[i] = 0;
+        -:   54:  }
+        -:   55:
+        3:   56:  opt->subtest_length = 0;
+        3:   57:  opt->subtest_length_max = SUBTEST_LEN;
+        -:   58:
+        3:   59:  opt->use_list_p = false;
+        3:   60:  opt->debug_p = false;
+        3:   61:  opt->tests_p = false;
+        -:   62:
+        3:   63:  opt->deep_debug_p = false;
+        -:   64:
+        3:   65:  return opt;
+        -:   66:}
+        -:   67:
+        3:   68:void destroy_arg_opt(arg_opt_t *opt) {
+        -:   69:  //  free(opt->list);
+        3:   70:  free(opt->subtest);
+        3:   71:  free(opt);
+        3:   72:}
+        -:   73:
+    #####:   74:bool test_active(int test_number, arg_opt_t *opt) {
+    #####:   75:  for (int i = 0; i < SUBTEST_LEN; i++) {
+    #####:   76:    if (opt->subtest[i] == test_number) {
+    #####:   77:      return true;
+        -:   78:    }
+        -:   79:  }
+    #####:   80:  return false;
+        -:   81:}
+        -:   82:
+       14:   83:void subtest_enable(int test_number, arg_opt_t *opt) {
+        -:   84:
+       14:   85:  if (opt->subtest_length < SUBTEST_LEN) {
+        -:   86:
+       14:   87:    opt->subtest[opt->subtest_length++] = test_number;
+        -:   88:
+       14:   89:    if (opt->debug_p)
+    #####:   90:      printf("ENABLED SUBTEST (KEY: %d)\n", opt->subtest[opt->subtest_length]);
+        -:   91:
+        -:   92:  } else {
+    #####:   93:    printf("ERROR: Invalid test\n");
+    #####:   94:    exit(-1);
+        -:   95:  }
+       14:   96:}
+        -:   97:
+        1:   98:void print_argv(int argc, char **argv) {
+        2:   99:  for (int i = 0; i < argc; i++)
+        1:  100:    printf("%s", argv[i]);
+        1:  101:  printf("\n");
+        1:  102:}
+        -:  103:
+        1:  104:void print_help() {
+        -:  105:
+        1:  106:  printf("Usage (--help or -h will show this message):\n");
+        -:  107:
+        1:  108:  putc_str("-h --help                 (Show this message)", BLUE, true);
+        1:  109:  putc_str("-d --debug (-v)           (Enable debug/verbose output)", BLUE,
+        -:  110:           true);
+        1:  111:  putc_str("-t --run-tests            (Run tests)", BLUE, true);
+        1:  112:  putc_str("-D --deep-debug           (More detailed debugging)", BLUE, true);
+        1:  113:  putc_str("-t --enable-test          (Enable part of a test or a test)", BLUE,
+        -:  114:           true);
+        1:  115:  putc_str("-s --set list_length <length>", BLUE, true);
+        -:  116:
+        1:  117:  printf("       (Length of linked list <length> < 100)\n");
+        -:  118:
+        1:  119:  putc_str("-e --enable-test  (Run separate tests (subtests) that checks "
+        -:  120:           "diffrent things.",
+        -:  121:           BLUE, true);
+        1:  122:  putc_str("-s --set list <size> <e_0> ... <e_(size - 1)>", BLUE, true);
+        -:  123:
+        1:  124:  printf("       (Length and individual elements of the linked list)\n");
+        -:  125:
+        1:  126:  putc_str("-s --set span <lower> <upper> (set option)", BLUE, true);
+        -:  127:
+        1:  128:  printf("       (All integers between <lower> and <upper> will be used in the "
+        -:  129:         "linked list)\n");
+        -:  130:
+        1:  131:  putc_str("-s --set list_length <length>  (Set the length of the list)", BLUE,
+        -:  132:           true);
+        -:  133:
+        1:  134:  printf("       (This changes how long the used list is, but it must be lower "
+        -:  135:         "than\n");
+        1:  136:  printf("        the allocated list size (%d), and the values of the list "
+        -:  137:         "defaults to\n",
+        -:  138:         LIST_LEN);
+        1:  139:  printf("        all natural numbers from 0 --> <length>)\n");
+        1:  140:}
+        -:  141:
+        3:  142:void arg_parse(int argc, char **argv, arg_opt_t *opt) {
+        -:  143:  ///~}~~~~~~~~~~~~~~~~~~~~~~~~}~~~~~~~~~~~~~~~~~~~~}~~~~~~~~~~~~~~~~~~~~~~~~}
+        -:  144:  ///{    (    (    (    (    { ARGUMENT HANTERING {    (    (    (    (    {
+        -:  145:  ///~}~~~~~~~~~~~~~~~~~~~~~~~~}~~~~~~~~~~~~~~~~~~~~}~~~~~~~~~~~~~~~~~~~~~~~~}
+        -:  146:
+        -:  147:  // Need to provide atleast =one= argument.
+        3:  148:  if (argc == 1) {
+        1:  149:    print_argv(argc, argv);
+        1:  150:    print_help();
+        1:  151:    destroy_arg_opt(opt);
+        1:  152:    exit(-1);
+        -:  153:  } else {
+        -:  154:
+        -:  155:    // Print help message
+       18:  156:    for (int i = 1; i < argc; i++) {
+       16:  157:      if ((STR_EQ(argv[i], "--help") || STR_EQ(argv[i], "-h"))) {
+    #####:  158:        print_argv(argc, argv);
+    #####:  159:        print_help();
+    #####:  160:        destroy_arg_opt(opt);
+    #####:  161:        exit(-1);
+        -:  162:
+        -:  163:        // PARSE: options (and set them)
+        -:  164:        // STX: --set <option> <value>
+       16:  165:      } else if (STR_EQ(argv[i], "--use-test") || STR_EQ(argv[i], "-e")) {
+        -:  166:
+       14:  167:        subtest_enable(atoi(argv[i + 1]), opt);
+       14:  168:        i++;
+        -:  169:
+        2:  170:      } else if (STR_EQ(argv[i], "--set") || STR_EQ(argv[i], "-s")) {
+        -:  171:
+        -:  172:        // Compare towards allowed options
+    #####:  173:        if (STR_EQ(argv[i + 1], "length")) {
+        -:  174:          // OPTION OF SET: Set the list to all numbers up to a number
+    #####:  175:          opt->list_length = atoi(argv[i + 2]);
+        -:  176:
+    #####:  177:          printf("Setting: %s = %d\n", argv[i + 1], atoi(argv[i + 2]));
+        -:  178:
+        -:  179:          // (Skip <option> and <value>) i.e jump two strings forward.
+    #####:  180:          i = i + 1;
+        -:  181:
+        -:  182:          // STX: -s <init_list> <n> <e_1> ... <e_n>
+    #####:  183:        } else if (STR_EQ(argv[i + 1], "list")) {
+        -:  184:          // OPTION OF SET: use provided arguments as a list
+    #####:  185:          int n = atoi(argv[i + 2]);
+        -:  186:
+        -:  187:          // Grab the next n argument
+    #####:  188:          for (int k = (i + 3); k <= n + (i + 2); k++) {
+    #####:  189:            *opt->list[0 + k - (i + 3)] = atoi(argv[k]);
+        -:  190:          }
+        -:  191:          // Skip past the rest of elements
+    #####:  192:          i += n + 2;
+        -:  193:          // Save length
+    #####:  194:          opt->use_list_p = true;
+    #####:  195:          opt->list_length = n;
+        -:  196:
+    #####:  197:        } else if (STR_EQ(argv[i + 1], "span")) {
+        -:  198:          // OPTION OF SET: span  (numbers from a -> b as list)
+    #####:  199:          int from = atoi(argv[i + 2]);
+    #####:  200:          int to = atoi(argv[i + 3]);
+        -:  201:
+    #####:  202:          if (-from + to > LIST_LEN) {
+    #####:  203:            printf("%sERROR: Span can be a max of %d%s", RED, LIST_LEN,
+        -:  204:                   NO_COLOR);
+    #####:  205:            destroy_arg_opt(opt);
+    #####:  206:            exit(-1);
+        -:  207:          }
+        -:  208:          // Grab the next n arguments and store them in =in_list=
+    #####:  209:          for (int k = from; k <= to; k++) {
+    #####:  210:            *opt->list[k - from] = k;
+        -:  211:          }
+        -:  212:          // Skip past the rest of elements
+    #####:  213:          i += 3;
+        -:  214:
+        -:  215:          // Save length
+    #####:  216:          opt->use_list_p = true;
+    #####:  217:          opt->list_length = -from + to;
+        -:  218:        }
+        -:  219:
+        -:  220:        // PARSE: Enable experimental features (mostly a lot of logs,..)
+        2:  221:      } else if (STR_EQ(argv[i], "--deep-debug") || STR_EQ(argv[i], "-D")) {
+        -:  222:
+    #####:  223:        opt->deep_debug_p = true; // Switch to enabled
+        -:  224:
+        -:  225:        // PARSE: Debugging options, (-d, --debug and -v)
+        2:  226:      } else if ((STR_EQ(argv[i], "-d") || STR_EQ(argv[i], "--debug") ||
+        2:  227:                  STR_EQ(argv[i], "-v"))) {
+        -:  228:
+    #####:  229:        printf("Debugging enabled\n");
+    #####:  230:        opt->debug_p = true; // Switch to enabled
+        -:  231:
+        2:  232:      } else if ((STR_EQ(argv[i], "-w") || STR_EQ(argv[i], "--working"))) {
+        -:  233:
+    #####:  234:        printf("Working?\n");
+    #####:  235:        printf("Next: %d", atoi(argv[i + 1]));
+    #####:  236:        i++;
+        -:  237:
+        -:  238:        // PARSE: Enable running of test on start.
+        2:  239:      } else if ((STR_EQ(argv[i], "--run-tests") || STR_EQ(argv[i], "-t"))) {
+        -:  240:
+        2:  241:        opt->tests_p = true; // Switch to enabled
+        -:  242:
+        -:  243:      } else {
+        -:  244:        // PARSE: Invalid / Non-Matching Flags
+    #####:  245:        printf("%sERROR: The flag '%s' is invalid%s\n", RED, argv[i], NO_COLOR);
+    #####:  246:        printf("LEN: %d\n", opt->list_length);
+        -:  247:        // Display help screen and return failure
+    #####:  248:        print_argv(argc, argv);
+    #####:  249:        print_help();
+    #####:  250:        destroy_arg_opt(opt);
+    #####:  251:        exit(-1);
+        -:  252:      }
+        -:  253:    }
+        -:  254:  }
+        2:  255:}
+        -:  256:
+    #####:  257:bool eq_elem_string(elem_t a, elem_t b) {
+    #####:  258:  char *p1 = a.c;
+    #####:  259:  char *p2 = b.c;
+        -:  260:
+    #####:  261:  if (p1 == NULL || p1 == p2) {
+    #####:  262:    return true;
+        -:  263:  }
+    #####:  264:  return false;
+        -:  265:}
+    #####:  266:bool eq_elem_void(elem_t a, elem_t b) {
+    #####:  267:  char *pointer1 = a.p;
+    #####:  268:  char *pointer2 = b.p;
+        -:  269:
+    #####:  270:  if (pointer1 == pointer2 || pointer1 == NULL) {
+    #####:  271:    return pointer1 == pointer2;
+        -:  272:  }
+        -:  273:
+    #####:  274:  return strcmp(pointer1, pointer2) == 0;
+        -:  275:}
+        -:  276:
+    #####:  277:bool eq_elem_int(elem_t a, elem_t b) { return a.i == b.i; }
+        -:  278:
+    #####:  279:unsigned long string_knr_hash(elem_t key) {
+    #####:  280:  unsigned long result = 0;
+    #####:  281:  char *str = (char *)key.p;
+        -:  282:
+        -:  283:  do {
+    #####:  284:    result = result * 31 + *str;
+    #####:  285:  } while (*++str != '\0');
+        -:  286:
+    #####:  287:  return result;
+        -:  288:}
+        -:  289:
+    #####:  290:int extract_int_hash_key(elem_t key) { return key.i; }
+        -:  291:
+    #####:  292:bool key_equiv(elem_t key, elem_t value_ignored, void *x) {
+        -:  293:
+    #####:  294:  elem_t *other_key_ptr = x;
+    #####:  295:  elem_t other_key = *other_key_ptr;
+    #####:  296:  if ((key.i == other_key.i) || (key.p == other_key.p) ||
+    #####:  297:      key.c == other_key.c) {
+    #####:  298:    return true;
+        -:  299:  }
+    #####:  300:  return false;
+        -:  301:}
+        -:  302:
+    #####:  303:bool value_equiv(elem_t key_ignored, elem_t value, void *x) {
+    #####:  304:  elem_t *other_value_ptr = x;
+    #####:  305:  elem_t *other_value = other_value_ptr;
+    #####:  306:  return value.c == (*other_value).c;
+        -:  307:}

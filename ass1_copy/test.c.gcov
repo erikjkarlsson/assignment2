@@ -1,0 +1,343 @@
+        -:    0:Source:test.c
+        -:    1:
+        -:    2:
+        -:    3:#include <stdbool.h>
+        -:    4:#include <stdio.h>
+        -:    5:#include <stdlib.h>
+        -:    6:#include <string.h>
+        -:    7:
+        -:    8:#include "common.h"
+        -:    9:#include "iterator.h"
+        -:   10:#include "list_linked.h"
+        -:   11:#include <CUnit/Basic.h>
+        -:   12:
+        -:   13:#define LIST_LEN_1 20
+        -:   14:
+        -:   15:#define ELEM_INT(NUM)                                                          \
+        -:   16:  (elem_t) { .i = NUM }
+        -:   17:#define ELEM_STR(STR)                                                          \
+        -:   18:  (elem_t) { .c = STR }
+        -:   19:#define GET_ELEM_STR(STR) (char *)STR.s
+        -:   20:#define GET_ELEM_INT(INT) (int)INT.i
+        -:   21:
+        -:   22:// Parse arguments
+        -:   23:arg_opt_t *options;
+        -:   24:
+        2:   25:int init_suite(void) { return 0; }
+        -:   26:
+        2:   27:int clean_suite(void) { return 0; }
+        -:   28:
+        2:   29:void test1(void) {
+        2:   30:  ioopm_list_t *food = ioopm_linked_list_create(ioopm_elem_cmp);
+        -:   31:  // This test adds four foods, and their respective popularity (on
+        -:   32:  // a fictional alien planet) in a linked list.
+        -:   33:  // And proceeds to calculate and assert the most popular food.
+        -:   34:
+        -:   35:  // ("Large Hamburgers", 100)
+        2:   36:  ioopm_linked_list_append(food, ELEM_STR("Large Hamburgers"));
+        2:   37:  ioopm_linked_list_append(food, ELEM_INT(100));
+        -:   38:
+        -:   39:  // ("Mustard Hotdogs", 2)
+        2:   40:  ioopm_linked_list_append(food, ELEM_STR("Mustard Hotdogs"));
+        2:   41:  ioopm_linked_list_append(food, ELEM_INT(2));
+        -:   42:
+        -:   43:  // ("Meat Sallad", 1000)
+        2:   44:  ioopm_linked_list_append(food, ELEM_STR("Meat Sallad"));
+        2:   45:  ioopm_linked_list_append(food, ELEM_INT(1000));
+        -:   46:
+        -:   47:  // ("Cucumber Burger", 4)
+        2:   48:  ioopm_linked_list_append(food, ELEM_STR("Cucumber Burger"));
+        2:   49:  ioopm_linked_list_append(food, ELEM_INT(4));
+        -:   50:
+        2:   51:  int tastiest = 0;
+        2:   52:  int index = 0;
+        2:   53:  int tmp = 0;
+        -:   54:
+       10:   55:  for (int i = 0; i < 4; i++) {
+        -:   56:    // Go through all pairs comparing all integer values
+        -:   57:    // for the largest one (corresponding to the tastiest).
+        -:   58:    // And save that index.
+        8:   59:    tmp = GET_ELEM_INT(ioopm_linked_list_get(food, 2 * i + 1));
+        8:   60:    if (tmp > tastiest) {
+        4:   61:      tastiest = tmp;
+        4:   62:      index = i;
+        -:   63:    }
+        -:   64:  }
+        -:   65:
+        -:   66:  // index corresponding to;
+        -:   67:  // "Meat Sallad" which is is the most tasty of them all
+        2:   68:  CU_ASSERT(2 * index == 4);
+        -:   69:
+        2:   70:  ioopm_linked_list_destroy(food);
+        2:   71:}
+        -:   72:
+        4:   73:void test2(void) {
+        -:   74:
+        4:   75:  int t = 2 * LIST_LEN_1;
+        4:   76:  ioopm_list_t *list = ioopm_linked_list_create(ioopm_elem_cmp);
+        -:   77:
+        -:   78:  // Insert elements (0 --> 2•)
+      164:   79:  for (int j = 0; j < t; j++) {
+      160:   80:    CU_ASSERT(j < t);
+      160:   81:    ioopm_linked_list_insert(list, j, ELEM_INT(j));
+        -:   82:  }
+        -:   83:
+        -:   84:  // Assure the insertion of element
+      164:   85:  for (int j = 0; j < t; j++) {
+      160:   86:    CU_ASSERT(ioopm_linked_list_contains(list, ELEM_INT(j)));
+        -:   87:  }
+        -:   88:
+        -:   89:  // list->size starts counting from zero
+        -:   90:  // hence in respect to times it is one "behind".
+        4:   91:  CU_ASSERT(list->size == t);
+        -:   92:
+        4:   93:  ioopm_linked_list_destroy(list);
+        4:   94:}
+        -:   95:
+    #####:   96:void test3(void) {
+        -:   97:
+    #####:   98:  ioopm_list_t *list = ioopm_linked_list_create(ioopm_elem_cmp);
+    #####:   99:  int length = 100;
+        -:  100:
+        -:  101:  elem_t e;
+        -:  102:  elem_t f;
+        -:  103:  // Insert the amount of the LENGTH variable of elements,
+        -:  104:  // constantly in the last position of the list.
+    #####:  105:  for (int j = 0; j < length; j++) {
+    #####:  106:    e = (elem_t){.i = j}; // [1]
+    #####:  107:    ioopm_linked_list_insert(list, list->size - 1, e);
+        -:  108:  }
+        -:  109:
+    #####:  110:  ioopm_list_iterator_t *iter = ioopm_list_iterator(list);
+        -:  111:  // Iterate through a list only using the iterator,
+        -:  112:  // get the current element through the iterator, at the same
+        -:  113:  // time use the linked list get function to get the same value.
+        -:  114:  // The values are then compared.
+        -:  115:
+    #####:  116:  for (int i = 0; i < length; i++) {
+        -:  117:    // Check if it is possible to iterate
+        -:  118:
+        -:  119:    // needs to be done outside of =iter_next=
+        -:  120:    // since the last element has no "next" attatched.
+    #####:  121:    e = ioopm_iterator_current(iter);
+    #####:  122:    f = ioopm_linked_list_get(list, i);
+        -:  123:
+    #####:  124:    CU_ASSERT((e.i == f.i));
+        -:  125:
+    #####:  126:    if (ioopm_iterator_has_next(iter)) {
+        -:  127:      // Get element pointed on by the iterator
+        -:  128:
+        -:  129:      // Iterate fwd...
+    #####:  130:      ioopm_iterator_next(iter);
+        -:  131:
+        -:  132:    } else {
+        -:  133:      // Get current elem, ASSERT and break loop.
+    #####:  134:      break;
+        -:  135:    }
+        -:  136:  }
+        -:  137:
+        -:  138:  // Assert the expected list size
+    #####:  139:  CU_ASSERT(list->size == LIST_LEN_1)
+        -:  140:
+    #####:  141:  ioopm_linked_list_destroy(list);
+    #####:  142:  ioopm_iterator_destroy(iter);
+    #####:  143:}
+        -:  144:
+        2:  145:void test4(void) {
+        -:  146:
+        2:  147:  ioopm_list_t *list = ioopm_linked_list_create(ioopm_elem_cmp);
+        -:  148:
+        -:  149:  // Insert Integer and assure list contains it
+        2:  150:  ioopm_linked_list_append(list, ELEM_INT(100));
+        2:  151:  CU_ASSERT(ioopm_linked_list_contains(list, ELEM_INT(100)));
+        -:  152:
+        -:  153:  // Insert String and assure list contains it
+        2:  154:  ioopm_linked_list_prepend(list, ELEM_STR("200"));
+        2:  155:  CU_ASSERT(ioopm_linked_list_contains(list, ELEM_STR("200")));
+        -:  156:
+        -:  157:  // Insert Integer and assure list contains it
+        2:  158:  ioopm_linked_list_insert(list, 1, ELEM_INT(200));
+        2:  159:  CU_ASSERT(ioopm_linked_list_contains(list, ELEM_INT(200)));
+        -:  160:
+        -:  161:  // Use the compare function and use it to assert the last
+        -:  162:  // inserted value at the correct position
+        2:  163:  CU_ASSERT(ioopm_elem_cmp(ELEM_INT(200), ioopm_linked_list_get(list, 1)));
+        -:  164:
+        2:  165:  ioopm_linked_list_destroy(list);
+        2:  166:}
+        -:  167:
+        2:  168:void test5(void) {
+        -:  169:
+        2:  170:  ioopm_list_t *list = ioopm_linked_list_create(ioopm_elem_cmp);
+        -:  171:
+        -:  172:  // Inject a value in the zeroth position
+        -:  173:  // resulting in a reversed list
+       22:  174:  for (int i = 1; i <= 10; i++) {
+       20:  175:    ioopm_linked_list_insert(list, 0, ELEM_INT(i));
+        -:  176:  }
+        -:  177:
+        -:  178:  // Assert the reversed order of the list
+       22:  179:  for (int i = 9; i >= 0; i--) {
+       20:  180:    CU_ASSERT(10 - i == GET_ELEM_INT(ioopm_linked_list_get(list, i)));
+        -:  181:  }
+        -:  182:
+        2:  183:  ioopm_linked_list_destroy(list);
+        2:  184:}
+        -:  185:
+        2:  186:void test6(void) {
+        -:  187:  // ## Testing the Iterator ##
+        -:  188:  // Insert values into a empty list, assuring
+        -:  189:  // that the size and the inserted values
+        -:  190:  // are indeed inserted.
+        -:  191:  // # ENABLE DEBUG #
+        -:  192:  // Use the -d flag to enable debug
+        -:  193:  // messages.
+        -:  194:
+        2:  195:  ioopm_list_t *list = ioopm_linked_list_create(ioopm_elem_cmp);
+        2:  196:  ioopm_list_iterator_t *iter = ioopm_list_iterator(list);
+        -:  197:
+        -:  198:  // Debug str of max size 255 chars,
+        -:  199:  // which will be reused for all debug print out.
+        -:  200:  // char *debug_str = calloc(255, sizeof(char));
+        -:  201:  //
+        2:  202:  int sum = 0;
+        2:  203:  int sum_assert = 0;
+        -:  204:
+        2:  205:  ioopm_iterator_reset(iter);
+        -:  206:
+       22:  207:  for (int i = 0; i < 10; i++) {
+       20:  208:    ioopm_iterator_insert(iter, ELEM_INT(i));
+       20:  209:    sum_assert += i;
+        -:  210:  }
+        -:  211:
+        2:  212:  ioopm_iterator_reset(iter);
+        2:  213:  int tmp = 0;
+        2:  214:  tmp = GET_ELEM_INT(ioopm_iterator_current(iter)); // ==> 1
+        2:  215:  sum += tmp;
+        -:  216:
+        -:  217:  // First element since iterator next NEVER returns
+        -:  218:  // the first element.
+        -:  219:
+       20:  220:  for (int i = 1; ioopm_iterator_has_next(iter); i++) {
+       18:  221:    tmp = GET_ELEM_INT(ioopm_iterator_next(iter));
+       18:  222:    sum += tmp;
+        -:  223:  }
+        -:  224:
+        -:  225:  // (+ 2 3 4 5 6 7 8 9 0) ==> 44
+        -:  226:  // Note: The current (0) moves towards the end
+        -:  227:  //       since insert makes the current element
+        -:  228:  //       its next on insertion.
+        -:  229:
+        -:  230:  // Assure the size is as expected
+        -:  231:  // and that the items inserted
+        -:  232:  // is correctly retrieved.
+        -:  233:
+        2:  234:  CU_ASSERT(list->size == 10);
+        2:  235:  CU_ASSERT(sum == sum_assert);
+        -:  236:
+        2:  237:  ioopm_linked_list_destroy(list);
+        2:  238:  ioopm_iterator_destroy(iter);
+        2:  239:}
+        -:  240:
+        2:  241:void test7(void) {
+        -:  242:  // Insert values into a empty list, assuring
+        -:  243:  // that the size and the inserted values
+        -:  244:  // are indeed inserted.
+        -:  245:
+        2:  246:  ioopm_list_t *list = ioopm_linked_list_create(ioopm_elem_cmp);
+        2:  247:  ioopm_list_iterator_t *iter = ioopm_list_iterator(list);
+        -:  248:
+        2:  249:  ioopm_iterator_reset(iter);
+        -:  250:
+       22:  251:  for (int i = 0; i < 10; i++) {
+        -:  252:
+       20:  253:    ioopm_iterator_insert(iter, ELEM_INT(i));
+        -:  254:  }
+        -:  255:
+        2:  256:  ioopm_iterator_reset(iter);
+        -:  257:
+       22:  258:  for (int i = 0; i < 10; i++) {
+       20:  259:    ioopm_iterator_remove(iter);
+        -:  260:  }
+        -:  261:
+        -:  262:  // Assure that the list is empty
+        2:  263:  CU_ASSERT(list->size == 0);
+        -:  264:
+        2:  265:  ioopm_linked_list_destroy(list);
+        2:  266:  ioopm_iterator_destroy(iter);
+        2:  267:}
+        -:  268:
+        3:  269:int main(int argc, char **argv) {
+        3:  270:  CU_pSuite test_suite1 = NULL;
+        3:  271:  options = create_arg_opt();
+        -:  272:
+        3:  273:  arg_parse(argc, argv, options);
+        -:  274:
+        -:  275:  // Lists tests enabled from the command line
+        -:  276:
+        2:  277:  if (CUE_SUCCESS != CU_initialize_registry()) {
+    #####:  278:    destroy_arg_opt(options);
+    #####:  279:    return CU_get_error();
+        -:  280:  }
+        2:  281:  test_suite1 = CU_add_suite("Test Suite 1", init_suite, clean_suite);
+        -:  282:
+        2:  283:  if (NULL == test_suite1) {
+        -:  284:
+    #####:  285:    destroy_arg_opt(options);
+        -:  286:
+    #####:  287:    CU_cleanup_registry();
+    #####:  288:    return CU_get_error();
+        -:  289:  }
+        -:  290:
+        -:  291:  if (true) {
+        -:  292:    // Run tests using the (-t --run-tests) flag
+        -:  293:    // using -e <test number> to enable specfic tests
+        -:  294:    // Ex: ./test -t -e 1 -e 4    Will enable test 1 and 4
+        2:  295:    if ((true ? (NULL ==
+        2:  296:                 CU_add_test(test_suite1,
+        -:  297:                             "Linked list: Mixing different types in one list",
+        -:  298:                             test1))
+        2:  299:              : false) ||
+        -:  300:        (true ? (NULL ==
+        2:  301:                 CU_add_test(test_suite1,
+        -:  302:                             "Linked list: Mixing different types in one list",
+        -:  303:                             test2))
+        2:  304:              : false) ||
+        -:  305:        (true ? (NULL ==
+        2:  306:                 CU_add_test(test_suite1,
+        -:  307:                             "Iterator: Iterating throiugh a linked list",
+        -:  308:                             test2))
+        2:  309:              : false) ||
+        -:  310:        (true ? (NULL ==
+        2:  311:                 CU_add_test(test_suite1,
+        -:  312:                             "Linked list: Assure list contains inserted item",
+        -:  313:                             test4))
+        2:  314:              : false) ||
+        -:  315:        (true ? (NULL ==
+        2:  316:                 CU_add_test(test_suite1,
+        -:  317:                             "Linked list: Insertion, Injective traversal",
+        -:  318:                             test5))
+        2:  319:              : false) ||
+        -:  320:        (true ? (NULL ==
+        2:  321:                 CU_add_test(test_suite1,
+        -:  322:                             "Iterator: Assure list contains inserted item",
+        -:  323:                             test6))
+        2:  324:              : false) ||
+        -:  325:        (true ? (NULL ==
+        2:  326:                 CU_add_test(test_suite1,
+        -:  327:                             "Iterator: Inserting items and then removing them",
+        -:  328:                             test7))
+        -:  329:              : false)) {
+    #####:  330:      destroy_arg_opt(options);
+        -:  331:
+    #####:  332:      CU_cleanup_registry();
+    #####:  333:      return CU_get_error();
+        -:  334:    }
+        -:  335:  }
+        2:  336:  destroy_arg_opt(options);
+        -:  337:
+        2:  338:  CU_basic_set_mode(CU_BRM_VERBOSE);
+        2:  339:  CU_basic_run_tests();
+        2:  340:  CU_cleanup_registry();
+        2:  341:  return CU_get_error();
+        -:  342:}
