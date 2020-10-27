@@ -20,3 +20,10 @@ Ref: https://wrigstad.com/ioopm/assignments/assignment2.html#orgc922f78
 
  - Undo
  - OPTIONAL Persistance on File
+
+* Data Structures
+ -
+
+
+
+- Fixa med doxygen (code dokumementation)
