@@ -1,0 +1,22 @@
+Ref: https://wrigstad.com/ioopm/assignments/assignment2.html#orgc922f78
+
+* Frontend Actions
+ - Add Merchandise
+ - List Merchendise
+ - Remove Merchendise
+ - Edit Merchendise
+
+ - Show Stock   
+ - Replenish
+
+ - Create Cart
+ - Remove Cart
+
+ - Add to Cart
+ - Remove from Cart
+ - Calculate Cost
+
+ - Checkout
+
+ - Undo
+ - OPTIONAL Persistance on File
