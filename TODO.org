@@ -6,7 +6,7 @@ Ref: https://wrigstad.com/ioopm/assignments/assignment2.html#orgc922f78
  - Remove Merchendise
  - Edit Merchendise
 
- - Show Stock   
+ - Show Stock
  - Replenish
 
  - Create Cart
