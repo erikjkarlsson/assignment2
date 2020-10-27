@@ -10,6 +10,8 @@ Ref: https://wrigstad.com/ioopm/assignments/assignment2.html#orgc922f78
  - Replenish
 
  - Create Cart
+        names of items to quantity
+        build as a linked list
  - Remove Cart
 
  - Add to Cart
