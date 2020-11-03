@@ -106,6 +106,7 @@ ioopm_hash_table_t *ioopm_hash_table_create_dynamic(
   return ht;
 
 }
+
 ioopm_hash_table_t *ioopm_hash_table_create(ioopm_hash_function hf, ioopm_eq_function comp_key, ioopm_eq_function comp_value)
 {
   return ioopm_hash_table_create_dynamic(hf, comp_key, comp_value, Load_factor, primes[0]);
