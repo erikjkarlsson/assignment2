@@ -12,7 +12,7 @@ struct item {
   char *desc;
   int   price; // Öre
   char *shelf;
-}; 
+};
 
 typedef struct item item_t;
 
@@ -37,7 +37,7 @@ item_t input_item(){
   char *desc  = ask_question_string("Enter Desc: ");
   int price   = ask_question_int("Enter Price: ");
   char *shelf = ask_question_shelf("Enter Shelf: ");
-    
+
   return make_item(name, desc, price, shelf);
 }
 
@@ -48,7 +48,7 @@ char *magick(char **arr1, char **arr2, char **arr3, int arr_len){
   strcat(str, arr2[random_number(arr_len)]);
   strcat(str, " ");
   strcat(str, arr3[random_number(arr_len)]);
-  
+
   return strdup(str);
 }
 
@@ -56,11 +56,11 @@ char *magick(char **arr1, char **arr2, char **arr3, int arr_len){
 void edit_db(item_t *items, int db_siz){
   while (1){
     int index = ask_question_int("Number to Edit: ");
-    
+
     if (!(index < 1 || index > db_siz)){
 	print_item(&items[index - 1]);
 	items[index - 1] = input_item();
-	break;	
+	break;
     }else {
       printf("Non item!\n");
     }
@@ -79,7 +79,7 @@ int main(int argc, char *argv[])
   seed_random();
   char *array1[] = { "ultra",    "super",    "micro",     "nano"};
   char *array2[] = { "smakande", "luktande", "smörjande", "glittrande"};
-  char *array3[] = { "kolor",    "pizzor",   "godisar",   "chips" }; 
+  char *array3[] = { "kolor",    "pizzor",   "godisar",   "chips" };
 
   if (argc < 2)
   {
@@ -110,14 +110,14 @@ int main(int argc, char *argv[])
 
     for (int i = db_siz; i < 16; ++i)
       {
-        char *name = magick(array1, array2, array3, 4); 
-        char *desc = magick(array1, array2, array3, 4); 
+        char *name = magick(array1, array2, array3, 4);
+        char *desc = magick(array1, array2, array3, 4);
         int price = random() % 200000;
         char shelf[] = { random() % ('Z'-'A') + 'A',
                          random() % 10 + '0',
                          random() % 10 + '0',
                          '\0' };
-        item_t item = make_item(name, desc, price, shelf);
+        item_t item = make_item(name, desc, price, strdup(shelf));
 
         db[db_siz] = item;
         ++db_siz;

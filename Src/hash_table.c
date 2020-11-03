@@ -46,7 +46,7 @@ struct hash_table
 };
 
 
-static size_t primes[] = {17, 31, 67, 127, 257, 509, 1021, 2053, 4099, 8191, 16381}; 
+static size_t primes[] = {17, 31, 67, 127, 257, 509, 1021, 2053, 4099, 8191, 16381};
 
 static entry_t *entry_create(elem_t new_key, elem_t new_value, entry_t *new_next){
   entry_t *new_entry;
@@ -70,17 +70,17 @@ static entry_t **create_buckets(ioopm_hash_table_t *ht, size_t capacity) {
 }
 
 
-static size_t new_capacity (ioopm_hash_table_t *ht) // gets the new capacity 
+static size_t new_capacity (ioopm_hash_table_t *ht) // gets the new capacity
 {
   ht->growth_stage = ht->growth_stage+1; // indexing in a list of primes
-  size_t capacity = primes[ht->growth_stage]; 
+  size_t capacity = primes[ht->growth_stage];
   return capacity;
 }
 
 ioopm_hash_table_t *ioopm_hash_table_create_dynamic(
   ioopm_hash_function hf,
-  ioopm_eq_function comp_key, 
-  ioopm_eq_function comp_value, 
+  ioopm_eq_function comp_key,
+  ioopm_eq_function comp_value,
   double load_factor, size_t capacity)
 {
   ioopm_hash_table_t *ht = calloc(1, sizeof(ioopm_hash_table_t));
@@ -91,7 +91,7 @@ ioopm_hash_table_t *ioopm_hash_table_create_dynamic(
   ht->load_factor = load_factor; /// Factor for when to resize the hash table
   ht->growth_stage = 0; /// Amount of times the hash table has been resized, used as an index
                         /// in a prime array to choose the next capacity
-  
+
   if (hf == NULL) /// If the user didn't supply a hash function |
   {//                                                           v
     ht->hash_func = extract_int_hash_key; /// Use the key as hash function
@@ -99,12 +99,12 @@ ioopm_hash_table_t *ioopm_hash_table_create_dynamic(
 
   else
   {
-    ht->hash_func = hf; 
+    ht->hash_func = hf;
   }
 
-  ht->buckets = create_buckets(ht, primes[ht->growth_stage]); 
+  ht->buckets = create_buckets(ht, primes[ht->growth_stage]);
   return ht;
-  
+
 }
 ioopm_hash_table_t *ioopm_hash_table_create(ioopm_hash_function hf, ioopm_eq_function comp_key, ioopm_eq_function comp_value)
 {
@@ -113,7 +113,7 @@ ioopm_hash_table_t *ioopm_hash_table_create(ioopm_hash_function hf, ioopm_eq_fun
 
 
 /// Returns true if it's time to grow the hash table
-static bool check_capacity (ioopm_hash_table_t *ht, float load_factor, size_t size, size_t capacity) 
+static bool check_capacity (ioopm_hash_table_t *ht, float load_factor, size_t size, size_t capacity)
 {
   return (load_factor * primes[ht->growth_stage]) < size;
 }
@@ -128,7 +128,7 @@ void ioopm_hash_table_clear (ioopm_hash_table_t *ht)
     iter = ht->buckets[i];
     next_entry = iter->next;
     iter->next = NULL;
-    
+
     while(next_entry)
     {
       tmp = next_entry->next;
@@ -143,10 +143,10 @@ void ioopm_hash_table_clear (ioopm_hash_table_t *ht)
 static void ioopm_hash_table_resize (ioopm_hash_table_t *ht)
 {
   ht->size = 0;
-  entry_t **previous_buckets = ht->buckets; /// Save the old buckets for later insertion 
-  size_t previous_capacity = ht->capacity; 
+  entry_t **previous_buckets = ht->buckets; /// Save the old buckets for later insertion
+  size_t previous_capacity = ht->capacity;
   ht->capacity = new_capacity(ht); /// Choose next capacity from prime array
-  
+
   entry_t *entry = NULL;
   entry_t *next = NULL;
   ht->buckets = create_buckets(ht, ht->capacity); /// Overwrites all current buckets with null-buckets, and expands hash table
@@ -175,7 +175,7 @@ static void ioopm_hash_table_resize (ioopm_hash_table_t *ht)
 for (int i = 0; i < ht->capacity; i++)
   {
     iter = ht->buckets[i];
-  
+
   while (iter){
      /// Store the adress for the next entry
      swap = iter->next;
@@ -186,7 +186,7 @@ for (int i = 0; i < ht->capacity; i++)
     }}
   }
 void ioopm_hash_table_destroy(ioopm_hash_table_t *ht){
-  
+
     ioopm_hash_table_clear(ht);
     destroy_single_bucket(ht);
   free(ht->buckets);
@@ -246,10 +246,26 @@ elem_t ioopm_hash_table_lookup(ioopm_hash_table_t *ht, elem_t key) {
   {
     return next->value;
   }
-  
+
   return ptr_elem(NULL);
 }
 
+bool ioopm_hash_table_increase(ioopm_hash_table_t *ht, elem_t key) {
+  unsigned long hashed_key = ht->hash_func(key);
+  unsigned long bucket = hashed_key % ht->capacity;
+
+  entry_t *tmp = find_previous_entry_for_key(ht->comp_key, ht->buckets[bucket], key);
+  entry_t *next = tmp->next;
+
+  if (errno != EINVAL)
+  {
+    next->value.i = next->value.i + 1;
+    return true;
+  }
+  else{
+    return false;
+  }
+}
 
 elem_t ioopm_hash_table_remove(ioopm_hash_table_t *ht, elem_t key)
 {
@@ -272,7 +288,7 @@ elem_t ioopm_hash_table_remove(ioopm_hash_table_t *ht, elem_t key)
         return removed_value;
     }
   }
-  
+
   Error();  /// Key was not found in the hash-table
   return ptr_elem(NULL);
 }
@@ -297,7 +313,7 @@ ioopm_list_t *ioopm_hash_table_keys(ioopm_hash_table_t *ht)
       index++;
     }
   }
-   
+
 return keys;
 }
 
@@ -332,7 +348,7 @@ bool ioopm_hash_table_any(ioopm_hash_table_t *ht, ioopm_predicate p, void *x)
       {
         entry = ht->buckets[i];
         while(entry && !result)
-          { 
+          {
             result = p(entry->key, entry->value, x);
             entry = entry->next;
           }
@@ -352,12 +368,12 @@ bool ioopm_hash_table_all(ioopm_hash_table_t *ht, ioopm_predicate p, void *x)
       result = p(entry->key, entry->value, x);
       if (result == false)
       {
-        return false; 
+        return false;
       }
       entry=entry->next;
     }
   }
-return true; 
+return true;
 }
 
 
