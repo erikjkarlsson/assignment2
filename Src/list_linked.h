@@ -92,7 +92,7 @@ void ioopm_linked_list_clear(ioopm_list_t *list);
 /// @param prop the property to be tested (function pointer)
 /// @param extra an additional argument (may be NULL) that will be passed to all internal calls of prop
 /// @return true if prop holds for all elements in the list, else false
-/*bool ioopm_linked_list_all(ioopm_list_t *list, ioopm_char_predicate prop, void *extra);
+bool ioopm_linked_list_all(ioopm_list_t *list, ioopm_char_predicate prop, void *extra);
 /// @brief Test if a supplied property holds for any element in a list.
 /// The function returns as soon as the return value can be determined.
 /// @param list the linked list
@@ -104,4 +104,4 @@ bool ioopm_linked_list_any(ioopm_list_t *list, ioopm_char_predicate prop, void *
 /// @param list the linked list
 /// @param fun the function to be applied
 /// @param extra an additional argument (may be NULL) that will be passed to all internal calls of fun
-void ioopm_linked_apply_to_all(ioopm_list_t *list, ioopm_apply_char_function fun, void *extra);*/
+void ioopm_linked_apply_to_all(ioopm_list_t *list, ioopm_apply_char_function fun, void *extra);
