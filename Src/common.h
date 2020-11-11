@@ -79,6 +79,7 @@
 #define int_elem(x) (elem_t) { .i=(x) }
 #define ptr_elem(x) (elem_t) { .p=(x) }
 #define char_elem(x) (elem_t) {.c=(x) }
+#define str_elem(x) (elem_t) {.c=(x) }
 
 
 typedef union elem elem_t;
@@ -99,7 +100,8 @@ arg_opt_t *create_arg_opt();
 union elem
 {
   /// TODO: update the names of the fields to something better?
-  int   i;
+  char *edesc;
+  int   i; 
   uint  u;
   bool  b;
   float f;

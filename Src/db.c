@@ -73,7 +73,7 @@ void list_db(item_t *items, int no_items){
   }
 }
 
-
+/*
 int main(int argc, char *argv[])
 {
   seed_random();
@@ -128,3 +128,4 @@ int main(int argc, char *argv[])
   }
   return 0;
 }
+*/
