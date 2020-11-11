@@ -17,11 +17,11 @@ struct merch
 };
 
 
-typedef struct  shelf shelf_t;
+typedef struct shelf shelf_t;
 struct shelf
 {
   char *shelf;
-  char *amount;
+  int amount;
 };
 
 
@@ -30,15 +30,67 @@ struct store
 {
   // Key: Item Name
   // Value: Item Information
-  ioopm_hash_table_t *name;
+  ioopm_hash_table_t *names;
 
   // Key: Storage Name
   // Value: Linked List of Item Instances   
   ioopm_hash_table_t *locs;  
 };
 
+merch_t create_merch(){
+  return (merch_t){
+    .info=ioopm_linked_list_create(ioopm_elem_cmp),
+    .locs=ioopm_linked_list_create(ioopm_elem_cmp)
+  };
+}
 
+shelf_t create_shelf(char *shelf, int amount){
+  return (shelf_t){.shelf=shelf, amount=amount}; 
+}
+
+store_t create_store(){
+  return (store_t) {
+    .name=ioopm_hash_table_create(),
+    .locs=ioopm_hash_table_create()
+  };
+}
 elem_t set_edesc(elem_t elem, char *name);
+
+void item_add_name(ioopm_hash_table_t names,
+		   elem_t name,
+		   elem_t desc,
+		   elem_t price,
+		   elem_t shelf){  
+  
+  ioopm_hash_table_insert(names, name, set_edesc(desc,  "desc"));
+  ioopm_hash_table_insert(names, name, set_edesc(price, "price"));
+  ioopm_hash_table_insert(names, name, set_edesc(shelf, "shelf"));
+  
+};
+
+bool item_name_exists(ioopm_hash_table_t names, elem_t name){
+  return ioopm_hash_table_has_key(names, name);
+}
+
+void item_rem_name(ioopm_hash_table_t names, elem_t name){
+  // Remove (just) a name
+  ioopm_hash_table_remove(names, name);
+};
+
+entry_t *get_bucket(ioopm_hash_table_t names, elem_t name){
+  unsigned long hashed_key = ht->hash_func(name);
+  unsigned long bucket = hashed_key % ht->capacity;
+
+  return names->buckets[bucket];
+}
+
+
+void item_add_shelf(){};
+void item_rem_shelf(){};
+
+
+
+
 
 void add_info(ioopm_list_t *info_list, elem_t info, char *edesc){
   // Add an info link to a info list
@@ -53,15 +105,8 @@ elem_t set_edesc(elem_t elem, char *name){
 
 }
 
-void create_info(ioopm_list_t *info_list,
-		 elem_t desc,
-		 elem_t price,
-		 elem_t name){  
-  // Add basic information to a item
-  add_info(info_list, name,  "name");
-  add_info(info_list, desc,  "desc");
-  add_info(info_list, price, "price");
-}
+
+
 
 
 /*
