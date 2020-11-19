@@ -1,5 +1,5 @@
 Ref: https://wrigstad.com/ioopm/assignments/assignment2.html#orgc922f78
-
+change
 * Frontend Actions
  - Add Merchandise
  - List Merchendise
@@ -23,9 +23,71 @@ Ref: https://wrigstad.com/ioopm/assignments/assignment2.html#orgc922f78
  - Undo
  - OPTIONAL Persistance on File
 
-* Data Structures
- -
+* Backend Design
+** Hash Table 1 
+=Key=:   Name
+=Value=: Pointer to [[Item structure]].
+
+** Hash Table 2
+=Key=:   Shelf 
+=Value=: List of all items stored there.
+
+** Misc
+
+<<Item Structure>>
+  - Name
+  - Description
+  - Price
+  - Amount
+  - List of [[Shelf Structure]]s and amount in each shelf
+
+<<Shelf Structure>>
+  - Shelf Name
+  - Quantity
+
+
+** Requirements
+
+1. Given the name of an item, 
+   find its information
+
+2. Given the name of an item, 
+   find its storage locations in the warehouse
+
+3. Given a storage location, 
+   find what is stored on it
+
+We can design a struct *S* that holds the information about an item
+*i* as well as a list *L* of the locations in the warehouse storing
+*i*’s, including the number of items at each location.
+
+
+- Item i   (Item)
+- Struct S (Information regarding i)
+- List L   (Locations of i)
+
+We can then use our hash table from Assignment 1 using 
+
+*** HT1 
+ Hash Table with  [ ~HTn→S~ ]
+  - names of items as keys
+  - pointers to instances of S as values.
+
+ =HTn→S=: a central hash table mapping names1 of 
+ items to their information.
+
+*** HT2
+ Hash Table with [ ~HTs→n~ ]
+  - storage location names as keys
+  - items (or item names) as values. 
+
+ =HTs→n= a central hash table mapping names of storage 
+ locations to names of items stored on the location
+ for each item S, a list L of the locations where it is
+ stored, and the amount stored at each location
+
+ _Need to keep HTn→S and HTs→n in sync_
 
 
 
-- Fixa med doxygen (code dokumementation)
+
