@@ -1,130 +1,84 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <errno.h>
 #include "hash_table.h"
-#include "db.c"
+#include "list_linked.h"
 #include "utils.h"
+#include "webstore.h" 
 
 
-// Name --> Merch
-typedef struct merch merch_t;
-struct merch
-{
-  // Item information
-  ioopm_link_t *info;
-  // Location informaion
-  ioopm_link_t *locs;  
-};
+
+/// Merch
 
-
-typedef struct shelf shelf_t;
-struct shelf
-{
-  char *shelf;
-  int amount;
-};
-
-
-typedef struct store store_t;
-struct store
-{
-  // Key: Item Name
-  // Value: Item Information
-  ioopm_hash_table_t *names;
-
-  // Key: Storage Name
-  // Value: Linked List of Item Instances   
-  ioopm_hash_table_t *locs;  
-};
-
-merch_t create_merch(){
-  return (merch_t){
-    .info=ioopm_linked_list_create(ioopm_elem_cmp),
-    .locs=ioopm_linked_list_create(ioopm_elem_cmp)
-  };
-}
-
-shelf_t create_shelf(char *shelf, int amount){
-  return (shelf_t){.shelf=shelf, amount=amount}; 
-}
-
-store_t create_store(){
-  return (store_t) {
-    .name=ioopm_hash_table_create(),
-    .locs=ioopm_hash_table_create()
-  };
-}
-elem_t set_edesc(elem_t elem, char *name);
-
-void item_add_name(ioopm_hash_table_t names,
-		   elem_t name,
-		   elem_t desc,
-		   elem_t price,
-		   elem_t shelf){  
+merch_t *create_merch(char *name,
+		      char *desc,
+		      size_t price,
+		      ioopm_list_t *locs){
   
-  ioopm_hash_table_insert(names, name, set_edesc(desc,  "desc"));
-  ioopm_hash_table_insert(names, name, set_edesc(price, "price"));
-  ioopm_hash_table_insert(names, name, set_edesc(shelf, "shelf"));
+  merch_t *item = calloc(1, sizeof(merch_t));
   
-};
+  item->name          = calloc(1, sizeof(char*));
+  item->name          = name;
+  item->desc          = calloc(1, sizeof(char*));
+  item->desc          = desc;  
+  item->price         = price;
+  
+  item->total_amount  = 0;
+  item->locs          = locs;
 
-bool item_name_exists(ioopm_hash_table_t names, elem_t name){
-  return ioopm_hash_table_has_key(names, name);
+  return item;
 }
 
-void item_rem_name(ioopm_hash_table_t names, elem_t name){
-  // Remove (just) a name
-  ioopm_hash_table_remove(names, name);
-};
-
-entry_t *get_bucket(ioopm_hash_table_t names, elem_t name){
-  unsigned long hashed_key = ht->hash_func(name);
-  unsigned long bucket = hashed_key % ht->capacity;
-
-  return names->buckets[bucket];
-}
-
-
-void item_add_shelf(){};
-void item_rem_shelf(){};
-
-
-
-
-
-void add_info(ioopm_list_t *info_list, elem_t info, char *edesc){
-  // Add an info link to a info list
-  ioopm_linked_list_append(info_list, set_edesc(info, edesc));
-}
-
-elem_t set_edesc(elem_t elem, char *name){
-  // Set item description
-  elem_t e = elem;
-  e.edesc = name;
-  return e;
-
+void print_merch(merch_t *merch){
+  printf("Item: %ld$ %ldx%s [%s]", merch->price,
+	 merch->total_amount, merch->name,
+	 merch->desc);  
 }
 
 
+
+/// Shelf
 
+shelf_t *create_shelf(char *shelf, int amount){
+  shelf_t *new_shelf = calloc(1, sizeof(shelf_t));
 
+  new_shelf->shelf  = shelf;
+  new_shelf->amount = amount;
 
-/*
-void merch_t_create(){
-  merch_t *merch->name = ioopm_hash_table_create(ioopm_hash_function hf, ioopm_eq_function comp_key, ioopm_eq_function comp_value); //lägg in passande func
-  merch_t *merch->name = ioopm_hash_table_create(ioopm_hash_function hf, ioopm_eq_function comp_key, ioopm_eq_function comp_value); //Lägg in passande func
+  return new_shelf;
 }
 
-void add_merchandise(merch_t merch_stock, elem_t name, elem_t shelf, elem_t item_pointer){
-  ioopm_hash_table_insert(merch_stock->name, name, value);
-  bool increased = ioopm_hash_table_increase(merch_stock->locs, shelf);
-  if(!increased){
-    ioopm_hash_table_insert(merch_stock->locs, shelf, int_elem(1));
+
+
+/// Store
+
+webstore_t *store_create(){
+  webstore_t *new_webstore = calloc(1, sizeof(webstore_t));
+  
+  new_webstore->merch_db   = ioopm_hash_table_create(extract_int_hash_key, eq_elem_int, eq_elem_string);
+  new_webstore->storage_db = ioopm_hash_table_create(extract_int_hash_key, eq_elem_int, eq_elem_string);
+
+  return new_webstore;
+}
+void store_destroy(webstore_t *store){
+  
+  ioopm_hash_table_destroy(store->merch_db);
+  ioopm_hash_table_destroy(store->storage_db);
+}
+
+void add_merchendise(webstore_t *store, char *name, char *desc, size_t price){
+
+
+  if (!ioopm_hash_table_has_key(store->merch_db, ptr_elem(name))){
+    // Can add to warehouse
+    ioopm_list_t *locs = ioopm_linked_list_create();
+    merch_t *new_merch = create_merch(name, desc, price, locs);
+
+    ioopm_hash_table_insert(store->merch_db, ptr_elem(name), ptr_elem(new_merch));
+
+    return; // SUCCESS 
+
+ 
   }
 }
-
-int main(int argc, char *argv[]){
-  item_t item = input_item();
-  add_merchandise(merch_t merch_stock, elem_t name, elem_t item_pointer)
-}
-*/
