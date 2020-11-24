@@ -139,16 +139,34 @@ void remove_merchendise(webstore_t *store, char *name){
 //TODO REQ: ask if more
 // list of all ptr of merch
 
-void list_merchandise(webstore_t *store){
-  
-  ioopm_list_t *list_merch    = ioopm_hash_table_values(store->merch_db); 
-  ioopm_list_iterator_t *iter = ioopm_list_iterator(list_merch);
-  
-  for (int i = 0; i < list_merch->size; i++){    
-    if(ioopm_iterator_has_next(iter)){	
-      print_merch(get_elem_ptr(ioopm_iterator_next(iter)));
+boolean continue_printing(){
+    ans = ask_question_string("Continue? y/n ");
+    if(ans == "y"){
+      return true;
     }
   }
-  
+  return false;
 }
 
+void list_merchandise(webstore_t *store){
+
+  ioopm_list_t *list_merch    = ioopm_hash_table_values(store->merch_db);
+  ioopm_list_iterator_t *iter = ioopm_list_iterator(list_merch);
+  char *ans = "y";
+  int counter = 20;
+  for (int i = 0; i < list_merch->size; i++){
+    if(counter >= 0){
+      if(continue_printing()){
+        counter = 20;
+      }
+      else{
+        return;
+      }
+    }
+    if(ioopm_iterator_has_next(iter)){
+      printf("%d", i);
+      print_merch(get_elem_ptr(ioopm_iterator_next(iter)));
+    }
+    counter--;
+  }
+}
