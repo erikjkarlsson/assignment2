@@ -89,11 +89,6 @@ void add_merchendise(webstore_t *store, char *name, char *desc, size_t price){
     merch_t *new_merch = create_merch(name, desc, price, locs);
 
     ioopm_hash_table_insert(store->merch_db, ptr_elem(name), ptr_elem(new_merch));
-
-<<<<<<< HEAD
-=======
-    // TODO: IS THIS NEEDED, check gdb ioopm_linked_list_destroy(locs);
->>>>>>> cd2e893e769137267ba87c36ea9c999fd2213be7
     return; // SUCCESS
   }  
 }
@@ -118,7 +113,6 @@ void merchendise_edit_desc(webstore_t *store, char *name, char *edited_desc){
 			    (char*)edited_desc);
 }
 
-<<<<<<< HEAD
 char *lookup_name(webstore_t *store, int index){
   ioopm_list_t *list_merch = ioopm_hash_table_values(store->merch_db);
   elem_t value_ptr = ioopm_linked_list_get(list_merch, index);
@@ -131,7 +125,7 @@ bool valid_index(webstore_t *store, int index){
   ioopm_list_t *list = ioopm_hash_table_values(store->merch_db);
   if(index-1 >= list->size){
     return false;
-=======
+
 void merchendise_modify(webstore_t *store, char *name, merch_modify_function *fun, void *fun_arg){
 
   // ERROR IF merch_db is NULL
@@ -162,17 +156,6 @@ void merchendise_modify(webstore_t *store, char *name, merch_modify_function *fu
     return; // ERROR
   }
     
-}
-
-
-void remove_merchendise(webstore_t *store, char *name){
-    // TODO: item->total_amount--;
-    ioopm_hash_table_remove(store->merch_db, ptr_elem(name));
-
-    return; // SUCCESS
->>>>>>> cd2e893e769137267ba87c36ea9c999fd2213be7
-  }
-  return true;
 }
 
 void remove_merchendise(webstore_t *store){
@@ -217,41 +200,22 @@ void list_merchandise(webstore_t *store){
   current = get_elem_ptr(ioopm_iterator_current(iter));
 
   for (int i = 1;; i++){
-      printf("No.%d: ", i);
+      printf("No.%d: \n", i);
       print_merch(current);
 
-<<<<<<< HEAD
-  int counter = 20;
-  for (int i = 0; i < list_merch->size; i++){
-    if(ioopm_iterator_has_next(iter)){
-      if(counter <= 0){
-        if(continue_printing()){
-          counter = 20;
-        }
-        else{
-          return;
-        }
-      }
-      counter--;
-      printf("No.%d: ", i+1);
-      print_merch(get_elem_ptr(ioopm_iterator_next(iter)));
-=======
     if(ioopm_iterator_has_next(iter)){
       current = get_elem_ptr(ioopm_iterator_next(iter));
       
     }else {
       break;
       
->>>>>>> cd2e893e769137267ba87c36ea9c999fd2213be7
     }
     
   }
-  
-   
-  
-
+     
   // FIX: Added destructors
   ioopm_iterator_destroy(iter);
   ioopm_linked_list_destroy(list_merch);
   
 }
+  
