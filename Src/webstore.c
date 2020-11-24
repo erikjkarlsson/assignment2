@@ -30,7 +30,11 @@ merch_t *create_merch(char *name,
 }
 
 void print_merch(merch_t *merch){
-  printf("Item: %s [%s], Price: %ld$, Amount: %ldx \n", merch->name, merch->desc, merch->price, merch->total_amount);
+  printf("| Item:          %s\n", merch->name);  
+  printf("| Description:   %s\n", merch->desc);
+  printf("| Price:         %ld\n",merch->price);
+  printf("| Stock (Total): %ld\n", merch->total_amount);
+
 }
 
 
@@ -182,8 +186,7 @@ void remove_merchendise(webstore_t *store){
 // list of all ptr of merch
 
 bool continue_printing(){
-
-    char *ans = ask_question_string("Continue? y/n \n");
+  char *ans = ask_question_string("Continue? y/n \n");
     char *ans_cmp = "y";
     if(strcmp(ans, ans_cmp)==0){
 
@@ -199,21 +202,27 @@ void list_merchandise(webstore_t *store){
   ioopm_list_t *list_merch    = ioopm_hash_table_values(store->merch_db);
   ioopm_list_iterator_t *iter = ioopm_list_iterator(list_merch);
   merch_t *current = NULL;
-  
+
+  int continue_alert_number = 20;
   
   current = get_elem_ptr(ioopm_iterator_current(iter));
 
   for (int i = 1;; i++){
-      printf("No.%d: \n", i);
-      print_merch(current);
+    if ((i % (continue_alert_number) == 0) && !continue_printing()) break;
 
+      
+    
+    printf("Begin Merchendise Item [No.%d]\n", i);
+
+    // printf("No.%d: \n", i);
+
+    print_merch(current);
+    printf("End \n\n");
+      
     if(ioopm_iterator_has_next(iter)){
-      current = get_elem_ptr(ioopm_iterator_next(iter));
-      
-    }else {
-      break;
-      
-    }
+      current = get_elem_ptr(ioopm_iterator_next(iter));      
+    }else { break; }
+
     
   }
      
