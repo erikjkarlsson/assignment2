@@ -99,6 +99,16 @@ void add_merchendise(webstore_t *store, char *name, char *desc, size_t price){
 
 typedef void (merch_modify_function)(merch_t *merch, void *extra);
 
+void merch_change_description(merch_t *merch_data, char *new_desc){ // Arg =
+  if (merch_data == NULL){
+    perror("ADD_MERCHENDISE: Uninitizalized Merch,\
+            the merchendise has not been initialized.\n");
+    exit(-1); // REMOVE THIS LATER
+  }
+  else { merch_data->desc = new_desc; }
+
+
+}
 void merchendise_modify(webstore_t *store, elem_t *name, merch_modify_function fun, void *fun_arg){
 
   // ERROR IF merch_db is NULL
@@ -115,8 +125,9 @@ void merchendise_modify(webstore_t *store, elem_t *name, merch_modify_function f
     return; // ERROR
     
   } else {
+    
     merch_t *data = get_elem_ptr(ioopm_hash_table_lookup(store->merch_db, ptr_elem(name)));    
-    fun(data, fun_arg);
+   fun(&data, fun_arg);
     
     return; // ERROR
   }
@@ -139,12 +150,12 @@ void remove_merchendise(webstore_t *store, char *name){
 //TODO REQ: ask if more
 // list of all ptr of merch
 
-boolean continue_printing(){
-    ans = ask_question_string("Continue? y/n ");
+bool continue_printing(){
+  char *ans = ask_question_string("Continue? y/n ");
     if(ans == "y"){
       return true;
+    
     }
-  }
   return false;
 }
 

@@ -15,10 +15,10 @@ int main(int argc, char *argv[]) {
 
   
   add_merchendise(store, "Cola", "from coca cola", (size_t)10);
-  add_merchendise(store, "A Chair", "Usable", (size_t)8);
-  add_merchendise(store, "A Plant", "A plant from Brazil", (size_t)4);
-  add_merchendise(store, "A Car", "A fast car", (size_t)2);
-  add_merchendise(store, "A Computer", "Gaming computer", (size_t)0);
+  add_merchendise(store, "Chair", "Usable", (size_t)8);
+  add_merchendise(store, "Plant", "A plant from Brazil", (size_t)4);
+  add_merchendise(store, "Car", "A fast car", (size_t)2);
+  add_merchendise(store, "Computer", "Gaming computer", (size_t)0);
 
   printf("Inserted 5 merchendise!\n");
 
