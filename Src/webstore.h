@@ -51,7 +51,7 @@ typedef merch_t *(merch_modify_function)(merch_t *merch, void *extra);
 //Adding a new merch with the same name as an existing merch is not allowed.
 void add_merchendise(webstore_t *store, char *name, char *desc, size_t price);
 
-void remove_merchendise(webstore_t *store, char *name);
+void remove_merchendise(webstore_t *store);
 
 void list_merchandise(webstore_t *store);
 

@@ -62,6 +62,7 @@ webstore_t *store_create(){
 
   return new_webstore;
 }
+
 void store_destroy(webstore_t *store){
 
   ioopm_hash_table_destroy(store->merch_db);
@@ -92,8 +93,6 @@ void add_merchendise(webstore_t *store, char *name, char *desc, size_t price){
     merch_t *new_merch = create_merch(name, desc, price, locs);
 
     ioopm_hash_table_insert(store->merch_db, ptr_elem(name), ptr_elem(new_merch));
-
-    // TODO: IS THIS NEEDED, check gdb ioopm_linked_list_destroy(locs);
     return; // SUCCESS
   }  
 }
@@ -150,13 +149,32 @@ void merchendise_modify(webstore_t *store, char *name, merch_modify_function *fu
     
 }
 
+char *lookup_name(webstore_t *store, int index){
+  ioopm_list_t *list_merch = ioopm_hash_table_values(store->merch_db);
+  elem_t value_ptr = ioopm_linked_list_get(list_merch, index);
+  merch_t *merch = get_elem_ptr(value_ptr);
+  printf("name%s\n", merch->name);
+  return merch->name; 
+}
 
-void remove_merchendise(webstore_t *store, char *name){
-    // TODO: item->total_amount--;
-    ioopm_hash_table_remove(store->merch_db, ptr_elem(name));
-
-    return; // SUCCESS
+bool valid_index(webstore_t *store, int index){
+  ioopm_list_t *list = ioopm_hash_table_values(store->merch_db);
+  if(index-1 >= list->size){
+    return false;
   }
+  return true;
+}
+
+void remove_merchendise(webstore_t *store){
+  list_merchandise(store);
+  int number = ask_question_int("Enter the number of item that you wish to remove: \n");
+  while(!valid_index(store, number)){
+    number = ask_question_int("Enter a valid number of item that you wish to remove: \n");
+  }
+  char *name = lookup_name(store, number);
+  ioopm_hash_table_remove(store->merch_db, ptr_elem(name));
+  return; // SUCCESS
+}
 
 
 // list_merchandise(webstore_t *store);
@@ -167,8 +185,7 @@ void remove_merchendise(webstore_t *store, char *name){
 // list of all ptr of merch
 
 bool continue_printing(){
-
-    char *ans = ask_question_string("Continue? y/n \n");
+  char *ans = ask_question_string("Continue? y/n \n");
     char *ans_cmp = "y";
     if(strcmp(ans, ans_cmp)==0){
 
@@ -184,22 +201,27 @@ void list_merchandise(webstore_t *store){
   ioopm_list_t *list_merch    = ioopm_hash_table_values(store->merch_db);
   ioopm_list_iterator_t *iter = ioopm_list_iterator(list_merch);
   merch_t *current = NULL;
-  
+
+  int continue_alert_number = 20;
   
   current = get_elem_ptr(ioopm_iterator_current(iter));
 
   for (int i = 1;; i++){
-      printf("Begin Merchendise Item [No.%d]\n", i);
-      print_merch(current);
-      printf("End \n\n");
+    if ((i % (continue_alert_number) == 0) && !continue_printing()) break;
+
+      
+    
+    printf("Begin Merchendise Item [No.%d]\n", i);
+
+    // printf("No.%d: \n", i);
+
+    print_merch(current);
+    printf("End \n\n");
       
     if(ioopm_iterator_has_next(iter)){
-      current = get_elem_ptr(ioopm_iterator_next(iter));
-      
-    }else {
-      break;
-      
-    }
+      current = get_elem_ptr(ioopm_iterator_next(iter));      
+    }else { break; }
+
     
   }
      
@@ -208,3 +230,4 @@ void list_merchandise(webstore_t *store){
   ioopm_linked_list_destroy(list_merch);
   
 }
+  
