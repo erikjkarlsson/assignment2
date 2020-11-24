@@ -107,6 +107,7 @@ merch_t *merch_change_description_function(merch_t *merch_data, void *new_desc){
   return merch_data;
 
 }
+
 void merchendise_edit_desc(webstore_t *store, char *name, char *edited_desc){
   return merchendise_modify(store, (char*)name,
 			    merch_change_description_function,
@@ -145,7 +146,7 @@ void merchendise_modify(webstore_t *store, char *name, merch_modify_function *fu
     
 }
 
-char *lookup_name(webstore_t *store, int index){
+char *get_name_from_index(webstore_t *store, int index){
   ioopm_list_t *list_merch = ioopm_hash_table_values(store->merch_db);
   elem_t value_ptr = ioopm_linked_list_get(list_merch, index);
   merch_t *merch = get_elem_ptr(value_ptr);
@@ -167,7 +168,7 @@ void remove_merchendise(webstore_t *store){
   while(!valid_index(store, number)){
     number = ask_question_int("Enter a valid number of item that you wish to remove: \n");
   }
-  char *name = lookup_name(store, number);
+  char *name = get_name_from_index(store, number);
   ioopm_hash_table_remove(store->merch_db, ptr_elem(name));
   return; // SUCCESS
 }
