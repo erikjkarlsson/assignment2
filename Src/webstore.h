@@ -44,6 +44,7 @@ struct webstore
 typedef struct webstore webstore_t;
 typedef struct database database_t;
 
+typedef merch_t *(merch_modify_function)(merch_t *merch, void *extra);
 
 //This adds a new merch to the warehouse with a name (string), description (string), and price (integer).
 //A newly added merch is not in stock.
@@ -68,6 +69,9 @@ merch_t *create_merch(char *name,
 		      ioopm_list_t *locs);
 
 void create_destroy(webstore_t *store);
+merch_t *merch_change_description_function(merch_t *merch_data, void *new_desc);
+void merchendise_modify(webstore_t *store, char *name, merch_modify_function *fun, void *fun_arg);
+void merchendise_edit_desc(webstore_t *store, char *name, char *edited_desc);
 /*
 //This should list all items in the store.
 //Items should preferably (soft requirement) be printed in alphabetical order on their names.
