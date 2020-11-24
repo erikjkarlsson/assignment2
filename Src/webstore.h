@@ -9,7 +9,7 @@
 #include <stdbool.h>
 #include <stdlib.h>
 #include <string.h>
-#include <errno.h> 
+#include <errno.h>
 #include "hash_table.h"
 
 #include "utils.h"
@@ -19,7 +19,7 @@ struct merch
 {
   char *name;
   char *desc;
-  size_t price; 
+  size_t price;
 
   size_t total_amount;   // Total amount  in storage
   ioopm_list_t *locs;    // Storage of shelfs
@@ -39,7 +39,7 @@ typedef struct shelf shelf_t;
 struct webstore
 {
   ioopm_hash_table_t *merch_db;
-  ioopm_hash_table_t *storage_db;    
+  ioopm_hash_table_t *storage_db;
 };
 typedef struct webstore webstore_t;
 typedef struct database database_t;
@@ -49,6 +49,8 @@ typedef struct database database_t;
 //A newly added merch is not in stock.
 //Adding a new merch with the same name as an existing merch is not allowed.
 void add_merchendise(webstore_t *store, char *name, char *desc, size_t price);
+
+void remove_merchendise(webstore_t *store, char *name);
 
 webstore_t *store_create();
 

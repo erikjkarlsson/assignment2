@@ -1,3 +1,4 @@
+trello
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -14,11 +15,11 @@ struct merch
 
 void merch_t_create(){
   merch_t *merch->name = ioopm_hash_table_create(ioopm_hash_function hf, ioopm_eq_function comp_key, ioopm_eq_function comp_value); //lägg in passande func
-  merch_t *merch->name = ioopm_hash_table_create(ioopm_hash_function hf, ioopm_eq_function comp_key, ioopm_eq_function comp_value); //Lägg in passande func
+  merch_t *locs->name = ioopm_hash_table_create(ioopm_hash_function hf, ioopm_eq_function comp_key, ioopm_eq_function comp_value); //Lägg in passande func
 }
 
 void add_merchandise(merch_t merch_stock, elem_t name, elem_t shelf, elem_t item_pointer){
-  ioopm_hash_table_insert(merch_stock->name, name, value);
+  ioopm_hash_table_insert(merch_stock->name, name, item_pointer);
   bool increased = ioopm_hash_table_increase(merch_stock->locs, shelf);
   if(!increased){
     ioopm_hash_table_insert(merch_stock->locs, shelf, int_elem(1));
@@ -26,6 +27,4 @@ void add_merchandise(merch_t merch_stock, elem_t name, elem_t shelf, elem_t item
 }
 
 int main(int argc, char *argv[]){
-  item_t item = input_item();
-  add_merchandise(merch_t merch_stock, elem_t name, elem_t item_pointer)
 }
