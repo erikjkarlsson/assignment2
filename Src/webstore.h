@@ -52,6 +52,8 @@ void add_merchendise(webstore_t *store, char *name, char *desc, size_t price);
 
 void remove_merchendise(webstore_t *store, char *name);
 
+void list_merchandise(webstore_t *store);
+
 webstore_t *store_create();
 
 void store_destroy(webstore_t *store);
