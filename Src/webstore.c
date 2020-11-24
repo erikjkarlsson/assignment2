@@ -19,9 +19,7 @@ merch_t *create_merch(char *name,
 
   merch_t *item = calloc(1, sizeof(merch_t));
 
-  item->name          = calloc(1, sizeof(char*));
   item->name          = name;
-  item->desc          = calloc(1, sizeof(char*));
   item->desc          = desc;
   item->price         = price;
 
@@ -72,22 +70,64 @@ void store_destroy(webstore_t *store){
 
 void add_merchendise(webstore_t *store, char *name, char *desc, size_t price){
 
-  if (!ioopm_hash_table_has_key(store->merch_db, ptr_elem(name))){
-    // Can add to warehouse
+  // ERROR IF merch_db is NULL
+  if(store->merch_db == NULL){
+    perror("ADD_MERCHENDISE: Uninitizalized Merch-Database,\
+            the database has not been initialized.\n");
+    exit(-1); // REMOVE THIS LATER
+    return; // ERROR
+  }
+  // ERROR IF merch_db has key  
+  else if (ioopm_hash_table_has_key(store->merch_db, ptr_elem(name))){
+    perror("ADD_MERCHENDISE: Duplicate Merch, \
+            the name is already registered in Merch-Table.\n");
+    exit(-1); // REMOVE THIS LATER
+    return; // ERROR
+  }
+
+  else {    
     ioopm_list_t *locs = ioopm_linked_list_create();
     merch_t *new_merch = create_merch(name, desc, price, locs);
 
     ioopm_hash_table_insert(store->merch_db, ptr_elem(name), ptr_elem(new_merch));
 
-    //TODO: item->total_amount++;
+    // TODO: IS THIS NEEDED, check gdb ioopm_linked_list_destroy(locs);
     return; // SUCCESS
-  }
+  }  
 }
 
-void remove_merchendise(webstore_t *store, char *name){
 
+typedef void (merch_modify_function)(merch_t *merch, void *extra);
+
+void merchendise_modify(webstore_t *store, elem_t *name, merch_modify_function fun, void *fun_arg){
+
+  // ERROR IF merch_db is NULL
+  if(store->merch_db == NULL){
+    perror("ADD_MERCHENDISE: Uninitizalized Merch-Database,\
+            the database has not been initialized.\n");
+    exit(-1); // REMOVE THIS LATER
+  }
+  // ERROR IF merch_db dont have the key  
+  else if (ioopm_hash_table_has_key(store->merch_db, ptr_elem(name))){
+    perror("ADD_MERCHENDISE: Duplicate Merch, \
+            the name not a merchendise in Merch-Table.\n");
+    exit(-1); // REMOVE THIS LATER
+    return; // ERROR
+    
+  } else {
+    merch_t *data = get_elem_ptr(ioopm_hash_table_lookup(store->merch_db, ptr_elem(name)));    
+    fun(data, fun_arg);
+    
+    return; // ERROR
+  }
+    
+}
+
+
+void remove_merchendise(webstore_t *store, char *name){
+    // TODO: item->total_amount--;
     ioopm_hash_table_remove(store->merch_db, ptr_elem(name));
-    //TODO: item->total_amount--;
+
     return; // SUCCESS
   }
 
