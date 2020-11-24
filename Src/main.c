@@ -9,7 +9,7 @@
 
 
 int main(int argc, char *argv[]) {
- 
+
   printf("Now Running!\n");
   webstore_t *store = store_create();
 
@@ -25,7 +25,7 @@ int main(int argc, char *argv[]) {
   ioopm_list_t *products = ioopm_hash_table_keys(store->merch_db);
 
 
-  printf("Size of Products: %d\n",  ioopm_linked_list_size(products));
+  printf("Size of Products: %ld\n",  ioopm_linked_list_size(products));
   
   char * xm;
 
@@ -33,6 +33,8 @@ int main(int argc, char *argv[]) {
     xm = ioopm_linked_list_get(products, i).p;    
     printf("Name: %s\n", xm);
   }
+  
+  list_merchandise(store);
   
 
 
