@@ -95,38 +95,52 @@ void add_merchendise(webstore_t *store, char *name, char *desc, size_t price){
 }
 
 
-typedef void (merch_modify_function)(merch_t *merch, void *extra);
 
-void merch_change_description(merch_t *merch_data, char *new_desc){ // Arg =
+
+merch_t *merch_change_description_function(merch_t *merch_data, void *new_desc){ // Arg =
   if (merch_data == NULL){
-    perror("ADD_MERCHENDISE: Uninitizalized Merch,\
+    perror("merch_change_description_function: Merch,\
             the merchendise has not been initialized.\n");
     exit(-1); // REMOVE THIS LATER
   }
-  else { merch_data->desc = new_desc; }
+  else { merch_data->desc = (char*)new_desc; }
 
+  return merch_data;
 
 }
-void merchendise_modify(webstore_t *store, elem_t *name, merch_modify_function fun, void *fun_arg){
+void merchendise_edit_desc(webstore_t *store, char *name, char *edited_desc){
+  return merchendise_modify(store, (char*)name,
+			    merch_change_description_function,
+			    (char*)edited_desc);
+}
+
+void merchendise_modify(webstore_t *store, char *name, merch_modify_function *fun, void *fun_arg){
 
   // ERROR IF merch_db is NULL
   if(store->merch_db == NULL){
-    perror("ADD_MERCHENDISE: Uninitizalized Merch-Database,\
+    perror("merchendise_modify: Uninitizalized Merch-Database,\
             the database has not been initialized.\n");
     exit(-1); // REMOVE THIS LATER
   }
   // ERROR IF merch_db dont have the key  
-  else if (ioopm_hash_table_has_key(store->merch_db, ptr_elem(name))){
-    perror("ADD_MERCHENDISE: Duplicate Merch, \
-            the name not a merchendise in Merch-Table.\n");
+  else if (!ioopm_hash_table_has_key(store->merch_db, ptr_elem(name))){
+    perror("merchendise_modify: Duplicate Merch, \
+            the name is not in the Merch Database.\n");
     exit(-1); // REMOVE THIS LATER
     return; // ERROR
     
   } else {
     
     merch_t *data = get_elem_ptr(ioopm_hash_table_lookup(store->merch_db, ptr_elem(name)));    
-   fun(&data, fun_arg);
-    
+    merch_t *new_data = NULL;
+    new_data = fun(data, fun_arg);
+
+   // Remove associated data
+   ioopm_hash_table_remove(store->merch_db, ptr_elem(name));
+
+   // Reinsert the modified data
+   ioopm_hash_table_insert(store->merch_db, ptr_elem(name), ptr_elem(new_data));
+   
     return; // ERROR
   }
     
@@ -165,21 +179,30 @@ void list_merchandise(webstore_t *store){
 
   ioopm_list_t *list_merch    = ioopm_hash_table_values(store->merch_db);
   ioopm_list_iterator_t *iter = ioopm_list_iterator(list_merch);
+  merch_t *current = NULL;
+  
+  
+  current = get_elem_ptr(ioopm_iterator_current(iter));
 
-  int counter = 2;
-  for (int i = 0; i < list_merch->size; i++){
+  for (int i = 1;; i++){
+      printf("No.%d: ", i);
+      print_merch(current);
+
     if(ioopm_iterator_has_next(iter)){
-      if(counter <= 0){
-        if(continue_printing()){
-          counter = 2;
-        }
-        else{
-          return;
-        }
-      }
-      counter--;
-      printf("No.%d: ", i+1);
-      print_merch(get_elem_ptr(ioopm_iterator_next(iter)));
+      current = get_elem_ptr(ioopm_iterator_next(iter));
+      
+    }else {
+      break;
+      
     }
+    
   }
+  
+   
+  
+
+  // FIX: Added destructors
+  ioopm_iterator_destroy(iter);
+  ioopm_linked_list_destroy(list_merch);
+  
 }

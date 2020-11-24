@@ -20,6 +20,8 @@ int main(int argc, char *argv[]) {
   add_merchendise(store, "Car", "A fast car", (size_t)2);
   add_merchendise(store, "Computer", "Gaming computer", (size_t)0);
 
+  merchendise_edit_desc(store, "Car", "A slow car");
+    
   printf("Inserted 5 merchendise!\n");
 
   ioopm_list_t *products = ioopm_hash_table_keys(store->merch_db);
@@ -35,18 +37,10 @@ int main(int argc, char *argv[]) {
   }
   
   list_merchandise(store);
-  
-
-
-
-  //  printf("name: %s\n", e-);
-
-  
-  
-
+    
   ioopm_linked_list_destroy(products);
-
-  store_destroy(store);  
+  store_destroy(store);
+  
   printf("Finished Running!\n");
 
   return 0;
