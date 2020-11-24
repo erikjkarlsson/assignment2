@@ -3,11 +3,12 @@
 #include <string.h>
 #include <errno.h>
 #include "hash_table.h"
+#include "iterator.h"
 #include "list_linked.h"
 #include "utils.h"
 #include "webstore.h"
 
-
+#define get_elem_ptr(e) e.p
 
 /// Merch
 
@@ -67,6 +68,8 @@ void store_destroy(webstore_t *store){
   ioopm_hash_table_destroy(store->storage_db);
 }
 
+
+
 void add_merchendise(webstore_t *store, char *name, char *desc, size_t price){
 
   if (!ioopm_hash_table_has_key(store->merch_db, ptr_elem(name))){
@@ -87,21 +90,25 @@ void remove_merchendise(webstore_t *store, char *name){
     //TODO: item->total_amount--;
     return; // SUCCESS
   }
-}
+
+
+// list_merchandise(webstore_t *store);
+// list all items in store
+// TODO REQ: Alphabetical order (soft req) - qsort
+// TODO REQ: print 20 at time
+//TODO REQ: ask if more
+// list of all ptr of merch
 
 void list_merchandise(webstore_t *store){
-  //list all items in store
-  //Alphabetical order (soft req) - qsort
-  //print 20 at time
-  //ask if more
-  elem_t current_merch_ptr;
-  ioopm_list_t *list_merch = ioopm_hash_table_values(store->merch_db); //list of all ptr of merch
+  
+  ioopm_list_t *list_merch    = ioopm_hash_table_values(store->merch_db); 
   ioopm_list_iterator_t *iter = ioopm_list_iterator(list_merch);
-  for (int i = 0; i < list_merch->size; i++){
-     if(ioopm_iterator_has_next(iter){
-       current_merch_ptr = ioopm_iterator_next(iter_k);
-       merch_t *merch = &current_merch_ptr; //??
-       print_merchmerch);
-     }
+  
+  for (int i = 0; i < list_merch->size; i++){    
+    if(ioopm_iterator_has_next(iter)){	
+      print_merch(get_elem_ptr(ioopm_iterator_next(iter)));
+    }
   }
+  
 }
+
