@@ -60,6 +60,7 @@ webstore_t *store_create(){
 
   return new_webstore;
 }
+
 void store_destroy(webstore_t *store){
 
   ioopm_hash_table_destroy(store->merch_db);
@@ -77,17 +78,36 @@ void add_merchendise(webstore_t *store, char *name, char *desc, size_t price){
 
     ioopm_hash_table_insert(store->merch_db, ptr_elem(name), ptr_elem(new_merch));
 
-    //TODO: item->total_amount++;
     return; // SUCCESS
   }
 }
 
-void remove_merchendise(webstore_t *store, char *name){
+char *lookup_name(webstore_t *store, int index){
+  ioopm_list_t *list_merch = ioopm_hash_table_values(store->merch_db);
+  elem_t value_ptr = ioopm_linked_list_get(list_merch, index);
+  merch_t *merch = get_elem_ptr(value_ptr);
+  printf("name%s\n", merch->name);
+  return merch->name; 
+}
 
-    ioopm_hash_table_remove(store->merch_db, ptr_elem(name));
-    //TODO: item->total_amount--;
-    return; // SUCCESS
+bool valid_index(webstore_t *store, int index){
+  ioopm_list_t *list = ioopm_hash_table_values(store->merch_db);
+  if(index-1 >= list->size){
+    return false;
   }
+  return true;
+}
+
+void remove_merchendise(webstore_t *store){
+  list_merchandise(store);
+  int number = ask_question_int("Enter the number of item that you wish to remove: \n");
+  while(!valid_index(store, number)){
+    number = ask_question_int("Enter a valid number of item that you wish to remove: \n");
+  }
+  char *name = lookup_name(store, number);
+  ioopm_hash_table_remove(store->merch_db, ptr_elem(name));
+  return; // SUCCESS
+}
 
 
 // list_merchandise(webstore_t *store);
@@ -111,12 +131,12 @@ void list_merchandise(webstore_t *store){
   ioopm_list_t *list_merch    = ioopm_hash_table_values(store->merch_db);
   ioopm_list_iterator_t *iter = ioopm_list_iterator(list_merch);
 
-  int counter = 2;
+  int counter = 20;
   for (int i = 0; i < list_merch->size; i++){
     if(ioopm_iterator_has_next(iter)){
       if(counter <= 0){
         if(continue_printing()){
-          counter = 2;
+          counter = 20;
         }
         else{
           return;

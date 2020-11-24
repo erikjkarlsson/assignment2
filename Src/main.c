@@ -34,6 +34,10 @@ int main(int argc, char *argv[]) {
     printf("Name: %s\n", xm);
   }
   
+  //list_merchandise(store);
+  
+  remove_merchendise(store);
+  
   list_merchandise(store);
   
 
