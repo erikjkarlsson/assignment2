@@ -12,16 +12,20 @@ int main(int argc, char *argv[]) {
 
   printf("Now Running!\n");
   webstore_t *store = store_create();
-
   
+  // Add Merch    
   add_merchendise(store, "Cola", "from coca cola", (size_t)10);
   add_merchendise(store, "Chair", "Usable", (size_t)8);
-  add_merchendise(store, "Plant", "A plant from Brazil", (size_t)4);
+  add_merchendise(store, "Bike", "A sports bike from Brazil", (size_t)4);
   add_merchendise(store, "Car", "A fast car", (size_t)2);
   add_merchendise(store, "Computer", "Gaming computer", (size_t)0);
 
+  // Merch edit desc 
   merchendise_edit_desc(store, "Car", "A slow car");
-    
+  merchendise_edit_desc(store, "Chair", "Terrible");
+  merchendise_edit_desc(store, "Bike", "16 Gears");
+  merchendise_edit_desc(store, "Computer", "Non-Gaming computer");
+  
   printf("Inserted 5 merchendise!\n");
 
   ioopm_list_t *products = ioopm_hash_table_keys(store->merch_db);

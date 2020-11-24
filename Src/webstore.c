@@ -30,7 +30,11 @@ merch_t *create_merch(char *name,
 }
 
 void print_merch(merch_t *merch){
-  printf("Item: %s [%s], Price: %ld$, Amount: %ldx \n", merch->name, merch->desc, merch->price, merch->total_amount);
+  printf("| Item:          %s\n", merch->name);  
+  printf("| Description:   %s\n", merch->desc);
+  printf("| Price:         %ld\n",merch->price);
+  printf("| Stock (Total): %ld\n", merch->total_amount);
+
 }
 
 
@@ -185,9 +189,10 @@ void list_merchandise(webstore_t *store){
   current = get_elem_ptr(ioopm_iterator_current(iter));
 
   for (int i = 1;; i++){
-      printf("No.%d: ", i);
+      printf("Begin Merchendise Item [No.%d]\n", i);
       print_merch(current);
-
+      printf("End \n\n");
+      
     if(ioopm_iterator_has_next(iter)){
       current = get_elem_ptr(ioopm_iterator_next(iter));
       
@@ -197,10 +202,7 @@ void list_merchandise(webstore_t *store){
     }
     
   }
-  
-   
-  
-
+     
   // FIX: Added destructors
   ioopm_iterator_destroy(iter);
   ioopm_linked_list_destroy(list_merch);
