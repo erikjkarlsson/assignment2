@@ -25,31 +25,37 @@ int main(int argc, char *argv[]) {
   change_or_add_shelf(store, "Cola", 2, "b");
   list_shelfs(store, "Cola");
   // Merch edit desc 
-  merchendise_edit_desc(store, "Car", "A slow car");
-  merchendise_edit_desc(store, "Chair", "Terrible");
-  merchendise_edit_desc(store, "Bike", "16 Gears");
-  merchendise_edit_desc(store, "Computer", "Non-Gaming computer");
-  
+  merchendise_new_desc(store, "Car", "A slow car");
+  merchendise_new_desc(store, "Chair", "Terrible");
+  merchendise_new_desc(store, "Bike", "16 Gears");
+  merchendise_new_desc(store, "Computer", "Non-Gaming computer");
+
   printf("Inserted 5 merchendise!\n");
 
-  ioopm_list_t *products = ioopm_hash_table_keys(store->merch_db);
 
-  printf("Size of Products: %ld\n",  ioopm_linked_list_size(products));
   
-  char * xm;
-
+  ioopm_list_t *products = ioopm_hash_table_keys(store->merch_db);
+  
   for (size_t i = 0; i < ioopm_linked_list_size(products); i++){
-    xm = ioopm_linked_list_get(products, i).p;    
-    printf("Name: %s\n", xm);
+    printf("Name: %s\n", ioopm_linked_list_get(products, i).p);
   }
+  printf("Size of Products: %ld\n",  ioopm_linked_list_size(products));
+  ioopm_linked_list_destroy(products);
+
+
   
   //list_merchandise(store);
   
-  prompt_remove_merchendise(store);
-  
-  list_merchandise(store);
+  //  prompt_remove_merchendise(store);
+  remove_merchendise(store, "Bike");
+  remove_merchendise(store, "Car");
+  remove_merchendise(store, "Cola");
+  remove_merchendise(store, "Chair");
+  remove_merchendise(store, "Computer");
+
+  //  list_merchandise(store);
     
-  ioopm_linked_list_destroy(products);
+
   store_destroy(store);
   
   printf("Finished Running!\n");

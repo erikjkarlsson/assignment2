@@ -52,12 +52,12 @@ typedef merch_t *(merch_modify_function)(merch_t *merch, void *extra);
 //Adding a new merch with the same name as an existing merch is not allowed.
 void add_merchendise(webstore_t *store, char *name, char *desc, size_t price);
 void change_or_add_shelf(webstore_t *store, char *name, int amount, char* location);
-
+bool valid_index(webstore_t *store, int index);
 void prompt_remove_merchendise(webstore_t *store);
 void remove_merchendise(webstore_t *store, char *name);
 void list_merchandise(webstore_t *store);
-
-  
+bool continue_printing();
+char *lookup_merch_name(webstore_t *store, int index);
 webstore_t *store_create();
 
 void store_destroy(webstore_t *store);
@@ -72,8 +72,18 @@ merch_t *create_merch(char *name,
 
 void create_destroy(webstore_t *store);
 merch_t *merch_change_description_function(merch_t *merch_data, void *new_desc);
+merch_t *merch_change_locs_function(merch_t *merch_data, void *new_locs);
+merch_t *merch_change_price_function(merch_t *merch_data, void *new_price);  
 void merchendise_modify(webstore_t *store, char *name, merch_modify_function *fun, void *fun_arg);
-void merchendise_edit_desc(webstore_t *store, char *name, char *edited_desc);
+
+void merchendise_new_desc(webstore_t *store, char *name, char *edited_desc);
+void merchendise_new_price(webstore_t *store, char *name, size_t new_price);
+void merchendise_new_locs(webstore_t *store, char *name, ioopm_list_t *new_locs);
+  
+void locs_delete(webstore_t *store, char *name);
+//void merch_delete(merch_t *merch_data);
+void merch_delete(webstore_t *store, char *name);
+//void locs_delete(ioopm_list_t *locs);
 /*
 //This should list all items in the store.
 //Items should preferably (soft requirement) be printed in alphabetical order on their names.
