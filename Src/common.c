@@ -59,6 +59,7 @@ arg_opt_t *create_arg_opt() {
   opt->use_list_p = false;
   opt->debug_p = false;
   opt->tests_p = false;
+  opt->log_p   = false;
 
   opt->deep_debug_p = false;
 
@@ -94,10 +95,22 @@ void subtest_enable(int test_number, arg_opt_t *opt) {
     exit(-1);
   }
 }
+void show_msg(char *type, char *function, char *message, int number){
+  printf(R_STR_STR, type);
+  printf(B_STR_STR, function);
+  printf("(%d)%s\n", number, message);  
+}
+
+void slog(char *function, char *message, int number){
+  show_msg("LOG: ", function, message, number);
+}
+void serror(char *function, char *message, int number){
+  show_msg("ERROR: ", function, message, number);
+}
 
 void print_argv(int argc, char **argv) {
   for (int i = 0; i < argc; i++)
-    printf("%s", argv[i]);
+    printf("%s ", argv[i]);
   printf("\n");
 }
 
@@ -109,6 +122,7 @@ void print_help() {
   putc_str("-d --debug (-v)           (Enable debug/verbose output)", BLUE,
            true);
   putc_str("-t --run-tests            (Run tests)", BLUE, true);
+    putc_str("-l -log            (Enable logging)", BLUE, true);
   putc_str("-D --deep-debug           (More detailed debugging)", BLUE, true);
   putc_str("-t --enable-test          (Enable part of a test or a test)", BLUE,
            true);
@@ -145,16 +159,21 @@ void arg_parse(int argc, char **argv, arg_opt_t *opt) {
   ///~}~~~~~~~~~~~~~~~~~~~~~~~~}~~~~~~~~~~~~~~~~~~~~}~~~~~~~~~~~~~~~~~~~~~~~~}
 
   // Need to provide atleast =one= argument.
-  if (argc == 1) {
+    if (argc == 1) {
+      /*
     print_argv(argc, argv);
     print_help();
     destroy_arg_opt(opt);
     exit(-1);
+      */
   } else {
 
     // Print help message
     for (int i = 1; i < argc; i++) {
-      if ((STR_EQ(argv[i], "--help") || STR_EQ(argv[i], "-h"))) {
+      if ((STR_EQ(argv[i], "--log") || STR_EQ(argv[i], "-l"))) {
+	opt->log_p = true;
+	
+      }else if ((STR_EQ(argv[i], "--help") || STR_EQ(argv[i], "-h"))) {
         print_argv(argc, argv);
         print_help();
         destroy_arg_opt(opt);
@@ -240,10 +259,9 @@ void arg_parse(int argc, char **argv, arg_opt_t *opt) {
 
         opt->tests_p = true; // Switch to enabled
 
-      } else {
+      } else if ((STR_EQ(argv[i], "--exit") || STR_EQ(argv[i], "-x"))) {
         // PARSE: Invalid / Non-Matching Flags
         printf("%sERROR: The flag '%s' is invalid%s\n", RED, argv[i], NO_COLOR);
-        printf("LEN: %d\n", opt->list_length);
         // Display help screen and return failure
         print_argv(argc, argv);
         print_help();
