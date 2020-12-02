@@ -42,7 +42,7 @@ int main(int argc, char *argv[]) {
   printf("Size of Products: %ld\n",  ioopm_linked_list_size(products));
   ioopm_linked_list_destroy(products);
 
-
+  printf("##########%d",merch_locs_total(store, "Cola"));
   
   //list_merchandise(store);
   

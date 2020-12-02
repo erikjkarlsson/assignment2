@@ -46,44 +46,85 @@ typedef struct webstore webstore_t;
 typedef struct database database_t;
 
 typedef merch_t *(merch_modify_function)(merch_t *merch, void *extra);
+typedef char *(merch_get_str_function)(merch_t *merch);
+typedef int *(merch_get_int_function)(merch_t *merch);
 
-//This adds a new merch to the warehouse with a name (string), description (string), and price (integer).
-//A newly added merch is not in stock.
-//Adding a new merch with the same name as an existing merch is not allowed.
-void add_merchendise(webstore_t *store, char *name, char *desc, size_t price);
-void change_or_add_shelf(webstore_t *store, char *name, int amount, char* location);
-bool valid_index(webstore_t *store, int index);
-void prompt_remove_merchendise(webstore_t *store);
-void remove_merchendise(webstore_t *store, char *name);
-void list_merchandise(webstore_t *store);
-bool continue_printing();
-char *lookup_merch_name(webstore_t *store, int index);
+
+/// Store
+
 webstore_t *store_create();
-
 void store_destroy(webstore_t *store);
-void print_merch(merch_t *merch);
+
+
+
+/// Shelfs 
 
 shelf_t *create_shelf(char *shelf, int amount);
+void shelf_delete(shelf_t *shelf);
+  
 void list_shelfs(webstore_t *store, char *name);
+void change_or_add_shelf(webstore_t *store, char *name, int amount, char* location);
+void locs_delete(webstore_t *store, char *name);
+
+int merch_locs_at_shelf(webstore_t *store, char *name, char *shelf);  
+int merch_locs_total(webstore_t *store, char *name);
+
+
+/// Merchendise
+
 merch_t *create_merch(char *name,
 		      char* desc,
 		      size_t price,
 		      ioopm_list_t *locs);
+// Free up merch 
+void merch_delete(webstore_t *store, char *name);
+void remove_merchendise(webstore_t *store, char *name);
 
-void create_destroy(webstore_t *store);
+int merch_price(webstore_t *store, char *name);
+char *merch_description(webstore_t *store, char *name);
+
+// Add a new merch
+void add_merchendise(webstore_t *store, char *name, char *desc, size_t price);
+ 
+// helpers
+void merchendise_modify(webstore_t *store, char *name, merch_modify_function *fun, void *fun_arg);
 merch_t *merch_change_description_function(merch_t *merch_data, void *new_desc);
 merch_t *merch_change_locs_function(merch_t *merch_data, void *new_locs);
 merch_t *merch_change_price_function(merch_t *merch_data, void *new_price);  
-void merchendise_modify(webstore_t *store, char *name, merch_modify_function *fun, void *fun_arg);
 
+// Set a new merch desc
 void merchendise_new_desc(webstore_t *store, char *name, char *edited_desc);
+// Set a new merch price
 void merchendise_new_price(webstore_t *store, char *name, size_t new_price);
+// Set a new merch locs
 void merchendise_new_locs(webstore_t *store, char *name, ioopm_list_t *new_locs);
-  
-void locs_delete(webstore_t *store, char *name);
-//void merch_delete(merch_t *merch_data);
-void merch_delete(webstore_t *store, char *name);
+
+//void merch_delete(webstore_t *store, char *name);
+void prompt_remove_merchendise(webstore_t *store);
+// Free merch
+void remove_merchendise(webstore_t *store, char *name);
+// list out all merch
+void list_merchandise(webstore_t *store);
+
+void print_merch(merch_t *merch);
+char *lookup_merch_name(webstore_t *store, int index);
+
+
+
+
+
+
+/// Misc
+
+bool continue_printing();
+bool valid_index(webstore_t *store, int index);
+// Logging function
+// use macro: MLOG
+void merch_log(char *function, char *name, char *message, int number);
+
+
 //void locs_delete(ioopm_list_t *locs);
+//void merch_delete(merch_t *merch_data);
 /*
 //This should list all items in the store.
 //Items should preferably (soft requirement) be printed in alphabetical order on their names.

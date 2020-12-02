@@ -98,7 +98,7 @@ void subtest_enable(int test_number, arg_opt_t *opt) {
 void show_msg(char *type, char *function, char *message, int number){
   printf(R_STR_STR, type);
   printf(B_STR_STR, function);
-  printf("(%d)%s", number, message);  
+  printf("(%d)%s\n", number, message);  
 }
 
 void slog(char *function, char *message, int number){
@@ -159,11 +159,13 @@ void arg_parse(int argc, char **argv, arg_opt_t *opt) {
   ///~}~~~~~~~~~~~~~~~~~~~~~~~~}~~~~~~~~~~~~~~~~~~~~}~~~~~~~~~~~~~~~~~~~~~~~~}
 
   // Need to provide atleast =one= argument.
-  if (argc == 1) {
+    if (argc == 1) {
+      /*
     print_argv(argc, argv);
     print_help();
     destroy_arg_opt(opt);
     exit(-1);
+      */
   } else {
 
     // Print help message

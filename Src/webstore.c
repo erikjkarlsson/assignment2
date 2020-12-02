@@ -43,7 +43,6 @@ void merch_delete(webstore_t *store, char *name){
   free(merch_data);
   
   // Remove from Hash Table
-
 }
 
 merch_t *create_merch(char *name,
@@ -163,6 +162,9 @@ void merchendise_new_locs(webstore_t *store, char *name, ioopm_list_t *new_locs)
 			    (ioopm_list_t*)new_locs);
 }
 
+bool merch_in_scock(webstore_t *store, char *name){
+  return ioopm_hash_table_has_key(store->merch_db, ptr_elem(name));
+}
 
 void merchendise_modify(webstore_t *store, char *name, merch_modify_function *fun, void *fun_arg){
 
@@ -195,8 +197,37 @@ void merchendise_modify(webstore_t *store, char *name, merch_modify_function *fu
   }
     
 }
+char *merch_get_desc_function(merch_t *merch_data){
+  return merch_data->desc;
+}
+  
+char *merch_description(webstore_t *store, char *name){
+  // ERROR IF merch_db dont have the key  
+  if (!ioopm_hash_table_has_key(store->merch_db, ptr_elem(name))){
+    perror("merchendise_modify: Duplicate Merch, \
+            the name is not in the Merch Database.\n");
+    exit(-1); // REMOVE THIS LATER  
+  }  
+  merch_t *data = get_elem_ptr(ioopm_hash_table_lookup(store->merch_db, ptr_elem(name)));        
+    
+  return data->desc;    
+}
 
-char *lookup_merch_name(webstore_t *store, int index){
+int merch_price(webstore_t *store, char *name){
+  // ERROR IF merch_db dont have the key  
+  if (!ioopm_hash_table_has_key(store->merch_db, ptr_elem(name))){
+    perror("merchendise_modify: Duplicate Merch, \
+            the name is not in the Merch Database.\n");
+    exit(-1); // REMOVE THIS LATER  
+  }  
+  merch_t *data = get_elem_ptr(ioopm_hash_table_lookup(store->merch_db, ptr_elem(name)));        
+    
+  return data->price;
+    
+}
+
+
+char *lookup_merch_name(webstore_t *store, int index){ // RENAME LATER
   ioopm_list_t *list_merch = ioopm_hash_table_values(store->merch_db);
   elem_t value_ptr = ioopm_linked_list_get(list_merch, index);
   merch_t *merch = get_elem_ptr(value_ptr);
@@ -208,11 +239,13 @@ void list_merchandise(webstore_t *store){
 
   ioopm_list_t *list_merch    = ioopm_hash_table_values(store->merch_db);
   ioopm_list_iterator_t *iter = ioopm_list_iterator(list_merch);
+  
   merch_t *current = NULL;
-
+  current = get_elem_ptr(ioopm_iterator_current(iter));
+  
   int continue_alert_number = 20;
   
-  current = get_elem_ptr(ioopm_iterator_current(iter));
+
 
   for (int i = 1;; i++){
     if ((i % (continue_alert_number) == 0) && !continue_printing()) break;
@@ -259,8 +292,13 @@ void shelf_delete(shelf_t *shelf){
 webstore_t *store_create(){
   webstore_t *new_webstore = calloc(1, sizeof(webstore_t));
   new_webstore->opt = create_arg_opt();
-  new_webstore->merch_db   = ioopm_hash_table_create(extract_int_hash_key, eq_elem_int, eq_elem_string);
-  new_webstore->storage_db = ioopm_hash_table_create(extract_int_hash_key, eq_elem_int, eq_elem_string);
+
+  new_webstore->merch_db   =
+    ioopm_hash_table_create(extract_int_hash_key,
+			    eq_elem_int, eq_elem_string);
+  new_webstore->storage_db =
+    ioopm_hash_table_create(extract_int_hash_key,
+			    eq_elem_int, eq_elem_string);
 
   return new_webstore;
 }
@@ -275,7 +313,10 @@ void store_destroy(webstore_t *store){
 
 /// Shelf
 
-
+void add_shelf(webstore_t *store, char *name, shelf_t *shelf){
+  change_or_add_shelf(store, name, shelf->amount, shelf->shelf);
+}
+  
 void change_or_add_shelf(webstore_t *store, char *name, int amount, char* location){
   slog("change_or_add_shelf", name, 1);
 
@@ -322,7 +363,7 @@ void change_or_add_shelf(webstore_t *store, char *name, int amount, char* locati
 
   slog("change_or_add_shelf", name, 3);
 
-  shelf_t *new_shelf = create_shelf(location, amount);
+  shelf_t *new_shelf = create_shelf(location, amount);  
   ioopm_linked_list_append(merch_data->locs, ptr_elem(new_shelf));
     
   // FIX: Added destructors
@@ -330,6 +371,14 @@ void change_or_add_shelf(webstore_t *store, char *name, int amount, char* locati
   slog("change_or_add_shelf", name, 4);
   
       
+}
+
+ioopm_list_t *merch_locs(webstore_t *store, char *name){
+
+  merch_t *merch_data         = get_elem_ptr(ioopm_hash_table_lookup(store->merch_db,
+								     ptr_elem(name)));  
+  ioopm_list_t *merch_locs    = merch_data->locs;
+  return merch_locs;
 }
 
 void list_shelfs(webstore_t *store, char *name){
@@ -363,26 +412,64 @@ void list_shelfs(webstore_t *store, char *name){
 
   
 }
-void locs_delete(webstore_t *store, char *name){
+int merch_locs_total(webstore_t *store, char *name){
   merch_t *merch_data = get_elem_ptr(ioopm_hash_table_lookup(store->merch_db,
 							     ptr_elem(name)));  
 
-  ioopm_link_t *tmp = NULL; 
   ioopm_link_t *merch_locs = merch_data->locs->first;  
-
-
+  int amount = 0;
   
+  shelf_t *shelf_data;
   while (merch_locs != NULL) {
-    tmp = merch_locs->next;
 
-    free(get_elem_ptr(merch_locs->element));
-
-    merch_locs = tmp;
+    shelf_data = (get_elem_ptr(merch_locs->element));
+    amount    += shelf_data->amount;
+    merch_locs = merch_locs->next;
            
   }
 
-  ioopm_linked_list_destroy(merch_data->locs);
+  return amount;
+}
+int merch_locs_at_shelf(webstore_t *store, char *name, char *shelf){
+  // Return the amount merchendise at a specific shelf
+  
+  merch_t *merch_data =
+    get_elem_ptr(ioopm_hash_table_lookup(store->merch_db,
+					 ptr_elem(name)));  
 
+  ioopm_link_t *merch_locs = merch_data->locs->first;
+  
+  int amount = 0;
+  
+  shelf_t *shelf_data;
+  while (merch_locs != NULL) {
+
+    shelf_data = (get_elem_ptr(merch_locs->element));
+
+    if (STR_EQ(shelf_data->shelf, shelf)) 
+      amount    += shelf_data->amount;
+    
+    merch_locs = merch_locs->next;
+           
+  }
+
+  return amount;
+}
+
+
+void locs_delete(webstore_t *store, char *name){
+  merch_t *merch_data =
+    get_elem_ptr(ioopm_hash_table_lookup(store->merch_db,
+					 ptr_elem(name)));  
+  
+  ioopm_link_t *merch_locs = merch_data->locs->first;  
+  
+  while (merch_locs != NULL) {
+    free(get_elem_ptr(merch_locs->element));
+    merch_locs = merch_locs->next;;           
+  }
+
+  ioopm_linked_list_destroy(merch_data->locs);
 }
 
 /// Other
