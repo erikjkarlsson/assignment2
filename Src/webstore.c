@@ -316,7 +316,54 @@ void store_destroy(webstore_t *store){
 void add_shelf(webstore_t *store, char *name, shelf_t *shelf){
   change_or_add_shelf(store, name, shelf->amount, shelf->shelf);
 }
+
+void display_storage(webstore_t *store, char *shelf){
+  // Names stored at requested shelf location
+  ioopm_list_t *db_names = look_in_storage(store, shelf);
+  ioopm_link_t *db_item = db_names->first;
+
+  printf("Shelf[%s]:", shelf);
   
+  do {
+    // Already exists in database
+    printf(" %s", (char*)get_elem_ptr(db_item->element));
+					      
+    db_item = db_item->next;
+    
+  } while (db_item != NULL);
+  printf("\n");
+}
+
+ioopm_list_t *look_in_storage(webstore_t *store, char *shelf){
+  return 
+    get_elem_ptr(ioopm_hash_table_lookup(store->storage_db,
+					 ptr_elem(shelf)));
+}
+
+void add_to_storage(webstore_t *store, char *name, char *shelf){
+
+  if (!ioopm_hash_table_has_key(store->storage_db, ptr_elem(shelf))){
+    ioopm_list_t *storage_list = ioopm_linked_list_create();
+    ioopm_linked_list_append(storage_list, ptr_elem(name));
+    ioopm_hash_table_insert(store->storage_db,
+			    ptr_elem(shelf),
+			    ptr_elem(storage_list));    
+  }
+  
+  // Names stored at requested shelf location
+  ioopm_list_t *db_names = look_in_storage(store, shelf);
+  ioopm_link_t *db_item = db_names->first;
+
+  do {
+    // Already exists in database
+    if (STR_EQ(db_item->element.c, name)) return;
+					      
+    db_item = db_item->next;           
+  } while (db_item != NULL);
+
+  ioopm_linked_list_append(db_names, ptr_elem(name));
+}
+   
 void change_or_add_shelf(webstore_t *store, char *name, int amount, char* location){
   slog("change_or_add_shelf", name, 1);
 
@@ -372,6 +419,8 @@ void change_or_add_shelf(webstore_t *store, char *name, int amount, char* locati
   
       
 }
+
+
 
 ioopm_list_t *merch_locs(webstore_t *store, char *name){
 
