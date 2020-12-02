@@ -96,6 +96,8 @@ void arg_parse(int argc, char **argv, arg_opt_t *opt);
 arg_opt_t *create_arg_opt();
 
 
+void slog(char *function, char *message, int number);
+void serror(char *function, char *message, int number);
 
 union elem
 {
@@ -143,6 +145,7 @@ struct arg_opt {
   bool use_list_p;
   bool debug_p;
   bool tests_p;
+  bool log_p;
   bool deep_debug_p;
 
   bool exit;

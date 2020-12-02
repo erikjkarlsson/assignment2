@@ -38,6 +38,7 @@ typedef struct shelf shelf_t;
 
 struct webstore
 {
+  arg_opt_t *opt; // Logging library
   ioopm_hash_table_t *merch_db;
   ioopm_hash_table_t *storage_db;
 };
@@ -50,19 +51,20 @@ typedef merch_t *(merch_modify_function)(merch_t *merch, void *extra);
 //A newly added merch is not in stock.
 //Adding a new merch with the same name as an existing merch is not allowed.
 void add_merchendise(webstore_t *store, char *name, char *desc, size_t price);
+void change_or_add_shelf(webstore_t *store, char *name, int amount, char* location);
 
-void remove_merchendise(webstore_t *store);
-
+void prompt_remove_merchendise(webstore_t *store);
+void remove_merchendise(webstore_t *store, char *name);
 void list_merchandise(webstore_t *store);
 
+  
 webstore_t *store_create();
 
 void store_destroy(webstore_t *store);
-
 void print_merch(merch_t *merch);
 
 shelf_t *create_shelf(char *shelf, int amount);
-
+void list_shelfs(webstore_t *store, char *name);
 merch_t *create_merch(char *name,
 		      char* desc,
 		      size_t price,
