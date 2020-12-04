@@ -291,7 +291,28 @@ void list_merchandise(webstore_t *store){
   
 }
 
-
+//show shelf and quantity
+/*
+void show_stock(webstore_t *store){
+  ioopm_list_t *list_shelfs = ioopm_hash_table_keys(store->storage_db);
+  //ioopm_list_iterator_t *iter = ioopm_list_iterator(list_shelfs);
+  
+  //shelf_t *current = NULL;
+  //current = get_elem_ptr(ioopm_iterator_current(iter)); //lista över items 
+  
+  for(int i =0; i < ioopm_linked_list_size(list_shelfs); i++){
+    ioopm_list_t *db_names = look_in_storage(store, shelf);
+    shelf_t shelf_key = get_elem_ptr(ioopm_linked_list_get(list_shelfs, i));
+    ioopm_list_t *list_names = get_elem_ptr(ioopm_hash_table_lookup(store->storage_db, ioopm_linked_list_get(list_shelfs, i)));
+    int stock = ioopm_linked_list_size(list_names);
+    char *shelf_name = shelf_key->shelf; 
+    printf("Shelf [%s]:%d\n", shelf_name, stock);
+    
+  }
+  ioopm_linked_list_destroy(list_shelfs);
+}
+
+*/
 /// Shelf
 
 shelf_t *create_shelf(char *shelf, int amount){
