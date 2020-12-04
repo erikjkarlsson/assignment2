@@ -1,27 +1,27 @@
 Ref: https://wrigstad.com/ioopm/assignments/assignment2.html#orgc922f78
 change
-* Frontend Actions
- - Add Merchandise
- - List Merchendise
- - Remove Merchendise
- - Edit Merchendise
+* Frontend Actions [1/14]
+ - [X] Add Merchandise
+ - [ ] List Merchendise
+ - [ ] Remove Merchendise
+ - [ ] Edit Merchendise
 
- - Show Stock
- - Replenish
+ - [ ] Show Stock
+ - [ ] Replenish
 
- - Create Cart
-        names of items to quantity
-        build as a linked list
- - Remove Cart
+ - [ ] Create Cart
+   - [ ] names of items to quantity
+   - [ ] build as a linked list
+ - [ ] Remove Cart
 
- - Add to Cart
- - Remove from Cart
- - Calculate Cost
+ - [ ] Add to Cart
+ - [ ] Remove from Cart
+ - [ ] Calculate Cost
 
- - Checkout
+ - [ ] Checkout
 
- - Undo
- - OPTIONAL Persistance on File
+ - [ ] Undo
+ - [ ] OPTIONAL Persistance on File
 
 * Backend Design
 ** Hash Table 1 

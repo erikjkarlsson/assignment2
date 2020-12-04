@@ -66,6 +66,7 @@ void list_shelfs(webstore_t *store, char *name);
 void change_or_add_shelf(webstore_t *store, char *name, int amount, char* location);
 void locs_delete(webstore_t *store, char *name);
 
+bool merch_in_stock(webstore_t *store, char *name);
 int merch_locs_at_shelf(webstore_t *store, char *name, char *shelf);  
 int merch_locs_total(webstore_t *store, char *name);
 
@@ -105,6 +106,11 @@ void prompt_remove_merchendise(webstore_t *store);
 void remove_merchendise(webstore_t *store, char *name);
 // list out all merch
 void list_merchandise(webstore_t *store);
+
+void merchendise_edit(webstore_t *store, char *name,
+		      size_t *new_price,
+		      char   *new_desc,
+		      char   *new_name);
 
 void print_merch(merch_t *merch);
 char *lookup_merch_name(webstore_t *store, int index);

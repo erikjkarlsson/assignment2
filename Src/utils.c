@@ -199,7 +199,7 @@ int random_number(int range){
   return (rand() % range);  
 }
 
-ool valid_command(char *command){
+bool valid_command(char *command){
   char *string = "LlTtRrGgHhAa";
   char *ptr = strstr(string, command);
   if (ptr != NULL) //command found
