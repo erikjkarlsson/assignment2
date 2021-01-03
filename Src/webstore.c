@@ -506,7 +506,6 @@ ioopm_list_t *look_in_storage(webstore_t *store, char *shelf){
 					 ptr_elem(shelf)));
 }
 
-
 void remove_storage_location(webstore_t *store, char *shelf){
   // Remove a storage shelf from the storage_db hash-table.
   
@@ -525,6 +524,22 @@ void remove_storage_location(webstore_t *store, char *shelf){
 			    ptr_elem(shelf));			   
   }  
 }
+
+void remove_all_storage_locations(webstore_t *store, char *shelf){
+  // Remove all shelfs in storage_db, but not the hash-table.
+  
+ ioopm_list_t *shelfs = ioopm_hash_table_keys(store->storage_db);
+ ioopm_link_t *current = shelfs->first;
+
+ do {
+   remove_storage_location(store, get_elem_ptr(current->element));
+   current = current->next;
+ } while (current != NULL);
+
+ ioopm_linked_list_destroy(shelfs);
+ 
+}
+
 
 void add_to_storage(webstore_t *store, char *name, char *shelf){
 
