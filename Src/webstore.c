@@ -506,6 +506,26 @@ ioopm_list_t *look_in_storage(webstore_t *store, char *shelf){
 					 ptr_elem(shelf)));
 }
 
+
+void remove_storage_location(webstore_t *store, char *shelf){
+  // Remove a storage shelf from the storage_db hash-table.
+  
+  if (!ioopm_hash_table_has_key(store->storage_db, ptr_elem(shelf))){
+    perror("remove_storage_location: Cannot remove, non-existing shelf.\n");
+    return; 
+
+  } else {
+    ioopm_list_t *storage_list = look_in_storage(store, shelf);
+
+    // Remove storage list
+    ioopm_linked_list_destroy(storage_list);
+
+    // Remove from hash table 
+    ioopm_hash_table_remove(store->storage_db,
+			    ptr_elem(shelf));			   
+  }  
+}
+
 void add_to_storage(webstore_t *store, char *name, char *shelf){
 
   if (!ioopm_hash_table_has_key(store->storage_db, ptr_elem(shelf))){
@@ -528,6 +548,7 @@ void add_to_storage(webstore_t *store, char *name, char *shelf){
   } while (db_item != NULL);
 
   ioopm_linked_list_append(db_names, ptr_elem(name));
+
 }
    
 void change_or_add_shelf(webstore_t *store,
