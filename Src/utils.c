@@ -198,4 +198,27 @@ int random_number(int range){
   // Scope: (0 -> range)
   return (rand() % range);  
 }
+
+bool valid_command(char *command){
+  char *string = "LlTtRrGgHhAa";
+  char *ptr = strstr(string, command);
+  if (ptr != NULL) //command found
+	{
+		return true;
+	}
+	else 
+	{
+		return false;
+	}
+
+}
+char *ask_question_menu(){
+  puts("--- Meny för kundvagnen ---"); 
+  char *command = ask_question_string("[L]ägga till en vara \n[T]a bort en vara \n[R]edigera en vara \nÅn[g]ra senaste ändringen \nLista [h]ela kundvagnen \n[A]vsluta och checka ut\n");
+  while(!valid_command(command)){
+    command = ask_question_string("Använd ett giltigt kommando: ");
+  }
+    return command;
+}
+
 		  
