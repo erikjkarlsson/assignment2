@@ -83,6 +83,10 @@ int main(int argc, char *argv[]) {
     printf("merch new name: Failed to add new name!\n");
 
     
+  merchendise_edit(store, "New Bike",  
+		   (size_t*) 4,
+		   "A sports bike from Brazil",
+		   "Bike");
   
   printf("Inserted 5 merchendise!\n");
 
@@ -105,7 +109,7 @@ int main(int argc, char *argv[]) {
   //list_merchandise(store);
   
   //  prompt_remove_merchendise(store);
-  remove_merchendise(store, "New Bike");
+  remove_merchendise(store, "Bike");
   remove_merchendise(store, "Car");
   remove_merchendise(store, "Cola");
   remove_merchendise(store, "Chair");
