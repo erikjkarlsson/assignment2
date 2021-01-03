@@ -10,7 +10,6 @@
 #include "webstore.h"
 
 #define get_elem_ptr(e) e.p
-
 #define MLOG(store, fun, name, msg)		\
   if (store->opt->log_p)\
     merch_log(fun, name, msg, 0);
@@ -417,7 +416,6 @@ void shelf_delete(shelf_t *shelf){
   free(shelf);
 }
 
-
 /// Store
 
 webstore_t *store_create(){
@@ -430,6 +428,10 @@ webstore_t *store_create(){
   new_webstore->storage_db =
     ioopm_hash_table_create(extract_int_hash_key,
 			    eq_elem_int, eq_elem_string);
+	
+	//linked list that holds all shopping carts
+	new_webstore->all_shopping_carts = 
+	  ioopm_linked_list_create();
 
   return new_webstore;
 }
