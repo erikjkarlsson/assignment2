@@ -589,7 +589,7 @@ void remove_storage_location(webstore_t *store, char *shelf){
   }  
 }
 
-void remove_all_storage_locations(webstore_t *store, char *shelf){
+void remove_all_storage_locations(webstore_t *store){
   // Remove all shelfs in storage_db, but not the hash-table.
   
  ioopm_list_t *shelfs = ioopm_hash_table_keys(store->storage_db);

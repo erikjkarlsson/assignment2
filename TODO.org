@@ -1,14 +1,22 @@
 Ref: https://wrigstad.com/ioopm/assignments/assignment2.html#orgc922f78
 change
-* Frontend Actions [1/14]
+* Frontend Actions [3/6]
  - [X] Add Merchandise
- - [ ] List Merchendise
- - [ ] Remove Merchendise
- - [ ] Edit Merchendise
-
+ - [X] List Merchendise
+ - [X] Remove Merchendise
+ - [-] Edit Merchendise [3/5]
+   - [X] Change Name 
+     - [X] Can’t change to an existing name.
+     - [X] Change the Hash Table Index
+   - [X] Change Desc
+   - [X] Change Price
+   - [-] Create a interactive interface ?
+   - [ ] Update Storage list
  - [ ] Show Stock
  - [ ] Replenish
 
+** User Interface [/]
+** Cart [0/8]
  - [ ] Create Cart
    - [ ] names of items to quantity
    - [ ] build as a linked list
@@ -23,7 +31,107 @@ change
  - [ ] Undo
  - [ ] OPTIONAL Persistance on File
 
+* Functions
+- =merch_log=
+- =merch_delete=
+- =create_merch=
+- =print_merch=
+- =add_merchendise=
+- =remove_merchendise=
+- =prompt_remove_merchendise=
+- =merch_change_internal_name_function=
+- =merch_change_description_function=
+- =merch_change_price_function=
+- =merch_change_locs_function=
+- =merchendise_new_internal_name=
+- =merchendise_new_desc=
+- =merchendise_new_price=
+- =merchendise_new_locs=
+- =merch_in_stock=
+- =merchendise_edit=
+- =merchendise_modify=
+- =merch_get_desc_function=
+- =merch_description=
+- =merch_price=
+- =lookup_merch_name=
+- =valid_index=
+- =continue_printing=
+- =list_merchandise=
+- =create_shelf=
+- =shelf_delete=
+- =store_create=
+- =store_destroy=
+
+- =storage_shelf_contains= store name shelf ::
+  Return a true if =name= exists in the storage db
+  on =shelf=.
+
+- =remove_name_from_storage= store name shelf ::
+  Remove a name from a shelf in the storage db.
+
+- =global_change_shelf= store name shelf amount ::
+  Change or Add a =shelf= to both the merch and 
+  storage db at the same time associated to a =name=.
+
+- =display_storage= store shelf ::
+  Display all names stored in the storage db
+  on =shelf=.
+
+- =look_in_storage= store shelf ::
+  Look in the storage db and return the 
+  associated storage list.
+
+- =remove_storage_location= store shelf ::
+  Remove a storage =shelf= from the storage
+  hash table, and deallocate it.
+  
+- =remove_all_storage_locations= store ::
+  Remove all shelfs in the storage db except 
+  from the hash table.
+
+- =add_to_storage= store name shelf ::
+  Add / Change a =shelf= in the storage db
+  such that it contains =name=.
+
+- =change_or_add_shelf= store name amount location ::
+  Add a new shelf or change an existing 
+  shelf in the merch db related to
+  =name=, at =location= containing =amount=.
+
+- =merch_locs= store name ::
+  Return the locs list from the merch db
+  associated to =name=.
+
+- =list_shelfs= store name ::
+  Print all shelfs in the merch db 
+  related to =name=.
+
+- =update_locs_total= store name ::
+  Calculate and set the total amount 
+  associated to =name=.
+
+- =merch_locs_total= store name ::
+  Add up the amount stored on each shelf
+  and return the total amount associated
+  to =name=.
+
+- =merch_locs_at_shelf= store name shelf ::
+  Return the total amount of merchendise 
+  associated to =shelf= and =name=.
+
+- =locs_delete= store name ::
+  Remove and deallocate the locs 
+  associated to =name=.  
+
 * Backend Design
+
+hash table
+key: hylla value: =elem_t= (ptr->linked list) 
+
+Bil A1
+
+
+
 ** Hash Table 1 
 =Key=:   Name
 =Value=: Pointer to [[Item structure]].
