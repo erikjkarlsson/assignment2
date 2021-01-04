@@ -41,6 +41,7 @@ struct webstore
   arg_opt_t *opt; // Logging library
   ioopm_hash_table_t *merch_db;
   ioopm_hash_table_t *storage_db;
+  ioopm_list_t *all_shopping_carts; 
 };
 typedef struct webstore webstore_t;
 typedef struct database database_t;

@@ -200,7 +200,7 @@ int random_number(int range){
 }
 
 bool valid_command(char *command){
-  char *string = "LlTtRrGgHhAa";
+  char *string = "SsLlTtRrGgHhAa";
   char *ptr = strstr(string, command);
   if (ptr != NULL) //command found
 	{
@@ -214,7 +214,7 @@ bool valid_command(char *command){
 }
 char *ask_question_menu(){
   puts("--- Meny för kundvagnen ---"); 
-  char *command = ask_question_string("[L]ägga till en vara \n[T]a bort en vara \n[R]edigera en vara \nÅn[g]ra senaste ändringen \nLista [h]ela kundvagnen \n[A]vsluta och checka ut\n");
+  char *command = ask_question_string("[S]kapa en ny kundvagn \n[L]ägga till en vara \n[T]a bort en vara \n[R]edigera en vara \nÅn[g]ra senaste ändringen \nLista [h]ela kundvagnen \n[A]vsluta och checka ut\n");
   while(!valid_command(command)){
     command = ask_question_string("Använd ett giltigt kommando: ");
   }
