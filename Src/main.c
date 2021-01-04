@@ -12,26 +12,32 @@ int main(int argc, char *argv[]) {
 
 
   printf("Now Running!\n");
+
+  // --- Initialize Argument Handler
   webstore_t *store = store_create();
   arg_parse(argc, argv, store->opt);  
-  // Add Merch    
+
+  // --- Add Merch    
   add_merchendise(store, "Cola", "from coca cola", (size_t)10);
   add_merchendise(store, "Chair", "Usable", (size_t)8);
   add_merchendise(store, "Bike", "A sports bike from Brazil", (size_t)4);
   add_merchendise(store, "Car", "A fast car", (size_t)2);
   add_merchendise(store, "Computer", "Gaming computer", (size_t)0);
 
-  
+  // --- Change Shelf
   change_or_add_shelf(store, "Cola", 1, "a");
   change_or_add_shelf(store, "Cola", 2, "b");
 
   list_shelfs(store, "Cola");
-  // Merch edit desc 
+  
+  // --- Change Description
   merchendise_new_desc(store, "Car", "A slow car");
   merchendise_new_desc(store, "Chair", "Terrible");
   merchendise_new_desc(store, "Bike", "16 Gears");
   merchendise_new_desc(store, "Computer", "Non-Gaming computer");
 
+  // --- Edit Merch
+  
   // Should not do anything
   merchendise_edit(store, "Bike",  
 		   NULL,
@@ -49,7 +55,7 @@ int main(int argc, char *argv[]) {
   else
     printf("merch edit desc: Failed!\n");
 
-    // Should only change price
+  // Should only change price
   merchendise_edit(store, "Bike",  
 		   (size_t*) 10,
 		   NULL,
@@ -89,12 +95,15 @@ int main(int argc, char *argv[]) {
   
   printf("Inserted 5 merchendise!\n");
 
+  // --- Add to Storage
   add_to_storage(store, "Cola", "A8");
   add_to_storage(store, "Car", "A1");
   add_to_storage(store, "Bike", "A1");
 
+  // --- Display Storage
   display_storage(store, "A1");
-
+  remove_all_storage_locations(store);
+    
   ioopm_list_t *products = ioopm_hash_table_keys(store->merch_db);
   
   for (size_t i = 0; i < ioopm_linked_list_size(products); i++){
@@ -107,7 +116,7 @@ int main(int argc, char *argv[]) {
   
   //list_merchandise(store);
   
-  //  prompt_remove_merchendise(store);
+  // --- Remove Merch
   remove_merchendise(store, "Bike");
   remove_merchendise(store, "Car");
   remove_merchendise(store, "Cola");
