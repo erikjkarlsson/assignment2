@@ -5,6 +5,11 @@ main:
 	hash_table.c webstore.c utils.c main.c -o ./bin || echo "ERROR IN COMPILATION"
 
 	@echo "Running Finished"
+
+cart:
+	gcc cart.c utils.c common.c hash_table.c list_linked.c webstore.c iterator.c
+	
+	
 clean:
 	rm ./main
 	@echo "Removed Binary"
@@ -21,7 +26,8 @@ runl: main
 rund: main
 	./bin --log --debug
 
-
+comp_test:
+	gcc -ggdb -Wall test.c cart.c utils.c common.c hash_table.c list_linked.c webstore.c iterator.c -o test.out -lcunit
 help:
 	@printf "=Commands=\t=Description=\n"
 	@printf "make test\tRun with testing\n"
