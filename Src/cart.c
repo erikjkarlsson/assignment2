@@ -148,7 +148,7 @@ void remove_from_cart(webstore_t *store, int id, int nr_merch, int amount_to_rem
     }
 }
 
-int calculate_cost(ebstore_t *store, int idw){
+int calculate_cost(webstore_t *store, int id){
     cart_t *current_cart = get_cart(store, id);
     int total_price = 0;
     
