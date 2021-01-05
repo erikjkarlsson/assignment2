@@ -1,15 +1,14 @@
 
 main:
 
-	gcc -g -Wall -std=c11 list_linked.c common.c iterator.c \
+	gcc -g -Wall -pedantic -std=c11 list_linked.c common.c iterator.c \
 	hash_table.c webstore.c utils.c main.c -o ./bin || echo "ERROR IN COMPILATION"
 
 	@echo "Running Finished"
 
 cart:
 	gcc cart.c utils.c common.c hash_table.c list_linked.c webstore.c iterator.c
-	
-	
+
 clean:
 	rm ./main
 	@echo "Removed Binary"
@@ -18,6 +17,10 @@ clean:
 run: main
 	./bin
 
+
+test: 
+	gcc -g -Wall -std=c11 list_linked.c common.c iterator.c \
+	hash_table.c webstore.c utils.c  test.c -lcunit  -o ./bin
 
 runl: main
 	./bin -l
