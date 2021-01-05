@@ -31,95 +31,186 @@ change
  - [ ] Undo
  - [ ] OPTIONAL Persistance on File
 
-* Functions
-- =merch_log=
-- =merch_delete=
-- =create_merch=
-- =print_merch=
-- =add_merchendise=
-- =remove_merchendise=
-- =prompt_remove_merchendise=
-- =merch_change_internal_name_function=
-- =merch_change_description_function=
-- =merch_change_price_function=
-- =merch_change_locs_function=
-- =merchendise_new_internal_name=
-- =merchendise_new_desc=
-- =merchendise_new_price=
-- =merchendise_new_locs=
-- =merch_in_stock=
-- =merchendise_edit=
-- =merchendise_modify=
-- =merch_get_desc_function=
-- =merch_description=
-- =merch_price=
-- =lookup_merch_name=
-- =valid_index=
-- =continue_printing=
-- =list_merchandise=
-- =create_shelf=
-- =shelf_delete=
-- =store_create=
-- =store_destroy=
+* Functions [0/44]
+~NOTE~: The checkmark indicates if the function 
+has been tested correctly.
 
-- =storage_shelf_contains= store name shelf ::
+- [ ] =merch_log= function name message number ::
+  Helper function for logging, Prettyprinting
+  a =function= name, =name=, =message= and a =number=.
+
+- [ ] =merch_delete= store name ::
+  Deallocate the merch related to =name= from
+  the merch database freeing the locs list, 
+  aswell as the merch struct.
+
+- [ ] =create_merch= name desc price locs ::
+  Create and allocate a merch struct.
+
+- [ ] =print_merch= merch ::
+  Pretty print a merch struct (except not its
+  locs list).
+  
+- [ ] =add_merchendise= store name desc price ::
+  Create a new merch, together with a empty 
+  locs list and add it to the merch database.  
+
+- [ ] =remove_merchendise= store name ::
+  Remove =name= from the merch database (free it 
+  from memory).
+
+- [ ] =prompt_remove_merchendise= store ::
+  List out all merchendise names in =merch_db= together
+  with a index, prompt for a index (until a valid is 
+  entered) then remove it.
+
+- [ ] =merch_change_internal_name_function= =merch_data= =new_name= ::
+  Helper function to be used with =merchendise_modify= for
+  setting the internal name.
+
+- [ ] =merch_change_description_function= =merch_data= =new_desc= ::
+  Helper function to be used with =merchendise_modify= for
+  setting the description.
+
+- [ ] =merch_change_price_function= =merch_data= =new_price= ::
+  Helper function to be used with =merchendise_modify= for
+  setting the price.
+
+- [ ] =merch_change_locs_function= =merch_data= =new_locs= ::
+  Helper function to be used with =merchendise_modify= for
+  setting the locs.
+
+- [ ] =merchendise_new_internal_name= store name =new_name= ::
+  Set the (internal) name related to =name= in the
+  merch database, equal to =new_name=. 
+  /(internal name is the name variable inside a merch struct)/
+
+- [ ] =merchendise_new_desc= store name desc ::
+  Set the description related to =name= in the
+  merch database, equal to =desc=.
+
+- [ ] =merchendise_new_price= store name price ::
+  Set the price related to =name= in the merch database, 
+  equal to =price=.
+
+- [ ] =merchendise_new_locs= store name locs ::
+  Set the locs list related to =name= in the merch 
+  database, equal to =locs=.
+
+- [ ] =merch_in_stock= store name ::
+  Returns true if =name= exists in the merch database.
+
+- [ ] =merchendise_edit= store name =new_price= =new_desc= =new_name= ::
+  Updates the merch data related to =name= for the name, desc
+  and price. All values which are to be changed should have
+  a value != NULL, that is, if either =new_price,= =new_desc=
+  or =new_name= is equal to NULL, they are ignored.
+
+- [ ] =merchendise_modify= store name fun =fun_arg= ::
+  This function applies =fun= aswell as =fun_arg=,
+  to the merch data associated to =name=. Used
+  together with the helper functions.
+
+- [ ] =merch_get_desc_function= =merch_data= ::
+  Helper function for extracting a 
+  description from merch data.
+
+- [ ] =merch_description= store name ::
+  Lookup (and return) the description
+  related to =name= in the merch db.
+
+- [ ] =merch_price= store name ::
+  Lookup (and return) the price related
+  to =name= in the merch db.
+
+- [ ] =lookup_merch_name= store index ::
+  Return the name at =index= when converting 
+  the hash table values into a linked list.
+
+- [ ] =valid_index= store index :: 
+  Return true, if =index= is smaller than the 
+  amount of names.
+
+- [ ] =continue_printing= ::
+  Handler function prompting for "y" input, 
+  upon it being "y" true is returned.
+
+- [ ] =list_merchandise= store ::
+  Printout the names of all merch in the merch
+  database.
+
+- [ ] =create_shelf= :: 
+  Allocate memory for a shelf.
+
+- [ ] =shelf_delete= shelf :: 
+  Free up a shelf.
+
+- [ ] =store_create= ::
+  Allocate both hash tables (merch and storage),
+  aswell as the argument handler.
+
+- [ ] =store_destroy= store ::
+  Free up the argument handler, and both hash 
+  tables (the whole store structure).
+
+- [ ] =storage_shelf_contains= store name shelf ::
   Return a true if =name= exists in the storage db
   on =shelf=.
 
-- =remove_name_from_storage= store name shelf ::
+- [ ] =remove_name_from_storage= store name shelf ::
   Remove a name from a shelf in the storage db.
 
-- =global_change_shelf= store name shelf amount ::
+- [ ] =global_change_shelf= store name shelf amount ::
   Change or Add a =shelf= to both the merch and 
   storage db at the same time associated to a =name=.
 
-- =display_storage= store shelf ::
+- [ ] =display_storage= store shelf ::
   Display all names stored in the storage db
   on =shelf=.
 
-- =look_in_storage= store shelf ::
+- [ ] =look_in_storage= store shelf ::
   Look in the storage db and return the 
   associated storage list.
 
-- =remove_storage_location= store shelf ::
+- [ ] =remove_storage_location= store shelf ::
   Remove a storage =shelf= from the storage
   hash table, and deallocate it.
   
-- =remove_all_storage_locations= store ::
+- [ ] =remove_all_storage_locations= store ::
   Remove all shelfs in the storage db except 
   from the hash table.
 
-- =add_to_storage= store name shelf ::
+- [ ] =add_to_storage= store name shelf ::
   Add / Change a =shelf= in the storage db
   such that it contains =name=.
 
-- =change_or_add_shelf= store name amount location ::
+- [ ] =change_or_add_shelf= store name amount location ::
   Add a new shelf or change an existing 
   shelf in the merch db related to
   =name=, at =location= containing =amount=.
 
-- =merch_locs= store name ::
+- [ ] =merch_locs= store name ::
   Return the locs list from the merch db
   associated to =name=.
 
-- =list_shelfs= store name ::
+- [ ] =list_shelfs= store name ::
   Print all shelfs in the merch db 
   related to =name=.
 
-- =update_locs_total= store name ::
+- [ ] =update_locs_total= store name ::
   Calculate and set the total amount 
   associated to =name=.
 
-- =merch_locs_total= store name ::
+- [ ] =merch_locs_total= store name ::
   Add up the amount stored on each shelf
   and return the total amount associated
   to =name=.
 
-- =merch_locs_at_shelf= store name shelf ::
+- [ ] =merch_locs_at_shelf= store name shelf ::
   Return the total amount of merchendise 
   associated to =shelf= and =name=.
 
-- =locs_delete= store name ::
+- [ ] =locs_delete= store name ::
   Remove and deallocate the locs 
   associated to =name=.  
 
