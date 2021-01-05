@@ -464,9 +464,9 @@ webstore_t *store_create(){
     ioopm_hash_table_create(extract_int_hash_key,
 			    eq_elem_int, eq_elem_string);
 	
-	//linked list that holds all shopping carts
-	new_webstore->all_shopping_carts = 
-	  ioopm_linked_list_create();
+  //linked list that holds all shopping carts
+  new_webstore->all_shopping_carts = 
+    ioopm_linked_list_create();
 
   return new_webstore;
 }
@@ -475,6 +475,8 @@ void store_destroy(webstore_t *store){
   destroy_arg_opt(store->opt);
   ioopm_hash_table_destroy(store->merch_db);
   ioopm_hash_table_destroy(store->storage_db);
+  ioopm_linked_list_destroy(store->all_shopping_carts);
+  
   free(store);
 }
 
