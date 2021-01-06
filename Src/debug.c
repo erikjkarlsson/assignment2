@@ -18,6 +18,7 @@ int main(int argc, char *argv[]) {
   arg_parse(argc, argv, store->opt);  
 
   // --- Add Merch    
+
   add_merchendise(store, "Cola",  "from coca cola",            (size_t)10);
   add_merchendise(store, "Chair", "Usable",                    (size_t)8);
   add_merchendise(store, "Bike",  "A sports bike from Brazil", (size_t)4);
@@ -26,6 +27,8 @@ int main(int argc, char *argv[]) {
   add_to_storage(store, "B", "A10");
   add_to_storage(store, "C", "A10");
 
+  display_storage(store, "A10");
+  list_merchandise(store);
   if(
   storage_contains(store, "A10", "A") &&
   storage_contains(store, "A10", "B") &&
@@ -37,7 +40,7 @@ int main(int argc, char *argv[]) {
   remove_merchendise(store, "Chair");
   remove_merchendise(store, "Cola");
 
-  remove_storage_location(store, "A10");
+  remove_all_storage_locations(store);
   
   store_destroy(store);
   

@@ -357,63 +357,66 @@ char *lookup_merch_name(webstore_t *store, int index){ // RENAME LATER
 }
 
 bool valid_index(webstore_t *store, int index){
+  // Return true if index is less or equal to
+  // the amount of merch in the merch database
   ioopm_list_t *list = ioopm_hash_table_values(store->merch_db);
+
   if(index-1 >= list->size){
+    ioopm_linked_list_destroy(list);
     return false;
   }
+  ioopm_linked_list_destroy(list);
   return true;
 }
 
 bool continue_printing(){
+  // Prompt for a yes "y"/"Y" returning true (else false)
   char *ans = ask_question_string("Continue? y/n \n");
-    char *ans_cmp = "y";
-    if(strcmp(ans, ans_cmp)==0){
 
-      return true;
-    
-    }
+  if((strcmp(ans, "y") == 0) || (strcmp(ans, "Y") == 0))      
+    return true;    
+  else
     return false;
-  }
+}
 
 
 void list_merchandise(webstore_t *store){
-
+  // List all merchendise as a short list of 20
+  // prompting for displaying more 
+  if (store == NULL){
+    perror("list_merchendise: Unallowed NULL argument.\n");
+  }
+  // All existing merch names
   ioopm_list_t *list_merch    =
     ioopm_hash_table_values(store->merch_db);
+
   ioopm_list_iterator_t *iter =
     ioopm_list_iterator(list_merch);
-  
-  merch_t *current = NULL;
-  current = get_elem_ptr(ioopm_iterator_current(iter));
-  
-  int continue_alert_number = 20;
-  
 
-
+  merch_t *current            =
+    get_elem_ptr(ioopm_iterator_current(iter));
+  
+  int continue_alert_number   = 20;
+  
+  // Iterate through all names
   for (int i = 1;; i++){
+    // Prompt for continuing to display merch
     if ((i % (continue_alert_number) == 0) && \
 	!continue_printing()) break;
-
-         
-    printf("Begin Merchendise Item [No.%d]\n", i);
-
-    // printf("No.%d: \n", i);
-
+    // Print current merch
+    printf("Merch Item [No.%d]\n", i);
     print_merch(current);
     printf("End \n\n");
-      
+
     if(ioopm_iterator_has_next(iter)){
       current = get_elem_ptr(ioopm_iterator_next(iter));      
     }else { break; }    
-  }
-     
-  // FIX: Added destructors
+  }     
   ioopm_iterator_destroy(iter);
-  ioopm_linked_list_destroy(list_merch);
-  
+  ioopm_linked_list_destroy(list_merch);  
 }
 
-//show shelf and quantity
+//show shelf and quantity FIX LATER
 /*
 void show_stock(webstore_t *store){
   ioopm_list_t *list_shelfs = ioopm_hash_table_keys(store->storage_db);
@@ -438,6 +441,7 @@ void show_stock(webstore_t *store){
 /// Shelf
 
 shelf_t *create_shelf(char *shelf, int amount){
+  // Allocate a shelf
   shelf_t *new_shelf = calloc(1, sizeof(shelf_t));
 
   new_shelf->shelf  = shelf;
@@ -445,23 +449,30 @@ shelf_t *create_shelf(char *shelf, int amount){
 
   return new_shelf;
 }
+
 void shelf_delete(shelf_t *shelf){
+  // Deallocate a shelf
+  if (shelf == NULL){
+    perror("shelf_delete: Unallowed NULL argument.\n");
+  }
   free(shelf);
 }
 
 /// Store
 
 webstore_t *store_create(){
+  // Allocate the argument handler, both hash tables
+  // and the shopping cart list. And the whole webstore.
+
   webstore_t *new_webstore = calloc(1, sizeof(webstore_t));
   new_webstore->opt = create_arg_opt();
-
+  // Storage and Merch databases
   new_webstore->merch_db   =
     ioopm_hash_table_create(extract_int_hash_key,
 			    eq_elem_int, eq_elem_string);
   new_webstore->storage_db =
     ioopm_hash_table_create(extract_int_hash_key,
-			    eq_elem_int, eq_elem_string);
-	
+			    eq_elem_int, eq_elem_string);	
   //linked list that holds all shopping carts
   new_webstore->all_shopping_carts = 
     ioopm_linked_list_create();
@@ -470,11 +481,15 @@ webstore_t *store_create(){
 }
 
 void store_destroy(webstore_t *store){
-  destroy_arg_opt(store->opt);
+  // Deallocate the argument handler, both hash tables
+  // and the shopping cart list. And the whole webstore.
+  if (store == NULL){
+    perror("store_destroy: Webstore is NULL.\n");
+  }  
+  destroy_arg_opt(store->opt);  
   ioopm_hash_table_destroy(store->merch_db);
   ioopm_hash_table_destroy(store->storage_db);
-  ioopm_linked_list_destroy(store->all_shopping_carts);
-  
+  ioopm_linked_list_destroy(store->all_shopping_carts);  
   free(store);
 }
 
@@ -482,35 +497,56 @@ void store_destroy(webstore_t *store){
 /// Shelf
 
 void add_shelf(webstore_t *store, char *name, shelf_t *shelf){
+  // Add a (must be new) shelf to the storage database containing a name
+
+  if (!ioopm_hash_table_has_key(store->merch_db, ptr_elem(name))){ 
+   perror("add_shelf: Cannot add a new shelf that exists.\n");
+  }
+  else if ((store == NULL) || (name == NULL) || (shelf == NULL)){
+    perror("add_shelf: Unallowed NULL arguments.\n");
+  }
   change_shelf(store, name, shelf->amount, shelf->shelf);
 }
 
 void display_storage(webstore_t *store, char *shelf){
+  // Prettyprint the contents of a shelf
+  if ((store == NULL) || (shelf == NULL)){
+    perror("display_storage: Unallowed NULL arguments.\n");
+  }  
+
   // Names stored at requested shelf location
   ioopm_list_t *db_names = look_in_storage(store, shelf);
   ioopm_link_t *db_item = db_names->first;
-
+  // Print what shelf
   printf("Shelf[%s]:", shelf);
-  
+  // Print all items
   do {
     // Already exists in database
     printf(" %s", (char*)get_elem_ptr(db_item->element));
 					      
-    db_item = db_item->next;
-    
+    db_item = db_item->next;    
   } while (db_item != NULL);
+  
   printf("\n");
 }
 
+// No need to test (used alot in other functions)
 ioopm_list_t *look_in_storage(webstore_t *store, char *shelf){
-  return 
-    get_elem_ptr(ioopm_hash_table_lookup(store->storage_db,
-					 ptr_elem(shelf)));
+  // Return the associated list to a shelf in storage
+  if ((store == NULL) || (shelf == NULL)){
+    perror("look_in_storage: Unallowed NULL arguments.\n");
+  }  
+  return get_elem_ptr(ioopm_hash_table_lookup(store->storage_db,
+					      ptr_elem(shelf)));
 }
 
 void remove_storage_location(webstore_t *store, char *shelf){
   // Remove a storage shelf from the storage_db hash-table.
   
+  if ((store == NULL) || (shelf == NULL)){
+    perror("remove_storage_location: Unallowed NULL arguments.\n");
+  }
+  // Shelf does not exist in storage db  
   if (!ioopm_hash_table_has_key(store->storage_db, ptr_elem(shelf))){
     perror("remove_storage_location: Cannot remove, non-existing shelf.\n");
   } else {
@@ -525,8 +561,11 @@ void remove_storage_location(webstore_t *store, char *shelf){
 
 void remove_all_storage_locations(webstore_t *store){
   // Remove all shelfs in storage_db, but not the hash-table.
- 
- ioopm_list_t *shelfs = ioopm_hash_table_keys(store->storage_db);
+  if (store == NULL){
+    perror("remove_all_storage_locations: Webstore is NULL\n");
+  }
+  
+ ioopm_list_t *shelfs  = ioopm_hash_table_keys(store->storage_db);
  ioopm_link_t *current = shelfs->first;
 
  do {
@@ -534,8 +573,7 @@ void remove_all_storage_locations(webstore_t *store){
    current = current->next;
  } while (current != NULL);
 
- ioopm_linked_list_destroy(shelfs);
- 
+ ioopm_linked_list_destroy(shelfs); 
 }
 
 
@@ -757,18 +795,25 @@ int merch_locs_at_shelf(webstore_t *store, char *name, char *shelf){
 }
 
 
-void locs_delete(webstore_t *store, char *name){
+void locs_delete(webstore_t *store, char *name){ 
+  // Free up a merch locs list (list & shelfs)
+
+  if ((store == NULL) || (name == NULL)){
+    perror("locs_delete: Unallowed NULL arguments.\n");
+  }
+  
   merch_t *merch_data =
     get_elem_ptr(ioopm_hash_table_lookup(store->merch_db,
 					 ptr_elem(name)));  
   
   ioopm_link_t *merch_locs = merch_data->locs->first;  
-  
+
+  // Free each shelf in the merch locs
   while (merch_locs != NULL) {
     free(get_elem_ptr(merch_locs->element));
     merch_locs = merch_locs->next;;           
   }
-
+  // Free the locs list
   ioopm_linked_list_destroy(merch_data->locs);
 }
 
