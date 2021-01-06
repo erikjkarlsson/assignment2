@@ -58,8 +58,6 @@ void change_existing_shelf(){
 void test_add_merch(){
   
   webstore_t *store = store_create();
-  
-  //add two merch
   add_merchendise(store, "Bike", "A sports bike from Brazil",
 		  (size_t)4);
   add_merchendise(store, "Car", "A fast car",
@@ -79,9 +77,13 @@ void test_add_merch(){
   CU_ASSERT_TRUE(STR_EQ(merch_description(store, "Car"),
 			"A fast car"));
   CU_ASSERT_TRUE(merch_price(store, "Car") == (size_t)2);
-  
+
+  // Removal of merch
   remove_merchendise(store, "Car");
   remove_merchendise(store, "Bike");
+
+  CU_ASSERT_FALSE(merch_in_stock(store, "Car"));
+  CU_ASSERT_FALSE(merch_in_stock(store, "Bike"));
   
   store_destroy(store);
 }
