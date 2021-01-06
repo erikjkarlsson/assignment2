@@ -44,11 +44,11 @@ void create_destroy_shelf(){
 void add_new_shelf(){
   webstore_t *store = store_create();
   char *shelf_name = "A21";
-  int amount = 3; 
+  size_t amount = 3; 
   
   add_merchendise(store, "Bike", "A sports bike from Brazil", (size_t)4);
   shelf_t *shelf_created = create_shelf(shelf_name, 3);
-  add_shelf(webstore_t *store, char *name, int amount, char* location);
+  add_shelf(store, "Bike", shelf_name);
 }
 
 void change_existing_shelf(){
