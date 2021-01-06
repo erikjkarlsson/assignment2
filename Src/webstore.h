@@ -50,28 +50,53 @@ typedef merch_t *(merch_modify_function)(merch_t *merch, void *extra);
 typedef char *(merch_get_str_function)(merch_t *merch);
 typedef int *(merch_get_int_function)(merch_t *merch);
 
-
+
 /// Store
 
+//Creates a new webstore. 
+//Allocate both hash tables (merch and storage),
+//as well as the argument handler.
 webstore_t *store_create();
+
+//Destroys the store.
+//Free up the argument handler, and both hash 
+//tables (the whole store structure).
 void store_destroy(webstore_t *store);
 
 
-
 /// Shelfs 
 
+//Creates shelf.
+//Allocates memory for a shelf.
 shelf_t *create_shelf(char *shelf, int amount);
+
+//Destroys shelf.
+//Frees up a shelf.
 void shelf_delete(shelf_t *shelf);
-  
+
+//Prints all shelfs in the merch db 
+//related to =name=.
 void list_shelfs(webstore_t *store, char *name);
-void change_or_add_shelf(webstore_t *store, char *name, int amount, char* location);
+
+//Changes an existing 
+//shelf in the merch db related to
+//=name=, at =location= containing =amount=.
+void change_shelf(webstore_t *store, char *name, int amount, char* location);
+
+ 
+//Adds shelf in the merch db related to
+//=name=, at =location= containing =amount=.
+void add_shelf(webstore_t *store, char *name, shelf_t *shelf);
+
+//Remove and deallocate the locs 
+//associated to =name=.  
 void locs_delete(webstore_t *store, char *name);
 
 bool merch_in_stock(webstore_t *store, char *name);
 int merch_locs_at_shelf(webstore_t *store, char *name, char *shelf);  
 int merch_locs_total(webstore_t *store, char *name);
 
-
+
 /// Merchendise
 
 merch_t *create_merch(char *name,
@@ -121,7 +146,7 @@ ioopm_list_t *look_in_storage(webstore_t *store, char *shelf);
 ioopm_list_t *look_in_storage(webstore_t *store, char *shelf);
 void add_to_storage(webstore_t *store, char *name, char *shelf);
 void display_storage(webstore_t *store, char *shelf);
-
+
 /// Misc
 
 bool continue_printing();
@@ -130,7 +155,7 @@ bool valid_index(webstore_t *store, int index);
 // use macro: MLOG
 void merch_log(char *function, char *name, char *message, int number);
 
-
+
 //void locs_delete(ioopm_list_t *locs);
 //void merch_delete(merch_t *merch_data);
 /*

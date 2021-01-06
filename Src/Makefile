@@ -1,4 +1,5 @@
 
+
 main:
 
 	gcc -g -Wall -pedantic -std=c11 list_linked.c common.c iterator.c \
@@ -17,10 +18,12 @@ clean:
 run: main
 	./bin
 
-
 test: 
 	gcc -g -Wall -std=c11 list_linked.c common.c iterator.c \
 	hash_table.c webstore.c utils.c  test.c -lcunit  -o ./bin
+
+memtest: test
+	valgrind --leak-check=full ./bin
 
 runl: main
 	./bin -l
@@ -29,8 +32,6 @@ runl: main
 rund: main
 	./bin --log --debug
 
-comp_test:
-	gcc -ggdb -Wall test.c cart.c utils.c common.c hash_table.c list_linked.c webstore.c iterator.c -o test.out -lcunit
 help:
 	@printf "=Commands=\t=Description=\n"
 	@printf "make test\tRun with testing\n"

@@ -484,7 +484,7 @@ void store_destroy(webstore_t *store){
 /// Shelf
 
 void add_shelf(webstore_t *store, char *name, shelf_t *shelf){
-  change_or_add_shelf(store, name, shelf->amount, shelf->shelf);
+  change_shelf(store, name, shelf->amount, shelf->shelf);
 }
 
 void display_storage(webstore_t *store, char *shelf){
@@ -570,21 +570,21 @@ void add_to_storage(webstore_t *store, char *name, char *shelf){
 
 }
    
-void change_or_add_shelf(webstore_t *store,
+void change_shelf(webstore_t *store,
 			 char *name,
 			 int amount,
 			 char* location){
   
-  QLOG(store, "change_or_add_shelf", name);
+  QLOG(store, "change_shelf", name);
 
   if(store->merch_db == NULL){
-    perror("change_or_add_shelf: Uninitizalized Merch-Database,\
+    perror("change_shelf: Uninitizalized Merch-Database,\
             the database has not been initialized.\n");
     return; // REMOVE THIS LATER
     
   }else if (!ioopm_hash_table_has_key(store->merch_db,
 				      ptr_elem(name))){
-    perror("change_or_add_shelf: 404 Merch Not Found, \
+    perror("change_shelf: 404 Merch Not Found, \
             item name not in the Merch Database.\n");
     return; // REMOVE THIS LATER
   }
@@ -598,12 +598,12 @@ void change_or_add_shelf(webstore_t *store,
   
  
   if(merch_data->locs == NULL){ 
-    perror("change_or_add_shelf: No Merch Database"); return;    
+    perror("change_shelf: No Merch Database"); return;    
   }if(amount < 0){
-    perror("change_or_add_shelf: Negative amount"); return;
+    perror("change_shelf: Negative amount"); return;
   }
 
-  QLOG(store, "change_or_add_shelf", name);
+  QLOG(store, "change_shelf", name);
   
   if (merch_data->locs->size > 0){
     shelf_t *shelf_data = get_elem_ptr(merch_locs->element);
@@ -621,7 +621,7 @@ void change_or_add_shelf(webstore_t *store,
 
   }
 
-  QLOG(store, "change_or_add_shelf", name);
+  QLOG(store, "change_shelf", name);
 
   shelf_t *new_shelf = create_shelf(location, amount);  
   ioopm_linked_list_append(merch_data->locs,
@@ -629,7 +629,7 @@ void change_or_add_shelf(webstore_t *store,
     
   // FIX: Added destructors
 
-  QLOG(store, "change_or_add_shelf", name);
+  QLOG(store, "change_shelf", name);
   
       
 }

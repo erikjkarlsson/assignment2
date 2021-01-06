@@ -26,9 +26,40 @@ void test(){
     CU_ASSERT_TRUE(true);
 }
 /////////////////////////////////////////////////////////////
-void test_merch(){
+
+//passes if there is no memory leaks
+void create_destroy_store(){
+  webstore_t *store = store_create();
+  store_destroy(store); 
+}
+
+//passes if there is no memory leaks
+void create_destroy_shelf(){
+  char *shelf_name = "A21";
+  shelf_t *shelf_created = create_shelf(shelf_name, 3);
+  CU_ASSERT_EQUAL(shelf_name, shelf_created->shelf);
+  shelf_delete(shelf_created);
+}
+
+void add_new_shelf(){
+  webstore_t *store = store_create();
+  char *shelf_name = "A21";
+  int amount = 3; 
+  
+  add_merchendise(store, "Bike", "A sports bike from Brazil", (size_t)4);
+  shelf_t *shelf_created = create_shelf(shelf_name, 3);
+  add_shelf(webstore_t *store, char *name, int amount, char* location);
+}
+
+void change_existing_shelf(){
+  
+}
+
+void test_add_merch(){
+  
   webstore_t *store = store_create();
   
+  //add two merch
   add_merchendise(store, "Bike", "A sports bike from Brazil",
 		  (size_t)4);
   add_merchendise(store, "Car", "A fast car",
@@ -80,7 +111,9 @@ int main()
       return CU_get_error();
   }
 
-  if ((NULL == CU_add_test(test_suite1, "Merch Test",   test_merch))   ||
+  if ((NULL == CU_add_test(test_suite1, "Create Destroy Store Test",   create_destroy_store))   ||
+      (NULL == CU_add_test(test_suite1, "Create Destroy Shelf Test",   create_destroy_shelf))   ||
+      (NULL == CU_add_test(test_suite1, "Add Merch Test",   test_add_merch))   ||
       (NULL == CU_add_test(test_suite1, "Storage Test", test_storage)) ||
       (NULL == CU_add_test(test_suite1, "Locs Test",    test_locs))    ||
       (NULL == CU_add_test(test_suite1, "Sync Test",    test_sync))){

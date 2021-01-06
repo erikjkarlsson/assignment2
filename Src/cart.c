@@ -112,7 +112,7 @@ void add_to_cart(webstore_t *store, int id, int nr_merch, int amount){
     int amount_of_merch_in_cart_already =  amount_of_merch_in_cart(current_cart, merch_to_add_name);
     int amount_of_merch_in_store = merch_locs_total(store, merch_to_add_name);//the amount of this merch in the store
     
-    //If the asked amount and the amount already in the cart exceeds tha amount of merch in the store
+    //If the asked amount and the amount already in the cart exceeds the amount of merch in the store
     if(amount_of_merch_in_store-(amount_of_merch_in_cart_already+amount) < 0){
         perror("ADD TO CART: Try to get more merch than there is in the store.\n");
         return;
