@@ -513,17 +513,13 @@ void remove_storage_location(webstore_t *store, char *shelf){
   
   if (!ioopm_hash_table_has_key(store->storage_db, ptr_elem(shelf))){
     perror("remove_storage_location: Cannot remove, non-existing shelf.\n");
-    return; 
-
   } else {
-    ioopm_list_t *storage_list = look_in_storage(store, shelf);
-
+    
+    ioopm_list_t *storage_list = look_in_storage(store, shelf);    
     // Remove storage list
     ioopm_linked_list_destroy(storage_list);
-
     // Remove from hash table 
-    ioopm_hash_table_remove(store->storage_db,
-			    ptr_elem(shelf));			   
+    ioopm_hash_table_remove(store->storage_db, ptr_elem(shelf));			   
   }  
 }
 
@@ -545,6 +541,11 @@ void remove_all_storage_locations(webstore_t *store){
 
 void add_to_storage(webstore_t *store, char *name, char *shelf){
 
+  if ((store == NULL) || (name == NULL) || (shelf == NULL)){
+    perror("add_to_storage: Unallowed NULL argument\n");
+  }
+  
+  // Create a new storage list if shelf does not exist
   if (!ioopm_hash_table_has_key(store->storage_db, ptr_elem(shelf))){
     ioopm_list_t *storage_list = ioopm_linked_list_create();
     ioopm_linked_list_append(storage_list, ptr_elem(name));
@@ -565,7 +566,6 @@ void add_to_storage(webstore_t *store, char *name, char *shelf){
   } while (db_item != NULL);
 
   ioopm_linked_list_append(db_names, ptr_elem(name));
-
 }
 
    
@@ -633,26 +633,28 @@ void change_shelf(webstore_t *store,
       
 }
 
-bool storage_contains(webstore_t *store,
-		      char *shelf, char *name){
+bool storage_contains(webstore_t *store, char *shelf, char *name){
+  if ((store == NULL) | (shelf == NULL) | (name == NULL)){
+    perror("storage_contains: Unallowed NULL argument.\n");
+  }
   
   if (!ioopm_hash_table_has_key(store->storage_db, ptr_elem(shelf))){
-    perror("storage_contains: Non existing shelf, \
-cannot contain anything.\n");
+    perror("storage_contains: Unallowed non existing shelf.\n");
     return false;    
   }
   
   // Names stored at requested shelf location
   ioopm_list_t *db_names = look_in_storage(store, shelf);
-  ioopm_link_t *db_item = db_names->first;
+  ioopm_link_t *db_item  = db_names->first;
 
   do {
     // Already exists in database
-    if (STR_EQ(db_item->element.c, name)) return true;
+    if (STR_EQ(db_item->element.c, name))
+      return true;
 					      
     db_item = db_item->next;           
   } while (db_item != NULL);
-
+  // Does not exist in database
   return false;
 }
 

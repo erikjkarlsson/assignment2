@@ -1,12 +1,19 @@
 
 
 main:
-
 	gcc -g -Wall -pedantic -std=c11 list_linked.c common.c iterator.c \
 	hash_table.c webstore.c utils.c main.c -o ./bin || echo "ERROR IN COMPILATION"
 
 	@echo "Running Finished"
 
+dbg: debug.c webstore.c webstore.h
+	gcc -g -Wall -pedantic -std=c11 list_linked.c common.c iterator.c \
+	hash_table.c webstore.c utils.c debug.c -o ./dbg || echo "ERROR IN COMPILATION"
+	./dbg
+	@echo "Running Finished"
+
+dbgt: dbg
+	valgrind --leak-check=full ./dbg
 cart:
 	gcc cart.c utils.c common.c hash_table.c list_linked.c webstore.c iterator.c
 
