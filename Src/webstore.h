@@ -142,7 +142,7 @@ void print_merch(merch_t *merch);
 char *lookup_merch_name(webstore_t *store, int index);
 
 ioopm_list_t *look_in_storage(webstore_t *store, char *shelf);
-void remove_all_storage_locations(webstore_t *store, char *shelf);
+void remove_all_storage_locations(webstore_t *store);
 ioopm_list_t *look_in_storage(webstore_t *store, char *shelf);
 void add_to_storage(webstore_t *store, char *name, char *shelf);
 void display_storage(webstore_t *store, char *shelf);

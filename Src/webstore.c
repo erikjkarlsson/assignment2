@@ -176,7 +176,7 @@ merch_t *merch_change_locs_function(merch_t *merch_data,
 void merchendise_new_internal_name(webstore_t *store,
 				   char *name,
 				   char *new_name){
-  return merchendise_modify(store, (char*)name,
+  merchendise_modify(store, (char*)name,
 			    merch_change_internal_name_function,
 			    (char*)new_name);
 }
@@ -184,7 +184,7 @@ void merchendise_new_desc(webstore_t *store,
 			  char *name,
 			  char *edited_desc){
   
-  return merchendise_modify(store, (char*)name,
+   merchendise_modify(store, (char*)name,
 			    merch_change_description_function,
 			    (char*)edited_desc);
 }
@@ -192,7 +192,7 @@ void merchendise_new_price(webstore_t *store,
 			   char *name,
 			   size_t new_price){
   
-  return merchendise_modify(store, (char*)name,
+   merchendise_modify(store, (char*)name,
 			    merch_change_price_function,
 			    (size_t*)new_price);
 }
@@ -200,7 +200,7 @@ void merchendise_new_locs(webstore_t *store,
 			  char *name,
 			  ioopm_list_t *new_locs){
   
-  return merchendise_modify(store, (char*)name,
+  merchendise_modify(store, (char*)name,
 			    merch_change_locs_function,
 			    (ioopm_list_t*)new_locs);
 }
@@ -527,7 +527,7 @@ void remove_storage_location(webstore_t *store, char *shelf){
   }  
 }
 
-void remove_all_storage_locations(webstore_t *store, char *shelf){
+void remove_all_storage_locations(webstore_t *store){
   // Remove all shelfs in storage_db, but not the hash-table.
  
  ioopm_list_t *shelfs = ioopm_hash_table_keys(store->storage_db);
