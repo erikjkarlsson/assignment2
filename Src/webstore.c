@@ -569,7 +569,19 @@ void add_to_storage(webstore_t *store, char *name, char *shelf){
   ioopm_linked_list_append(db_names, ptr_elem(name));
 
 }
-   
+
+void global_change_shelf(webstore_t *store, char *name,
+             char *shelf, size_t amount){
+  // Add / Update shelf to both the merch database and the
+  // storage database. If it already exists, update amount.
+  
+  change_or_add_shelf(store, name, amount, shelf);
+
+  // Add name to shelf if it already doesnt not contain it.
+  if (!storage_shelf_contains(store, name, shelf))
+    add_to_storage(store, name, shelf);  
+}
+
 void change_or_add_shelf(webstore_t *store,
 			 char *name,
 			 int amount,
