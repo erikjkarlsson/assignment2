@@ -212,148 +212,126 @@ bool merch_in_stock(webstore_t *store, char *name){
 
   
 void merchendise_edit(webstore_t *store, char *name,
-		      size_t *new_price,
-		      char   *new_desc,
+		      size_t *new_price, char *new_desc,
 		      char   *new_name){
-
-  // ERROR IF merch_db is NULL
-  if(store->merch_db == NULL){
-    perror("merchendise_edit: Uninitizalized Merch-Database,\
-            the database has not been initialized.\n");
-    exit(-1); // REMOVE THIS LATER
-  }
-
-  // ERROR IF merch_db dont have the item
-  else if (!ioopm_hash_table_has_key(store->merch_db,
+  // Edit a merch item, setting a new description,
+  // new price, new name (only in merch db) if
+  // the are Non-NULL
+  if((store == NULL)){
+    perror("merchendise_edit: Unallowed NULL argument.\n");
+  }else if(store->merch_db == NULL){
+    perror("merchendise_edit: Database is NULL.\n");
+  }else if (!ioopm_hash_table_has_key(store->merch_db,
 				     ptr_elem(name))){
-    perror("merchendise_edit: Duplicate Merch, \
-            the name is not in the Merch Database.\n");
-    exit(-1); // REMOVE THIS LATER
-    return; // ERROR
-    
-  } 
-  
+    perror("merchendise_edit: Non existing merch.\n");    
+  }   
   // Change Price if (new_price) is non NULL
   if (new_price != NULL){
     merchendise_new_price(store, name, (size_t) new_price);
-  }
-  // Change Desc  if (new_desc)  is non NULL
+  }// Change Desc  if (new_desc)  is non NULL
   if (new_desc != NULL){
     merchendise_new_desc(store, name, new_desc);
-  }
-  // Change Name  if (new_name)  is non NULL
+  }// Change Name  if (new_name)  is non NULL
   if (new_name != NULL){
-    
+    // Name already exists 
     if (ioopm_hash_table_has_key(store->merch_db,
 				 ptr_elem(new_name))){
-      // Name already exists 
-      perror("merchendise_edit: Duplicate Name Change, \
-            Cannot change to an existing name.\n");
-      exit(-1); // REMOVE THIS LATER      
+      perror("merchendise_edit: Unallowed name change.\n");
     }
-
     // Get the related struct
     merch_t *merch_data =
       get_elem_ptr(ioopm_hash_table_lookup(store->merch_db,
 					   ptr_elem(name)));
-
     // Insert the old data under the changed name
     ioopm_hash_table_insert(store->merch_db,
 			    ptr_elem(new_name),
-			    ptr_elem(merch_data));    
-    
-    // Remove the old mapping (should not free data) 
+			    ptr_elem(merch_data));        
+    // Remove the old mapping (should not free the underlaying data) 
     ioopm_hash_table_remove(store->merch_db, ptr_elem(name));
-
   }
-  
-
- return;
 }
-void merchendise_modify(webstore_t *store,
-			char *name,
+void merchendise_modify(webstore_t *store, char *name,
 			merch_modify_function *fun,
 			void *fun_arg){
-
-  // ERROR IF merch_db is NULL
-  if(store->merch_db == NULL){
-    perror("merchendise_modify: Uninitizalized Merch-Database,\
-            the database has not been initialized.\n");
-    exit(-1); // REMOVE THIS LATER
-  }
-  // ERROR IF merch_db dont have the key  
-  else if (!ioopm_hash_table_has_key(store->merch_db,
-				     ptr_elem(name))){
-    perror("merchendise_modify: Duplicate Merch, \
-            the name is not in the Merch Database.\n");
-    exit(-1); // REMOVE THIS LATER
-    return; // ERROR
-    
+  if ((store == NULL) || (name == NULL) || (fun == NULL)){
+    perror("merchendise_modify: Unallowed NULL arguments.\n");
+  } else if(store->merch_db == NULL){
+    perror("merchendise_modify: Merch database is NULL.\n");
+  } else if (!ioopm_hash_table_has_key(store->merch_db, ptr_elem(name))){
+    perror("merchendise_modify: Non existing merch.\n");    
   } else {
     
     merch_t *data =
       get_elem_ptr(ioopm_hash_table_lookup(store->merch_db,
 					   ptr_elem(name)));    
-    merch_t *new_data = NULL;
-    new_data = fun(data, fun_arg);
+    merch_t *new_data = fun(data, fun_arg);
 
-   // Remove associated data
+   // Remove the old merch from the merch database
    ioopm_hash_table_remove(store->merch_db,
 			   ptr_elem(name));
 
-   // Reinsert the modified data
+   // Reinsert the modified merch into the database
    ioopm_hash_table_insert(store->merch_db,
 			   ptr_elem(name),
-			   ptr_elem(new_data));
-   
-    return; // ERROR
-  }
-    
+			   ptr_elem(new_data));   
+   return;
+  }    
 }
 char *merch_get_desc_function(merch_t *merch_data){
-  return merch_data->desc;
+  // Helper function for extracting destription
+  // from a merch
+  return strdup(merch_data->desc);
 }
   
 char *merch_description(webstore_t *store, char *name){
-  // ERROR IF merch_db dont have the key  
+  // Return the description of merch item
   if (!ioopm_hash_table_has_key(store->merch_db, ptr_elem(name))){
-    perror("merchendise_modify: Duplicate Merch, \
-            the name is not in the Merch Database.\n");
-    exit(-1); // REMOVE THIS LATER  
-  }  
+    perror("merchendise_modify: Non existing merch.\n");
+  }else if ((name == NULL) || (store == NULL)){
+    perror("merchendise_modify: Unallowed NULL argument.\n");
+  }
+  
   merch_t *data =
     get_elem_ptr(ioopm_hash_table_lookup(store->merch_db,
 					 ptr_elem(name)));        
     
-  return data->desc;    
+  return strdup(data->desc);    
 }
 
 int merch_price(webstore_t *store, char *name){
-  // ERROR IF merch_db dont have the key  
-  if (!ioopm_hash_table_has_key(store->merch_db,
-				ptr_elem(name))){
-    perror("merchendise_modify: Duplicate Merch, \
-            the name is not in the Merch Database.\n");
-    exit(-1); // REMOVE THIS LATER  
-  }  
+  // Return the price of the specified merch name
+  if (!ioopm_hash_table_has_key(store->merch_db, ptr_elem(name))){
+    perror("merchendise_modify: Non existing merch.\n");
+  }else if ((name == NULL) || (store == NULL)){
+    perror("merchendise_modify: Unallowed NULL argument.\n");
+  }
   merch_t *data =
     get_elem_ptr(ioopm_hash_table_lookup(store->merch_db,
-					 ptr_elem(name)));        
-    
-  return data->price;
-    
+					 ptr_elem(name)));            
+  return data->price;    
 }
 
 
-char *lookup_merch_name(webstore_t *store, int index){ // RENAME LATER
+char *lookup_merch_name(webstore_t *store, int index){ 
+  // Return the name of the merch at a specified
+  // index in the list returned by hash_table_values
+  if ((store == NULL) || (index <= 0)){
+    perror("lookup_merch_name: Unallowed NULL argument.\n");
+  }  
   ioopm_list_t *list_merch =
     ioopm_hash_table_values(store->merch_db);
-  elem_t value_ptr =
+  
+  if ((index <= 0) || (ioopm_linked_list_size(list_merch))){
+    perror("lookup_merch_name: Impossible index.\n");
+  }
+  elem_t value_ptr         =
     ioopm_linked_list_get(list_merch, index);
-
-  merch_t *merch = get_elem_ptr(value_ptr);
-  printf("name%s\n", merch->name);
-  return merch->name; 
+  merch_t *merch           =
+    get_elem_ptr(value_ptr);
+  char *merch_name = merch->name;
+  
+  ioopm_linked_list_destroy(list_merch);  
+  return merch_name;
 }
 
 bool valid_index(webstore_t *store, int index){
@@ -361,7 +339,10 @@ bool valid_index(webstore_t *store, int index){
   // the amount of merch in the merch database
   ioopm_list_t *list = ioopm_hash_table_values(store->merch_db);
 
-  if(index-1 >= list->size){
+  if ((index <= 0) || (ioopm_linked_list_size(list))){
+    perror("lookup_merch_name: Impossible index.\n");
+  }  
+  else if(index-1 >= list->size){
     ioopm_linked_list_destroy(list);
     return false;
   }
