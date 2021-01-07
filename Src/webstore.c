@@ -28,16 +28,33 @@ void merch_delete(webstore_t *store, char *name){
   merch_t *merch_data =
     get_elem_ptr(ioopm_hash_table_lookup(store->merch_db,
 					 ptr_elem(name)));
-
-  free(merch_data->desc);
-  free(merch_data->name);
   
   ioopm_hash_table_remove(store->merch_db,
-			  ptr_elem(name));    
+			  ptr_elem(name));
+  
+  free(merch_data->desc);
+  free(merch_data->name);
+
   // Free Merchendise
   free(merch_data);
   
   // Remove from Hash Table
+}
+void delete_all_merch(webstore_t *store){
+  // Remove all shelfs in storage_db, but not the hash-table.
+  if (store == NULL){
+    perror("delete_all_merch: Webstore is NULL\n");
+  }
+  
+ ioopm_list_t *names  = ioopm_hash_table_keys(store->merch_db);
+ ioopm_link_t *current = names->first;
+
+ do {
+   merch_delete(store, get_elem_ptr(current->element));
+   current = current->next;
+ } while (current != NULL);
+
+ ioopm_linked_list_destroy(names); 
 }
 
 
@@ -436,7 +453,7 @@ void show_stock(webstore_t *store){
     } while (shelf != NULL);
 
   ioopm_linked_list_destroy(shelfs);
-  ioopm_linked_list_destroy(names);
+  //  ioopm_linked_list_destroy(names);
 }
 
 
@@ -497,9 +514,14 @@ void store_destroy(webstore_t *store){
     perror("store_destroy: Webstore is NULL.\n");
   }
   
-  destroy_arg_opt(store->opt);  
+  destroy_arg_opt(store->opt);
+    delete_all_merch(store);  
+  remove_all_storage_locations(store);
+
+  
   ioopm_hash_table_destroy(store->merch_db);
   ioopm_hash_table_destroy(store->storage_db);
+
   ioopm_linked_list_destroy(store->all_shopping_carts);  
   free(store);
 }
@@ -560,31 +582,46 @@ void remove_storage_location(webstore_t *store, char *shelf){
   // Shelf does not exist in storage db  
   if (!ioopm_hash_table_has_key(store->storage_db, ptr_elem(shelf))){
     perror("remove_storage_location: Cannot remove, non-existing shelf.\n");
-  } else {
+  } 
     
-    ioopm_list_t *storage_list = look_in_storage(store, shelf);    
-    // Remove storage list
-    ioopm_linked_list_destroy(storage_list);
-    // Remove from hash table 
-    ioopm_hash_table_remove(store->storage_db, ptr_elem(shelf));			   
-  }  
+  ioopm_list_t *storage_list = look_in_storage(store, shelf);    
+  // Remove storage list
+  ioopm_link_t *current = storage_list->first;
+  /*
+  do {
+    printf(current->element.c);
+    current = current->next;
+  } while (current != NULL);
+
+  */
+  ioopm_linked_list_destroy(storage_list);
+  // Remove from hash table 
+  ioopm_hash_table_remove(store->storage_db, ptr_elem(shelf));
+
+   
 }
 
 void remove_all_storage_locations(webstore_t *store){
   // Remove all shelfs in storage_db, but not the hash-table.
   if (store == NULL){
     perror("remove_all_storage_locations: Webstore is NULL\n");
-  }
-  
+  }  
  ioopm_list_t *shelfs  = ioopm_hash_table_keys(store->storage_db);
  ioopm_link_t *current = shelfs->first;
 
+ if (current == NULL){
+   perror("remove_all_storage_locations:  Storage db is NULL.\n");
+ }
+
  do {
+   
+
+   // printf("%s", get_elem_ptr(current->element));
    remove_storage_location(store, get_elem_ptr(current->element));
    current = current->next;
  } while (current != NULL);
 
- ioopm_linked_list_destroy(shelfs); 
+  ioopm_linked_list_destroy(shelfs); 
 }
 
 
@@ -596,6 +633,7 @@ void add_to_storage(webstore_t *store, char *name, char *shelf){
   
   // Create a new storage list if shelf does not exist
   if (!ioopm_hash_table_has_key(store->storage_db, ptr_elem(shelf))){
+
     ioopm_list_t *storage_list = ioopm_linked_list_create();
     ioopm_linked_list_append(storage_list, ptr_elem(name));
     ioopm_hash_table_insert(store->storage_db,
@@ -609,7 +647,7 @@ void add_to_storage(webstore_t *store, char *name, char *shelf){
 
   do {
     // Already exists in database
-    if (STR_EQ(db_item->element.c, name)) return;
+    if (STR_EQ(get_elem_ptr(db_item->element), name)) return;
 					      
     db_item = db_item->next;           
   } while (db_item != NULL);
@@ -692,7 +730,7 @@ bool storage_contains(webstore_t *store, char *shelf, char *name){
 
   do {
     // Already exists in database
-    if (STR_EQ(db_item->element.c, name))
+    if (STR_EQ(get_elem_ptr(db_item->element), name))
       return true;
 					      
     db_item = db_item->next;           
@@ -702,7 +740,7 @@ bool storage_contains(webstore_t *store, char *shelf, char *name){
 }
 
 void global_change_shelf(webstore_t *store, char *name,
-             char *shelf, size_t amount){
+			 char *shelf, size_t amount){
   // Add / Update shelf to both the merch database and the
   // storage database. If it already exists, update amount.  
   change_shelf(store, name, amount, shelf);
@@ -845,7 +883,7 @@ int merch_locs_at_shelf(webstore_t *store, char *name, char *shelf){
 
   do {
 
-    shelf_data = (merch_locs->element).c;
+    shelf_data = get_elem_ptr(merch_locs->element);
 
     if (STR_EQ(shelf_data->shelf, shelf))
 	return shelf_data->amount;

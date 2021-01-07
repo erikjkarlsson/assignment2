@@ -29,7 +29,7 @@ int main(int argc, char *argv[]) {
 
 
 
-  show_stock(store);
+    show_stock(store);
   /*
 
   // Changed from 4
