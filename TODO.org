@@ -1,5 +1,5 @@
-Ref: https://wrigstad.com/ioopm/assignments/assignment2.html#orgc922f78
-change
+Ref: https://wrigstad.com/ioopm/assignments/assignment2.html
+
 * Frontend Actions [3/6]
  - [X] Add Merchandise
  - [X] List Merchendise
@@ -31,7 +31,7 @@ change
  - [ ] Undo
  - [ ] OPTIONAL Persistance on File
 
-* Functions [0/44]
+* Functions (Tested [0/44])
 ~NOTE~: The checkmark indicates if the function 
 has been tested correctly.
 
@@ -184,7 +184,7 @@ has been tested correctly.
   Add / Change a =shelf= in the storage db
   such that it contains =name=.
 
-- [ ] =change_or_add_shelf= store name amount location ::
+- [ ] =change_shelf= store name amount location ::
   Add a new shelf or change an existing 
   shelf in the merch db related to
   =name=, at =location= containing =amount=.
@@ -213,6 +213,140 @@ has been tested correctly.
 - [ ] =locs_delete= store name ::
   Remove and deallocate the locs 
   associated to =name=.  
+
+* Macros 
+- [ ] ~STORE_CREATE~ =()= 
+- [ ] ~STORE_DESTROY~ =(store)= 
+- [ ] ~ADD_GLOBAL_SHELF~ =(store, name, shelf_name, amount)= 
+- [ ] ~HAS_SHELF~ =(store, shelf_name, name)= 
+- [ ] ~PRINT_SHELF~ =(store, shelf_name)= 
+- [ ] ~REMOVE_ALL_SHELFS~ =(store)= 
+- [ ] ~GET_SHELF_LIST~ =(store, shelf_name)= 
+- [ ] ~REMOVE_SHELF~ =(store, shelf_name)= 
+- [ ] ~ADD_SHELF~ =(store, name, shelf_name)= 
+- [ ] ~MERCH_CREATE~ =(name, description, price, locs)= 
+- [ ] ~SHELF_CREATE~ =()= 
+- [ ] ~SHELF_DESTROY~ =(shelf)=
+- [X] ~MERCH_TOTAL_STOCK~ =(store, name)= 
+  + Replenish
+- [X] ~MERCH_STOCK~ =(store, name, shelf_name)= 
+  + Replenish
+- [X] ~LIST_MERCH_STOCK~ =(store, name)= 
+  + Show Stock
+  + TODO: Alphabetical printout
+  + TODO: Shelf name formatting
+- [ ] ~MERCH_IN_STOCK~ =(store, name)= 
+- [X] ~SET_MERCH_DESCRIPTION~ =(store, name, description)= 
+  + Edit Merchendise
+- [X] ~SET_MERCH_PRICE~ =(store, name, price)= 
+  + Edit Merchendise
+- [ ] ~SET_MERCH_LOCS~ =(store, name, new_locs)= 
+- [X] ~SET_MERCH_NAME~ =(store, name, new_name)= 
+  + Edit Merchendise
+- [ ] ~MERCH_DESCRIPTION~ =(store, name)= 
+- [ ] ~MERCH_PRICE~ =(store, name)= 
+- [ ] ~MERCH_PRINT_ALL_SHELFS~ =(store, name)= 
+- [X] ~SET_MERCH_SHELF_STOCK~ =(store, name, amount, shelf_name)= 
+  + Replenish 
+- [ ] ~ADD_MERCH_SHELF~ =(store, name, amount, shelf_name)= 
+- [ ] ~PRINT_MERCH~ =(merch)= 
+- [X] ~LIST_MERCH~ =(store)= 
+  + List Merchendise
+- [ ] ~PROMPT_REMOVE_MERCH~ =(store)= 
+- [X] ~REMOVE_MERCH~ =(store, name)= 
+  + Remove Merchendise
+- [X] ~ADD_MERCH~ =(store, name, description, price)= 
+  + Add Merchendise
+- [ ] ~QLOG~ =(store, fun, msg)=		
+- [ ] ~OMLOG~ =(store, fun, name, msg,i)=		
+- [ ] ~MLOG~ =(store, fun, name, msg)=		
+- [ ] ~get_elem_ptr~ =(e)= 
+  
+* TODO Non Functional Requirements [0/4]
+** TODO Separate Code into Modules [0/1]
+>> ~Check if the file is used.~ <<
+
+- [-] Find out which files to keep, what to keep in them. 
+  - [X]  =Webstore.c=    :: Merchendise API, and Storage API
+  - [X]  =hash_table.c=  :: Hash Table implomentation
+  - [X]  =linked_list.c= :: Linked List implomentation
+  - [X]  =common.c=      :: Argument Handler + General Macros 
+    and Helper Functions
+  - [X]  =iterator.c=    :: Iterator implomentation
+  - [ ]  =utils.c=       :: General utilities
+    Move some utilities here?
+  - [ ]  =test.c=        :: Unit Testing 
+  - [ ]  =db.c=          :: Generic Database functions
+    Move some functions here?
+  - [X]  =cart.c=        :: Shoppingcart API
+  - TODO: Add a module for the UI?
+
+** TODO Find team to do a code review [0/1]
+- [ ] [[https://en.wikipedia.org/wiki/Code_review][Need to find a team to review the code]]
+** TODO Testing [0/1]
+- [ ] Testing should be done in CUnit.
+  Focus should be on individual backend methods
+
+#+begin_quote
+Unittests will focus on invididual methods in the backend. For
+example, adding a new merchendise will test the behaviour on good and
+back input (how handle duplicates?), and check that stock for new
+merchendise come back as zero.
+
+Note that you are building on data structure libraries that come with
+a set of tests. We don’t need to test that e.g., the hash table is
+correct in our tests – we should test that the treatment of
+merchendise, items, storage locations etc. are correct. That means we
+are staying (at least) one solid level of abstraction above the hash
+table, list, etc.
+#+end_quote
+
+** TODO Documentation [0/2]
+- [ ] Documentation of the code is done in Doxygen.
+- [ ] The sources of borrowed code 
+  (hash table, linked list, utils, ...)
+  should be stated in the [[./README.md]].
+
+*** README.md reference example
+  #+begin_quote
+Hash table comes from Alice’s Assignment 1
+Linked list comes from Cecil’s Assignment 1
+Utils comes from Bob’s C bootstrap labs
+  #+end_quote
+
+* TODO Finishing the Assignment [0/6]
+- [ ] At the end, go over your backlog of cheats and dodges and see which
+  ones need taking care of. Ideally this stack should be empty. If you
+  have made any special deals for some parts of your code, make sure
+  these are documented somewhere (in the repo).
+
+- [ ] As the first section of README.md, add instructions for how to build
+  the program and run its tests. Ideally this should be as easy as
+  make test. In this section, also state the line coverage and branch
+  coverage per .c file and what tool you used to obtain these numbers.
+
+- [ ] Write a minimal documentation of how to use your program – after
+  building it, how does one start it, and what files etc. (if
+  anything) must be present. Put this in a README.md in the top-level
+  directory for this assignment.
+
+- [ ] Prepare a demonstration of z101 to give at the next lab. In addition
+  to z101, pick another 2-3 achievements to tick off, and include
+  these in your demonstration preparation. To back up your
+  presentation, present evidence like places in your code where
+  relevant things show up, documentation, paper drawings, etc. –
+  things that support your demonstration. Think carefully about what
+  things fit together (ask for help if you feel uncertain after
+  trying) and what achievements tell a good story together. Make sure
+  that not one person dominates the demonstration or answers all
+  questions to avoid someone failing the demonstration because there
+  was no evidence of achievements mastery.
+
+- [ ] Send an email to ioopm@it.uu.se with your names and usernames, a
+  link to the GitHub repository where the code can be checked out.
+
+- [ ] Create a final commit for the assignment and check it into
+  GitHub. Tag the commit with assignment2_done.
 
 * Backend Design
 

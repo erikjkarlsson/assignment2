@@ -9,19 +9,6 @@
 #include "utils.h"
 #include "webstore.h"
 
-#define get_elem_ptr(e) e.p
-#define MLOG(store, fun, name, msg)		\
-  if (store->opt->log_p)\
-    merch_log(fun, name, msg, 0);
-
-#define OMLOG(store, fun, name, msg,i)		\
-  if (store->opt->log_p)\
-    merch_log(fun, name, msg, i);
-
-#define QLOG(store, fun, msg)		\
-  if (store->opt->log_p)\
-    merch_log(fun, "", msg, 0);
-
 void merch_log(char *function, char *name, char *message, int number){
   printf(R_STR_STR, function);
   printf(":%d %s", number, name);
@@ -49,6 +36,7 @@ void merch_delete(webstore_t *store, char *name){
   
   // Remove from Hash Table
 }
+
 
 merch_t *create_merch(char *name,
 		      char *desc,
@@ -280,30 +268,31 @@ void merchendise_modify(webstore_t *store, char *name,
 char *merch_get_desc_function(merch_t *merch_data){
   // Helper function for extracting destription
   // from a merch
-  return strdup(merch_data->desc);
+  return merch_data->desc;
 }
   
+
 char *merch_description(webstore_t *store, char *name){
   // Return the description of merch item
   if (!ioopm_hash_table_has_key(store->merch_db, ptr_elem(name))){
-    perror("merchendise_modify: Non existing merch.\n");
+    perror("merch_description: Non existing merch.\n");
   }else if ((name == NULL) || (store == NULL)){
-    perror("merchendise_modify: Unallowed NULL argument.\n");
+    perror("merch_description: Unallowed NULL argument.\n");
   }
   
   merch_t *data =
     get_elem_ptr(ioopm_hash_table_lookup(store->merch_db,
 					 ptr_elem(name)));        
     
-  return strdup(data->desc);    
+  return data->desc;    
 }
 
 int merch_price(webstore_t *store, char *name){
   // Return the price of the specified merch name
   if (!ioopm_hash_table_has_key(store->merch_db, ptr_elem(name))){
-    perror("merchendise_modify: Non existing merch.\n");
+    perror("merch_price: Non existing merch.\n");
   }else if ((name == NULL) || (store == NULL)){
-    perror("merchendise_modify: Unallowed NULL argument.\n");
+    perror("merch_price: Unallowed NULL argument.\n");
   }
   merch_t *data =
     get_elem_ptr(ioopm_hash_table_lookup(store->merch_db,
@@ -477,8 +466,8 @@ void store_destroy(webstore_t *store){
 
 /// Shelf
 
-void add_shelf(webstore_t *store, char *name, shelf_t *shelf){
-  // Add a (must be new) shelf to the storage database containing a name
+void merch_add_shelf(webstore_t *store, char *name, shelf_t *shelf){
+  // Add a (must be new) shelf to the merch database containing a name
 
   if (!ioopm_hash_table_has_key(store->merch_db, ptr_elem(name))){ 
    perror("add_shelf: Cannot add a new shelf that exists.\n");
@@ -588,22 +577,18 @@ void add_to_storage(webstore_t *store, char *name, char *shelf){
 }
 
    
-void change_shelf(webstore_t *store,
-			 char *name,
-			 int amount,
-			 char* location){
+void change_shelf(webstore_t *store, char *name,
+			 int amount, char* location){
   
   QLOG(store, "change_shelf", name);
 
   if(store->merch_db == NULL){
-    perror("change_shelf: Uninitizalized Merch-Database,\
-            the database has not been initialized.\n");
+    perror("change_shelf: Merch database is NULL.\n");
     return; // REMOVE THIS LATER
     
   }else if (!ioopm_hash_table_has_key(store->merch_db,
 				      ptr_elem(name))){
-    perror("change_shelf: 404 Merch Not Found, \
-            item name not in the Merch Database.\n");
+    perror("change_shelf: Non existing merch.\n");
     return; // REMOVE THIS LATER
   }
 
@@ -616,9 +601,9 @@ void change_shelf(webstore_t *store,
   
  
   if(merch_data->locs == NULL){ 
-    perror("change_shelf: No Merch Database"); return;    
+    perror("change_shelf: Merch Database is NULL.\n"); return;    
   }if(amount < 0){
-    perror("change_shelf: Negative amount"); return;
+    perror("change_shelf: Negative stock.\n"); return;
   }
 
   QLOG(store, "change_shelf", name);
