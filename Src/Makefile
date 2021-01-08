@@ -1,12 +1,22 @@
 
 
-main:
-
+main: merch.h main.c webstore.c webstore.h merch.c merch.h
 	gcc -g -Wall -pedantic -std=c11 list_linked.c common.c iterator.c \
-	hash_table.c webstore.c utils.c main.c -o ./bin || echo "ERROR IN COMPILATION"
+	hash_table.c webstore.c utils.c merch.c main.c -o ./bin
+	@echo "::::::::::: Finished :::::::::::"
 
-	@echo "Running Finished"
 
+dbg: debug.c webstore.c webstore.h merch.h merch.c
+	gcc -g -Wall -pedantic -std=c11 list_linked.c common.c iterator.c \
+	hash_table.c webstore.c utils.c debug.c merch.c -o ./dbg 
+	./dbg
+	@echo "::::::::::: Finished :::::::::::"
+
+run:
+	./dbg
+
+dbgt: dbg
+	valgrind --leak-check=full ./dbg
 cart:
 	gcc cart.c utils.c common.c hash_table.c list_linked.c webstore.c iterator.c
 

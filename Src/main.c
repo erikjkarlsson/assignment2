@@ -6,7 +6,7 @@
 #include "list_linked.h"
 #include "utils.h"
 #include "webstore.h"
-
+#include "merch.h"
 
 
 int main(int argc, char *argv[]) {
@@ -14,8 +14,10 @@ int main(int argc, char *argv[]) {
 
   printf("Now Running!\n");
 
+  // --- Load hardcoded test merch
+  webstore_t *store = initialize_database();
+  
   // --- Initialize Argument Handler
-  webstore_t *store = store_create();
   arg_parse(argc, argv, store->opt);  
 
   // --- Add Merch    
@@ -25,57 +27,10 @@ int main(int argc, char *argv[]) {
   add_merchendise(store, "Car", "A fast car", (size_t)2);
   add_merchendise(store, "Computer", "Gaming computer", (size_t)0);
 
-  // --- Change Shelf
-  change_or_add_shelf(store, "Cola", 1, "a");
-  change_or_add_shelf(store, "Cola", 2, "b");
-
-  list_shelfs(store, "Cola");
-  
-  // --- Change Description
-  merchendise_new_desc(store, "Car", "A slow car");
-  merchendise_new_desc(store, "Chair", "Terrible");
-  merchendise_new_desc(store, "Bike", "16 Gears");
-  merchendise_new_desc(store, "Computer", "Non-Gaming computer");
-
-  // --- Edit Merch
-  
-  // Should not do anything
-  merchendise_edit(store, "Bike",  
-		   NULL,
-		   NULL,
-		   NULL); 
-
-  // Should only change description
-  merchendise_edit(store, "Bike",  
-		   NULL,
-		   "New Desc",
-		   NULL); 
-
-  if (STR_EQ(merch_description(store, "Bike"), "New Desc"))
-    printf("merch edit desc: Correctly changed desc!\n");
-  else
-    printf("merch edit desc: Failed!\n");
-
-  // Should only change price
-  merchendise_edit(store, "Bike",  
-		   (size_t*) 10,
-		   NULL,
-		   NULL); 
-
-  // Changed from 4
-  if (merch_price(store, "Bike") == 10) 
-    printf("merch edit price: Correctly changed price!\n");
-  else
-    printf("merch edit price: Failed!\n");
 
 
-  // Should remove the name from db
-  // and move all data to the new name
-
-  merchendise_edit(store, "Bike",  
-		   NULL,
-		   NULL,
-		   "New Bike"); 
+    show_stock(store);
+  /*
 
   // Changed from 4
   if (merch_in_stock(store, "Bike"))
@@ -125,7 +80,7 @@ int main(int argc, char *argv[]) {
   remove_merchendise(store, "Computer");
 
   //  list_merchandise(store);
-    
+  */
 
   store_destroy(store);
   
