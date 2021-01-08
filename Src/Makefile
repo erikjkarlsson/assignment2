@@ -24,6 +24,13 @@ test:
 
 memtest: test
 	valgrind --leak-check=full ./bin
+	
+test_cart: 
+	gcc -g -Wall -std=c11 list_linked.c common.c iterator.c \
+	hash_table.c webstore.c utils.c cart.c test_cart.c -lcunit  -o ./bin
+
+memtest_cart: test_cart
+	valgrind --leak-check=full ./bin
 
 runl: main
 	./bin -l

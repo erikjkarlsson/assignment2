@@ -8,33 +8,20 @@
 #include "common.h"
 #include "utils.h"
 #include "webstore.h"
+#include "cart.h"
 
 #define get_elem_ptr(e) e.p
 #define get_elem_int(e) e.i
 #define get_elem_str(e) e.c
 
-//used to place keys and values in one
-struct entry_ht
-{
-  char *key; 
-  int value;
-};
-
-typedef struct entry_ht entry_ht_t;
-
-
-struct cart {
-  int id; 
-  ioopm_hash_table_t *merch_in_cart; 
-}; 
-
-typedef struct cart cart_t;
-
 ///
 /*HELP FUNCTIONS*/
 ///
 
-bool valid_id(){ //TODO
+bool valid_id(webstore *store, int id){ 
+    if(id >= 0 && id < ioopm_linked_list_size(store->all_shopping_carts)){
+        return true;
+    }
     return false;
 }
 
@@ -74,7 +61,7 @@ bool cart_is_empty(cart_t *cart){
 /*FUNCTIONS*/
 ///
 
-void create_cart(webstore_t *store){
+cart_t *create_cart(webstore_t *store){
     cart_t *new_cart = calloc(1, sizeof(cart_t));
     
     //ht containing all merch in cart with string key and int elem 
@@ -87,6 +74,8 @@ void create_cart(webstore_t *store){
     ioopm_linked_list_prepend(store->all_shopping_carts, ptr_elem(new_cart));
     
     printf("The id of your cart is %d\n", new_cart->id); //TODO: function or remove 
+    
+    return new_cart;
 }
 
 void remove_cart(webstore_t *store, int id){
@@ -105,6 +94,16 @@ void remove_cart(webstore_t *store, int id){
 }
 
 void add_to_cart(webstore_t *store, int id, int nr_merch, int amount){
+    
+    if(amount <= 0){
+        perror("ADD TO CART: The amount of merch added to the cart must be 0 or higher.\n");
+        return;
+    }
+    
+    if(!valid_id(id)){
+        perror("ADD TO CART: The id of the cart is invalid.\n");
+        return; 
+    }
     
     char *merch_to_add_name = lookup_merch_name(store, nr_merch);
     cart_t *current_cart = get_cart(store, id);
@@ -128,6 +127,12 @@ void add_to_cart(webstore_t *store, int id, int nr_merch, int amount){
 }
 
 void remove_from_cart(webstore_t *store, int id, int nr_merch, int amount_to_remove){
+    
+    if(!valid_id(id)){
+        perror("REMOVE FROM CART: The id of the cart is invalid.\n");
+        return; 
+    }
+    
     char *merch_to_remove_name = lookup_merch_name(store, nr_merch);
     cart_t *current_cart = get_cart(store, id);
     
@@ -149,6 +154,12 @@ void remove_from_cart(webstore_t *store, int id, int nr_merch, int amount_to_rem
 }
 
 int calculate_cost(webstore_t *store, int id){
+    
+    if(!valid_id(id)){
+        perror("CALCULATE COST: The id of the cart is invalid.\n");
+        return; 
+    }
+    
     cart_t *current_cart = get_cart(store, id);
     int total_price = 0;
     
@@ -229,6 +240,18 @@ void display_cart(cart_t *cart){ //id?
         
 }
 
+size_t nr_of_merch_in_cart(cart_t *cart){
+    return ioopm_hash_table_size(cart->merch_in_cart);
+}
+
+int get_amount_of_merch(cart_t *cart, char *merch_name){
+    return ioopm_hash_table_lookup(cart->merch_in_cart, str_elem(merch_name)); 
+}
+
+bool merch_in_cart(cart_t *cart, char *merch_name){
+    return ioopm_hash_table_has_key(cart->merch_in_cart, str_elem(merch_name));
+}
+
 ////
 /* PROMT FUNCTIONS */
 ///
@@ -270,7 +293,7 @@ void event_loop(webstore_t *store){
     }
 }
 
-int main(int argc, char *argv[]) {
+/*int main(int argc, char *argv[]) {
     webstore_t *store = store_create();
     arg_parse(argc, argv, store->opt);  
     // Add Merch    
@@ -291,4 +314,4 @@ int main(int argc, char *argv[]) {
     //display_cart(get_cart(store, 0));
     
     return 0; 
-}
+}*/
