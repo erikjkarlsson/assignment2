@@ -54,7 +54,19 @@ void global_change_shelf_test(){
 void change_existing_shelf(){
   
 }
+void num_shelf_validation_test(){
+  CU_ASSERT_FALSE((!is_shelf("A00")) || (is_shelf("AA0")) ||
+		  (is_shelf("000"))  || (is_shelf("0A0")) ||
+		  (is_shelf("0AA"))  || (is_shelf(""))    ||
+		  (is_shelf("AAAA")  || (is_shelf("A00A"))));
 
+  CU_ASSERT_FALSE((is_number("A111")) || is_number("1A11") ||
+		  (is_number("111A")) || is_number("11A1") ||
+		  (is_number("")) || is_number("AAAA"));
+
+
+
+}
 void test_add_remove_storage(){
   webstore_t *store = store_create();
 

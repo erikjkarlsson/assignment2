@@ -69,241 +69,95 @@ typedef int *(merch_get_int_function)(merch_t *merch);
 
 
 /////// Merch
+bool valid_index(webstore_t *store, int index);
+char *lookup_merch_name(webstore_t *store, int index); 
 
-#define ADD_MERCH(store, name, description, price) \
-  add_merchendise(store, name, description, price);
-// Removal
-#define REMOVE_MERCH(store, name) \
-  remove_merchendise(store, name);
+void print_merch(merch_t *merch);
 
-#define PROMPT_REMOVE_MERCH(store) \
-  prompt_remove_merchendise(store);
-// Printing
-#define LIST_MERCH(store) \
-  list_merchandise(webstore_t *store);
+void add_to_storage(webstore_t *store, char *name, char *shelf);
+void destroy_storage(webstore_t *store);
 
-#define PRINT_MERCH(merch) \
-  print_merch(merch);
-// Merch Shelf
-#define ADD_MERCH_SHELF(store, name, amount, shelf_name) \
-  change_shelf(store, name, amount, shelf_name);
+void remove_shelf(webstore_t *store, char *shelf);
+ioopm_list_t *get_locations(webstore_t *store, char *shelf);
+bool storage_contains(webstore_t *store, char *shelf, char *name);
 
-#define SET_MERCH_SHELF_STOCK(store, name, amount, shelf_name) \
-  change_shelf(store, name, amount, shelf_name);
+void list_shelfs(webstore_t *store, char *name);
+void display_shelf(webstore_t *store, char *shelf);
 
-#define MERCH_PRINT_ALL_SHELFS(store, name) \
-  list_shelfs(store, name);
-// Get merch info
-#define MERCH_PRICE(store, name) \
-  merch_price(store, name);
+void set_shelf(webstore_t *store, char *name,
+	       char *shelf, size_t amount);
 
-#define MERCH_DESCRIPTION(store, name) \
-  merch_description(store, name);
-// Set merch info
-#define SET_MERCH_NAME(store, name, new_name) \
-  merchendise_edit(store, name, NULL, NULL, new_name);
-
-#define SET_MERCH_LOCS(store, name, new_locs) \
-  merchendise_new_locs(store, name, new_locs);
-
-#define SET_MERCH_PRICE(store, name, price) \
-  merchendise_edit(store, name, price, NULL, NULL);
-
-#define SET_MERCH_DESCRIPTION(store, name, description) \
-  merchendise_edit(store, name, NULL, description, NULL);
-// Merch stock
-#define MERCH_IN_STOCK(store, name) \
-  merch_in_stock(store, name);
-
-#define LIST_MERCH_STOCK(store, name) \
-  list_shelfs(store, name);
-
-#define MERCH_STOCK(store, name, shelf_name) \
-  merch_locs_at_shelf(store, name, shelf_name);
-
-#define MERCH_TOTAL_STOCK(store, name) \
-  merch_locs_total(store, name);
-
-#define SHELF_DESTROY(shelf) shelf_destroy(store);
-#define SHELF_CREATE() shelf_create();
-
-#define MERCH_CREATE(name, description, price, locs) \
-  create_merch(name, description, price, locs);
-
-/////// Shelfs (storage) ///////
-// Add shelf
-#define ADD_SHELF(store, name, shelf_name) \
-  add_to_storage(store, name, shelf_name);
-// Remove shelfs
-#define REMOVE_SHELF(store, shelf_name) \
-  remove_storage_location(store, shelf_name);
-
-#define GET_SHELF_LIST(store, shelf_name) \
-  look_in_storage(store, shelf_name);
-
-#define REMOVE_ALL_SHELFS(store) \
-  remove_all_storage_locations(store);
-// Print a shelf
-#define PRINT_SHELF(store, shelf_name) \
-  display_storage(store, shelf_name);
-// Does shelf exist?
-#define HAS_SHELF(store, shelf_name, name) \
-  storage_contains(store, shelf_name, name);
-
-/////// Global ///////
-// Add a shelf to storage and merch database
-#define ADD_GLOBAL_SHELF(store, name, shelf_name, amount) \
-  global_change_shelf(store, name, shelf_name, amount);
-
-#define STORE_DESTROY(store) store_destroy(store);
-#define STORE_CREATE() store_create();
-
-/// Store
-
-//Creates a new webstore. 
-//Allocate both hash tables (merch and storage),
-//as well as the argument handler.
+void store_destroy(webstore_t *store);
 webstore_t *store_create();
 
-//Destroys the store.
-//Free up the argument handler, and both hash 
-//tables (the whole store structure).
-void store_destroy(webstore_t *store);
-
-
-/// Shelfs 
-
-//Creates shelf.
-//Allocates memory for a shelf.
-shelf_t *create_shelf(char *shelf, size_t amount);
-
-//Destroys shelf.
-//Frees up a shelf.
-void shelf_delete(shelf_t *shelf);
-
-//Prints all shelfs in the merch db 
-//related to =name=.
-void list_shelfs(webstore_t *store, char *name);
-
-//Changes an existing 
-//shelf in the merch db related to
-//=name=, at =location= containing =amount=.
-void change_shelf(webstore_t *store, char *name,
-		  size_t amount, char* location);
-
- 
-//Adds shelf in the merch db related to
-//=name=, at =location= containing =amount=.
-void add_shelf(webstore_t *store, char *name, shelf_t *shelf);
-
-//Remove and deallocate the locs 
-//associated to =name=.  
-void locs_delete(webstore_t *store, char *name);
+void list_merchandise(webstore_t *store);
 
 bool merch_in_stock(webstore_t *store, char *name);
-int merch_locs_at_shelf(webstore_t *store, char *name, char *shelf);  
-int merch_locs_total(webstore_t *store, char *name);
-
-
-/// Merchendise
-
-merch_t *create_merch(char *name,
-		      char* desc,
-		      size_t price,
-		      ioopm_list_t *locs);
-// Free up merch 
-void merch_delete(webstore_t *store, char *name);
-void remove_merchendise(webstore_t *store, char *name);
-
-int merch_price(webstore_t *store, char *name);
-char *merch_description(webstore_t *store, char *name);
-
-// Add a new merch
-void add_merchendise(webstore_t *store, char *name, char *desc, size_t price);
- 
-// helpers
-void merchendise_modify(webstore_t *store, char *name, merch_modify_function *fun, void *fun_arg);
-merch_t *merch_change_description_function(merch_t *merch_data, void *new_desc);
-merch_t *merch_change_locs_function(merch_t *merch_data, void *new_locs);
-merch_t *merch_change_price_function(merch_t *merch_data, void *new_price);  
-void global_change_shelf(webstore_t *store, char *name,
-			 char *shelf, size_t amount);
+int merch_stock_on_shelf(webstore_t *store, char *name, char *shelf);
 bool sync_merch_stock(webstore_t *store, char *name);
-
 size_t increase_stock(webstore_t *store, char *name,
 		      char *shelf_name, int *amount);
 
-// Set a new merch desc
-void merchendise_new_desc(webstore_t *store, char *name, char *edited_desc);
-// Set a new merch price
-void merchendise_new_price(webstore_t *store, char *name, size_t new_price);
-// Set a new merch locs
-void merchendise_new_locs(webstore_t *store, char *name, ioopm_list_t *new_locs);
+void show_stock(webstore_t *store);
+void rename_merch(webstore_t *store, char *name, char *new_name);
 
-//void merch_delete(webstore_t *store, char *name);
-void prompt_remove_merchendise(webstore_t *store);
-// Free merch
+int merch_stock(webstore_t *store, char *name);
+void set_merch_stock(webstore_t *store, char *name,
+		     size_t amount, char* location);
+
+int merch_price(webstore_t *store, char *name);
+void set_merch_price(webstore_t *store, char *name, size_t price);
+
+char *merch_description(webstore_t *store, char *name);
+void set_merch_description(webstore_t *store, char *name, char *desc);
+
+ioopm_list_t *merch_locs(webstore_t *store, char *name);
+void destroy_locs(webstore_t *store, char *name);
+
+
+void add_merchendise(webstore_t *store, char *name, char *desc, size_t price);
+void destroy_all_merch(webstore_t *store);
 void remove_merchendise(webstore_t *store, char *name);
-// list out all merch
-void list_merchandise(webstore_t *store);
+merch_t *create_merch(char *name, char *desc, size_t price, ioopm_list_t *locs);
 
-void merchendise_edit(webstore_t *store, char *name,
-		      size_t *new_price,
-		      char   *new_desc,
-		      char   *new_name);
-
-void print_merch(merch_t *merch);
-char *lookup_merch_name(webstore_t *store, int index);
-
-ioopm_list_t *look_in_storage(webstore_t *store, char *shelf);
-void remove_all_storage_locations(webstore_t *store);
-void remove_storage_location(webstore_t *store, char* shelf);
-ioopm_list_t *look_in_storage(webstore_t *store, char *shelf);
-void add_to_storage(webstore_t *store, char *name, char *shelf);
-void display_storage(webstore_t *store, char *shelf);
-bool storage_contains(webstore_t *store,
-		      char *shelf, char *name);
-/// Misc
+shelf_t *create_shelf(char *shelf, size_t amount);
+void destroy_shelf(shelf_t *shelf);
 
 bool continue_printing();
 bool valid_index(webstore_t *store, int index);
-// Logging function
-// use macro: MLOG
-void merch_log(char *function, char *name, char *message, int number);
-
 
 
 //void locs_delete(ioopm_list_t *locs);
 //void merch_delete(merch_t *merch_data);
-/*
+
 //This should list all items in the store.
 //Items should preferably (soft requirement) be printed in alphabetical order on their names.
 //Because there may be more things in the database than might fit on a screen,
 //items should be printed 20 at a time, and the user is asked to continue listing (if possible)
 //or return to the main menu.
-void list_merchandise();
+//void list_merchandise();
 
 //Removes an item completely from the warehouse, including all its stock.
-void  remove_merchandise();
+//void  remove_merchandise();
 
 // Create merch
 //Allows changing the name, description and price of a merch. Note that this does not affect its stock.
 //Changing the name of a merch to the name of an existing merch is not allowed.
 //Note that changing the name may mean changing the key unless you use a unique id for each merch.
-void edit_merchandise();
+//void edit_merchandise();
 
 //List all the storage locations for a particular merch,
 //along with the quantities stored on each location.
 //Storage locations should preferably be listed in alphabetical order (e.g., A20 before B01 and C01 before C10).
 //Names of storage locations follow this format always: one capital letter (A-Z) followed by two digits (0-9).
-void show_stock();
+//void show_stock();
 
 //Increases the stock of a merch by at least one.
 //You can replenish on an existing storage location or a new one.
 //The stock for a merch is the sum of all items on all storage locations holding that merch.
 //A storage location stocks items of one (type of) merch, never more.
 //For simplicity, there is no limit to the amount of storage locations nor is there a limit on the number of items a location can hold.
-void replenish();
+//void replenish();
 
 //Creates a new shopping cart in the system which is empty.
 //A shopping cart represents a possible order.
@@ -311,10 +165,10 @@ void replenish();
 //a cart does not change the stock for that merch – stocks are changed only during checkout.
 //Shopping carts are identified by a monotonically increasing number,
 //i.e., the number of the i’th shopping cart created is i, regardless of how many shopping carts have been removed.
-void create_cart();
+//void create_cart();
 
 //Removes a shopping cart from the system.
-void remove_cart();
+//void remove_cart();
 
 // Adds some quantity of a merch to a specific shopping cart.
 //All possible orders in the system must be fullfillable.
@@ -344,5 +198,5 @@ void undo();
 //Quits the program.
 void Quit();
 
-*/
+
 #endif

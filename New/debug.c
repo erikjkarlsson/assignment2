@@ -28,14 +28,19 @@ int main(int argc, char *argv[]) {
   add_to_storage(store, "C", "A10");
 
   display_storage(store, "A10");
-
   list_merchandise(store);
-  
   if(
   storage_contains(store, "A10", "A") &&
   storage_contains(store, "A10", "B") &&
   storage_contains(store, "A10", "C")
      ) printf("YES\n");
+  
+  // --- Remove Merch
+  remove_merchendise(store, "Bike");
+  remove_merchendise(store, "Chair");
+  remove_merchendise(store, "Cola");
+
+  remove_all_storage_locations(store);
   
   store_destroy(store);
   
