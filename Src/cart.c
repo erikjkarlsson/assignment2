@@ -18,7 +18,8 @@
 /*HELP FUNCTIONS*/
 ///
 
-bool valid_id(webstore *store, int id){ 
+bool valid_id(webstore_t *store, int id)
+{ 
     if(id >= 0 && id < ioopm_linked_list_size(store->all_shopping_carts)){
         return true;
     }
@@ -100,7 +101,7 @@ void add_to_cart(webstore_t *store, int id, int nr_merch, int amount){
         return;
     }
     
-    if(!valid_id(id)){
+    if(!valid_id(store,id)){
         perror("ADD TO CART: The id of the cart is invalid.\n");
         return; 
     }
@@ -128,7 +129,7 @@ void add_to_cart(webstore_t *store, int id, int nr_merch, int amount){
 
 void remove_from_cart(webstore_t *store, int id, int nr_merch, int amount_to_remove){
     
-    if(!valid_id(id)){
+    if(!valid_id(store,id)){
         perror("REMOVE FROM CART: The id of the cart is invalid.\n");
         return; 
     }
@@ -155,9 +156,9 @@ void remove_from_cart(webstore_t *store, int id, int nr_merch, int amount_to_rem
 
 int calculate_cost(webstore_t *store, int id){
     
-    if(!valid_id(id)){
+    if(!valid_id(store,id)){
         perror("CALCULATE COST: The id of the cart is invalid.\n");
-        return; 
+        return 0; 
     }
     
     cart_t *current_cart = get_cart(store, id);
@@ -245,7 +246,7 @@ size_t nr_of_merch_in_cart(cart_t *cart){
 }
 
 int get_amount_of_merch(cart_t *cart, char *merch_name){
-    return ioopm_hash_table_lookup(cart->merch_in_cart, str_elem(merch_name)); 
+    return get_elem_int(ioopm_hash_table_lookup(cart->merch_in_cart, str_elem(merch_name))); 
 }
 
 bool merch_in_cart(cart_t *cart, char *merch_name){
@@ -261,36 +262,6 @@ void add_to_cart_promt(){
     //list
     //ask for number
 
-}
-
-void event_loop(webstore_t *store){
-    char *command = ask_question_menu();
-    
-    if(*command == 'S' || *command == 's'){
-        //skapa en ny kundvagn 
-    }
-    if(*command == 'L' || *command == 'l'){
-        //lägga till ett item i kundvagnen; 
-    }
-    if(*command == 'T' || *command == 't'){
-        //Ta bort ett item i kundvagnen
-    }
-    if(*command == 'R' || *command == 'r'){
-        //Redigera ett item i kundvagnen
-    }
-    
-    if(*command == 'H' || *command == 'h'){
-        //lista alla items i kundvagnen
-    }
-    
-    if(*command == 'G' || *command == 'g'){
-        //Ångra senaste ändringen
-    }
-    if(*command == 'A' || *command == 'a'){
-        //minska på items i warehouse
-        //Kalkulera kostnaden
-        exit(0);
-    }
 }
 
 /*int main(int argc, char *argv[]) {

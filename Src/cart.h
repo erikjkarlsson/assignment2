@@ -44,4 +44,4 @@ size_t nr_of_merch_in_cart(cart_t *cart);
 
 int get_amount_of_merch(cart_t *cart, char *merch_name); 
 
-bool merch_in_cart(cart_t *cart, char *merch_name)
+bool merch_in_cart(cart_t *cart, char *merch_name);
