@@ -96,7 +96,7 @@ bool merch_in_stock(webstore_t *store, char *name);
 int merch_stock_on_shelf(webstore_t *store, char *name, char *shelf);
 bool sync_merch_stock(webstore_t *store, char *name);
 size_t increase_stock(webstore_t *store, char *name,
-		      char *shelf_name, int *amount);
+		      char *shelf_name, size_t amount);
 
 void show_stock(webstore_t *store);
 void rename_merch(webstore_t *store, char *name, char *new_name);
