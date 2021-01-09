@@ -120,6 +120,7 @@ void test_add_remove_storage(){
 void test_add_merch(){
   
   webstore_t *store = store_create();
+  
   add_merchendise(store, "Bike", "A sports bike from Brazil",
 		  (size_t)4);
   add_merchendise(store, "Car", "A fast car",

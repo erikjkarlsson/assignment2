@@ -177,6 +177,7 @@ void ioopm_linked_list_insert(ioopm_list_t *list, size_t index, elem_t value)
     ioopm_insert_at_index(list, index, value);
 }
 
+/*
  elem_t ioopm_linked_list_remove(ioopm_list_t *list, size_t index)
  { 
    elem_t save;
@@ -205,7 +206,42 @@ void ioopm_linked_list_insert(ioopm_list_t *list, size_t index, elem_t value)
 
    return (elem_t) {.error = true};
  }
+*/
 
+int list_inner_adjust_index(int index, int upper_bound)
+{
+    
+    if(index > (upper_bound)){
+        index = (upper_bound-1);
+    }
+    
+    if(index < 0){
+        index = 0;
+    }
+    
+    return index;
+}
+
+void ioopm_linked_list_remove(ioopm_list_t *list, int index){ //return int (*)
+    index = list_inner_adjust_index(index, ioopm_linked_list_size(list));
+    ioopm_link_t *cursor = list->first; 
+    if(index == 0){
+      list->first = cursor->next;
+      free(cursor);
+      return;
+      
+    }
+    /// Note index - 1 to stop on the preceeding node
+    for (int i = 0; i < index - 1; ++i){
+        cursor = cursor->next;
+        
+    }
+    
+    ioopm_link_t *to_remove = cursor->next;  /// Save pointer to link
+    cursor->next = to_remove->next;    /// unlink link
+    free(to_remove);     
+    
+}
 
 elem_t ioopm_linked_list_get(ioopm_list_t *list, size_t index)
 {  

@@ -64,13 +64,6 @@ merch_t *create_merch(char *name, char *desc, size_t price, ioopm_list_t *locs);
 shelf_t *create_shelf(char *shelf, size_t amount);
 void destroy_shelf(shelf_t *shelf);
 
-
-
-
-
-
-
-
   
 /// /// /// /// /// /// /// /// /// /// /// /// /// /// 
 // MERCH                                            ///
