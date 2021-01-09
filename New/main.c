@@ -14,26 +14,18 @@ int main(int argc, char *argv[]) {
 
   printf("Now Running!\n");
 
-  // --- Load hardcoded test merch
-  webstore_t *store = initialize_database();
-  
+  webstore_t *store = store_create();  // --- Load hardcoded test merch
+  INIT_DATABASE(store);
   // --- Initialize Argument Handler
   arg_parse(argc, argv, store->opt);  
-
+  
+  //  show_stock(store);  
+  printf("Stock Apple: %ld\n", merch_stock(store, (char*)"Apple"));
+  // --- Add to Storage
+  //  remove_all_storage_locations(store);
   show_stock(store);
   
-  
-  // --- Add to Storage
-  add_to_storage(store, "Cola", "A8");
-  add_to_storage(store, "Car", "A1");
-  add_to_storage(store, "Bike", "A1");
-
-  // --- Display Storage
-  display_shelf(store, "A1");
-  //  remove_all_storage_locations(store);
-    
-  
-  //list_merchandise(store);
+  list_merchandise(store);
   
   // --- Remove Merch
   //remove_merchendise(store, "Bike");
