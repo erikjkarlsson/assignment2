@@ -83,6 +83,7 @@ merch_t *create_merch(char *name, char *desc,
 
   item->name          = name;
   item->desc          = desc;
+
   item->price         = price;
   item->total_amount  = 0;
   item->locs          = locs;
@@ -479,10 +480,10 @@ void store_destroy(webstore_t *store){
   
   destroy_arg_opt(store->opt);
 
-  if (store->merch_db == NULL)
+
     destroy_all_merch(store);
 
-  if (store->storage_db == NULL)
+
     destroy_storage(store);
   
   ioopm_hash_table_destroy(store->merch_db);
