@@ -120,10 +120,19 @@ void destroy_all_merch(webstore_t *store){
     perror("destroy_all_merch: Webstore is NULL\n");
     return;
   }
-  
+
+  if (store->merch_db == NULL){
+    perror("destroy_all_merch: Webstore is NULL\n");
+    return;
+  }
+
  ioopm_list_t *names  = ioopm_hash_table_keys(store->merch_db);
  ioopm_link_t *current = names->first;
-
+ if (current == NULL){
+   perror("destroy_all_merch: All mearch already destroyed.\n");
+   return;
+ } 
+ 
  do {
    remove_merchendise(store, get_elem_ptr(current->element));
    current = current->next;
@@ -141,7 +150,6 @@ void add_merchendise(webstore_t *store,
   if(store->merch_db == NULL){
     perror("ADD_MERCHENDISE: Uninitizalized Merch-Database,\
             the database has not been initialized.\n");
-    exit(-1); // REMOVE THIS LATER
     return; // ERROR
   }
   // ERROR IF merch_db has key  
@@ -149,12 +157,12 @@ void add_merchendise(webstore_t *store,
 				    ptr_elem(name))){
     perror("ADD_MERCHENDISE: Duplicate Merch, \
             the name is already registered in Merch-Table.\n");
-    exit(-1); // REMOVE THIS LATER
     return; // ERROR
   }
 
   else {    
-    ioopm_list_t *locs = ioopm_linked_list_create();    
+    ioopm_list_t *locs = ioopm_linked_list_create();
+    
     merch_t *new_merch = create_merch(strdup(name), strdup(desc),
 				      price, locs);
 
@@ -288,8 +296,10 @@ char *merch_description(webstore_t *store, char *name){
   // Return the description of merch item
   if (!ioopm_hash_table_has_key(store->merch_db, ptr_elem(name))){
     perror("merch_description: Non existing merch.\n");
+    return "";
   }else if ((name == NULL) || (store == NULL)){
     perror("merch_description: Unallowed NULL argument.\n");
+    return "";
   }
   
   merch_t *data =
@@ -311,15 +321,18 @@ void set_merch_description(webstore_t *store, char *name, char *desc){
   merch_t *data =
     get_elem_ptr(ioopm_hash_table_lookup(store->merch_db,
 					 ptr_elem(name)));            
-  data->desc = desc;
+  free(data->desc);
+  data->desc = strdup(desc);
 }
 
 int merch_price(webstore_t *store, char *name){
   // Return the price of the specified merch name
   if (!ioopm_hash_table_has_key(store->merch_db, ptr_elem(name))){
     perror("merch_price: Non existing merch.\n");
+    return -1;
   }else if ((name == NULL) || (store == NULL)){
     perror("merch_price: Unallowed NULL argument.\n");
+    return -1;
   }
   merch_t *data =
     get_elem_ptr(ioopm_hash_table_lookup(store->merch_db,
@@ -466,10 +479,10 @@ void store_destroy(webstore_t *store){
   
   destroy_arg_opt(store->opt);
 
-  if (!(store->merch_db == NULL))
+  if (store->merch_db == NULL)
     destroy_all_merch(store);
 
-  if (!(store->storage_db == NULL))  
+  if (store->storage_db == NULL)
     destroy_storage(store);
   
   ioopm_hash_table_destroy(store->merch_db);
@@ -635,10 +648,15 @@ void destroy_storage(webstore_t *store){
   if (store == NULL){
     perror("destroy_storage: Webstore is NULL\n");
     return;
-  }  
+  }
+  if (store->storage_db == NULL){
+    perror("destroy_all_merch: Storage DB already free'd.\n");
+    return;
+  }
+
  ioopm_list_t *shelfs  = ioopm_hash_table_keys(store->storage_db);
  ioopm_link_t *current = shelfs->first;
-
+ 
  if (current == NULL){
    perror("destroy_storage:  Storage db is NULL.\n");
    return;
@@ -958,14 +976,20 @@ merch_t *merch_change_locs_function(merch_t *merch_data,
 char *lookup_merch_name(webstore_t *store, int index){ 
   // Return the name of the merch at a specified
   // index in the list returned by hash_table_values
-  if ((store == NULL) || (index <= 0)){
+  if (store == NULL){
     perror("lookup_merch_name: Unallowed NULL argument.\n");
+    return "";
   }  
   ioopm_list_t *list_merch =
-    ioopm_hash_table_values(store->merch_db);
-  
-  if ((index <= 0) || (ioopm_linked_list_size(list_merch))){
-    perror("lookup_merch_name: Impossible index.\n");
+    ioopm_hash_table_values(store->merch_db); 
+
+  if (index < 0){
+    perror("lookup_merch_name: Too Small Index.\n");
+    return "";
+   } 
+  if (((size_t)index >= ioopm_linked_list_size(list_merch))){
+    perror("lookup_merch_name: Too Large index.\n");
+    return "";
   }
   elem_t value_ptr         =
     ioopm_linked_list_get(list_merch, index);
@@ -982,8 +1006,11 @@ bool valid_index(webstore_t *store, int index){
   // the amount of merch in the merch database
   ioopm_list_t *list = ioopm_hash_table_values(store->merch_db);
 
-  if ((index <= 0) || (ioopm_linked_list_size(list))){
-    perror("lookup_merch_name: Impossible index.\n");
+  if ((size_t)index > ioopm_linked_list_size(list)){
+    perror("valid_index: Too Large index.\n");
+  }  
+  if (index < 0){
+    perror("valid_index: Too Small Index.\n");
   }  
   else if(index-1 >= list->size){
     ioopm_linked_list_destroy(list);

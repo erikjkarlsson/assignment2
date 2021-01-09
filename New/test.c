@@ -30,28 +30,53 @@ void test(){
 //passes if there is no memory leaks
 void create_destroy_store(){
   webstore_t *store = store_create();
-  store_destroy(store); 
+  store_destroy(store);
 }
 
 //passes if there is no memory leaks
 void create_destroy_shelf(){
+  webstore_t *store = store_create();
   char *shelf_name = "A21";
   shelf_t *shelf_created = create_shelf(shelf_name, 3);
   CU_ASSERT_EQUAL(shelf_name, shelf_created->shelf);
-  shelf_delete(shelf_created);
+  destroy_shelf(shelf_created);
+  store_destroy(store);
 }
 
-void global_change_shelf_test(){
+void set_shelf_test(){
   webstore_t *store = store_create();
   char *shelf_name = "A21";
   size_t amount = 3; 
   
   add_merchendise(store, "Bike", "A sports bike from Brazil", (size_t)4);
-  shelf_t *shelf_created = create_shelf(shelf_name, 3);
-  global_change_shelf(store, "Bike", amount, shelf_name);
+
+  set_shelf(store, "Bike",shelf_name, amount);
+
+  CU_ASSERT_TRUE(merch_stock(store, "Bike") == amount);
+  increase_stock(store, "Bike", shelf_name, 1);
+  CU_ASSERT_TRUE(merch_stock(store, "Bike") == amount + 1);
+  
+  set_shelf(store, "Bike",  "", 2);
+  CU_ASSERT_FALSE(merch_stock(store, "") == 2);
+  set_shelf(store, "",  "Bike", 2);
+  CU_ASSERT_FALSE(merch_stock(store, "") == 2);
+  store_destroy(store);
 }
 
-void change_existing_shelf(){
+void index_lookup_test(){
+  webstore_t *store = store_create();
+  add_merchendise(store, "Bike", "A sports bike from Brazil", (size_t)4);
+
+  CU_ASSERT_TRUE(valid_index(store, 0));
+  CU_ASSERT_TRUE(valid_index(store, 1));
+  
+ CU_ASSERT_TRUE(STR_EQ("Bike", lookup_merch_name(store, 0)));
+
+ CU_ASSERT_TRUE(STR_EQ("", lookup_merch_name(store, 1)));
+ CU_ASSERT_FALSE(STR_EQ("B", lookup_merch_name(store, 0)));
+   
+ 
+ store_destroy(store);
   
 }
 void num_shelf_validation_test(){
@@ -78,9 +103,17 @@ void test_add_remove_storage(){
   CU_ASSERT_TRUE(storage_contains(store, "A10", "A"));
   CU_ASSERT_TRUE(storage_contains(store, "A10", "B"));
   CU_ASSERT_TRUE(storage_contains(store, "A10", "C"));
- 
-  remove_storage_location(store, "A10");
-  
+
+  add_to_storage(store, "A", "A10");
+  add_to_storage(store, "B", "A10");
+  add_to_storage(store, "C", "A10");
+
+  remove_shelf(store, "A10");
+
+  CU_ASSERT_FALSE(storage_contains(store, "A10", "A"));
+  CU_ASSERT_FALSE(storage_contains(store, "A10", "B"));
+  CU_ASSERT_FALSE(storage_contains(store, "A10", "C"));
+
   store_destroy(store);
   
 }
@@ -97,23 +130,42 @@ void test_add_merch(){
     
   CU_ASSERT_TRUE(STR_EQ(merch_description(store, "Bike"),
 			"A sports bike from Brazil"));
+  set_merch_description(store, "Bike", "x");  
+  CU_ASSERT_TRUE(STR_EQ(merch_description(store, "Bike"),
+			"x"));
 
   CU_ASSERT_TRUE(merch_price(store, "Bike") == (size_t)4);
-
+  set_merch_price(store, "Bike", 2);
+  CU_ASSERT_TRUE(merch_price(store, "Bike") == (size_t)2);
+  
   // --- Car
   CU_ASSERT_TRUE(merch_in_stock(store, "Car"));
   
   CU_ASSERT_TRUE(STR_EQ(merch_description(store, "Car"),
 			"A fast car"));
-  CU_ASSERT_TRUE(merch_price(store, "Car") == (size_t)2);
+  set_merch_description(store, "Car", "x");  
+  CU_ASSERT_TRUE(STR_EQ(merch_description(store, "Car"),
+			"x"));
 
-  // Removal of merch
+  CU_ASSERT_TRUE(merch_price(store, "Car") == (size_t)2);
+  set_merch_price(store, "Car", 4);
+  CU_ASSERT_TRUE(merch_price(store, "Car") == (size_t)4);
+  
   remove_merchendise(store, "Car");
   remove_merchendise(store, "Bike");
 
   CU_ASSERT_FALSE(merch_in_stock(store, "Car"));
   CU_ASSERT_FALSE(merch_in_stock(store, "Bike"));
-  
+
+    
+  CU_ASSERT_FALSE(STR_EQ(merch_description(store, "Car"),
+			"A fast car"));
+  CU_ASSERT_FALSE(merch_price(store, "Car") == (size_t)2);
+
+  CU_ASSERT_FALSE(STR_EQ(merch_description(store, "Bike"),
+			"A sports bike from Brazil"));
+  CU_ASSERT_FALSE(merch_price(store, "Bike") == (size_t)4);
+
   store_destroy(store);
 }
 /////////////////////////////////////////////////////////////
@@ -147,7 +199,9 @@ int main()
       (NULL == CU_add_test(test_suite1, "Add Merch Test",   test_add_merch))   ||
       (NULL == CU_add_test(test_suite1, "Storage Test", test_storage)) ||
       (NULL == CU_add_test(test_suite1, "Locs Test",    test_locs))    ||
-      (NULL == CU_add_test(test_suite1, "Sync Test",    test_sync))){
+      (NULL == CU_add_test(test_suite1, "Set Shelf Test",    set_shelf_test))    ||
+      (NULL == CU_add_test(test_suite1, "Sync Test",    test_sync))    ||
+      (NULL == CU_add_test(test_suite1, "Index Lookup (Misc) Test",    index_lookup_test))){
       CU_cleanup_registry();
       return CU_get_error();
     }
