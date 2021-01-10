@@ -210,7 +210,7 @@ bool valid_command(char *command){
 bool valid_command_webstore(char *command){
   // Check if command is a valid command
   // of ask_question_menu
-  char *string = "SsTtRrGgHhAIi";
+  char *string = "SsTtRrGgHhIi";
   char *ptr = strstr(string, command);
   if (ptr != NULL){//command found    
     return true;

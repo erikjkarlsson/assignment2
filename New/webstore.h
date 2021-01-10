@@ -128,6 +128,8 @@ void destroy_shelf(shelf_t *shelf);
 bool continue_printing();
 bool valid_index(webstore_t *store, int index);
 
+char *get_merch_name_in_storage(webstore_t *store, int nr_merch);
+
 
 //void locs_delete(ioopm_list_t *locs);
 //void merch_delete(merch_t *merch_data);

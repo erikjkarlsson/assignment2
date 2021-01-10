@@ -84,8 +84,7 @@ merch_t *create_merch(char *name, char *desc,
 }
 
 void remove_merchendise(webstore_t *store, char *name){
-  if (!ioopm_hash_table_has_key(store->merch_db,
-				ptr_elem(name))){
+  if (!ioopm_hash_table_has_key(store->merch_db, ptr_elem(name))){
     perror("remove_merchendise: Non existing item, \
             The name to be removed does not exist.\n");
     return; // ERROR
@@ -852,6 +851,7 @@ void show_stock(webstore_t *store){
   ioopm_link_t *name;
   char *current_name;
   int current_stock;
+  int current_nr = 0; 
   
     do {
       char * current_shelf = (char *)get_elem_ptr(shelf->element);
@@ -863,6 +863,8 @@ void show_stock(webstore_t *store){
 	current_stock = merch_stock_on_shelf(store, (char*)current_name,
 					    (char *)current_shelf);      
 	
+	current_nr += 1;
+	printf("No.%d | ", current_nr); 
 	printf("%s",      current_name);
 	printf(" - %dKr", merch_price(store, current_name));
 	
@@ -872,7 +874,46 @@ void show_stock(webstore_t *store){
 	  printf(" IN STOCK");
 
 	printf(" (%dst)",      current_stock);
-	printf("\n %s\n\n",    merch_description(store, current_name));
+	printf("\n        %s\n\n",    merch_description(store, current_name));
+
+	// Next Name
+	name          = name->next;
+      } while (name != NULL);
+
+      // Next shelf
+      shelf         = shelf->next;
+    } while (shelf != NULL);
+
+  ioopm_linked_list_destroy(shelfs);
+
+}
+
+char *get_merch_name_in_storage(webstore_t *store, int nr_merch){
+  
+  ioopm_list_t *shelfs = ioopm_hash_table_keys(store->storage_db);
+
+  if (ioopm_linked_list_size(shelfs) < nr_merch) {
+    perror("  GET MERCH NAME IN STORAGE: Number of merch is invalid .\n");
+    return "";
+  }
+
+  ioopm_link_t *shelf  = shelfs->first;
+  ioopm_link_t *name;
+  char *current_name;
+  int current_stock;
+  int current_nr = 0; 
+  
+    do {
+      char * current_shelf = (char *)get_elem_ptr(shelf->element);
+      name          = get_locations(store, current_shelf)->first;
+      
+      do {
+	current_name  = (char *)get_elem_ptr(name->element);
+	
+	current_nr += 1;
+	if(current_nr == nr_merch){ 
+	  return current_name; 
+	}
 
 	// Next Name
 	name          = name->next;
