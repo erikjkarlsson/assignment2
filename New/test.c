@@ -79,6 +79,7 @@ void index_lookup_test(){
  store_destroy(store);
   
 }
+
 void num_shelf_validation_test(){
   CU_ASSERT_FALSE((!is_shelf("A00")) || (is_shelf("AA0")) ||
 		  (is_shelf("000"))  || (is_shelf("0A0")) ||
@@ -104,12 +105,14 @@ void test_add_remove_storage(){
   CU_ASSERT_TRUE(storage_contains(store, "A10", "B"));
   CU_ASSERT_TRUE(storage_contains(store, "A10", "C"));
   
+  CU_ASSERT_TRUE(ioopm_linked_list_size(get_locations(store, "A10")) == 3);
+
   remove_name_from_shelf(store, "A10", "A");
   remove_name_from_shelf(store, "A10", "B");
   
   CU_ASSERT_FALSE(storage_contains(store, "A10", "A"));
-  CU_ASSERT_TRUE(storage_contains(store, "A10", "B"));
-  CU_ASSERT_FALSE(storage_contains(store, "A10", "C"));
+  CU_ASSERT_FALSE(storage_contains(store, "A10", "B"));
+  CU_ASSERT_TRUE(storage_contains(store, "A10", "C"));
  
   add_to_storage(store, "A", "A10");
   add_to_storage(store, "C", "A10");
