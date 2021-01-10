@@ -35,5 +35,11 @@
   SET_ITEM_LOC(store, "Used Jacket",      "C99", 1);\
   SET_ITEM_LOC(store, "Sandals",          "C00", 36);
 
-
+#define REMOVE_ITEM(store, name_merch) \
+    remove_merchendise(store, name_merch);
+    
 webstore_t *initialize_database();
+
+void new_item(webstore_t *store, char *name, char *desc, size_t price, char *shelf, int storage_amount);
+
+void remove_item(webstore_t *store, char *name);

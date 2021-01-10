@@ -44,15 +44,15 @@ void event_loop_menu(webstore_t *store){
 
 void change_cart_id(webstore_t *store, int new_id){
     if(current_cart_id == 0){
-        puts("There is only one cart avaible!");
+        puts("Det finns bara en tillgänglig kundvagn!");
     }
     
     while(!valid_id(store, new_id)){
-        new_id = ask_question_int("Please enter a valid cart id: \n"); 
+        new_id = ask_question_int("Var vänligen och skriv in ett giltigt id: \n"); 
     }
     
     current_cart_id = new_id; 
-    printf("Your cart id is now: %d\n", current_cart_id); 
+    printf("Det nuvuande kundvagns id:et är : %d\n", current_cart_id); 
 }
 
 void event_loop_cart(webstore_t *store){
@@ -67,22 +67,17 @@ void event_loop_cart(webstore_t *store){
     
     if(*command == 'B' || *command == 'b'){
         if(current_cart_id >= 0){
-            printf("Your current cart id is %d\n", current_cart_id); 
+            printf("Den nuvarande kundvagnens id är %d\n", current_cart_id); 
             list_all_cart_id(store); 
-            int new_id = ask_question_int("Enter a new cart id: \n"); 
+            int new_id = ask_question_int("Skriv in ett nytt id: \n"); 
             change_cart_id(store, new_id); 
         }else{
-            puts("There is no cart avaible!");
+            puts("Det finns ingen tillgänglig kundvagn!");
         }
     }
     
     if(*command == 'L' || *command == 'l'){
         add_to_cart_promt(store, current_cart_id); 
-        /*char *name = ask_question_string("Enter the name of the merch you would like to add to the cart: "); 
-        int merch_amount = ask_question_int("Enter the amount of this merch that you would like to add to the cart: "); 
-        char *merch_name = name; 
-        printf("name: %s", merch_name); 
-        add_to_cart(store, current_cart_id, (char *) merch_name, merch_amount); */
     }
     
     if(*command == 'T' || *command == 't'){
@@ -98,7 +93,7 @@ void event_loop_cart(webstore_t *store){
     }
     if(*command == 'A' || *command == 'a'){
         int cost = calculate_cost(store, current_cart_id);
-        printf("The total cost for cart No.%d is %d:-\n", current_cart_id, cost); 
+        printf("Det totala priset på vara No.%d är %d:-\n", current_cart_id, cost); 
     }
     
     if(*command == 'I' || *command == 'i'){
@@ -113,27 +108,38 @@ void event_loop_webstore(webstore_t *store){
     
     puts(""); 
     if(*command == 'S' || *command == 's'){
-        //skapa en ny kundvagn 
+        puts("--- Create New Merch ---"); 
+        char *name_merch = ask_question_string("Skriv in varans namn: \n");
+        char *desc_merch = ask_question_string("Skriv in beskrivningen för varan: \n");
+        size_t price = ask_question_int("Skriv in priset på varan: \n");
+        char *shelf_name = ask_question_string("Skriv in hyllan som varan ska förvaras på: \n"); 
+        size_t amount = ask_question_int("skriv in mängden av varan som ska förvaras på hyllan: \n"); 
+        
+        new_item(store, name_merch, desc_merch, price, shelf_name, amount);
+
     }
-    if(*command == 'L' || *command == 'l'){
-        //lägga till ett item i kundvagnen; 
-    }
+    
     if(*command == 'T' || *command == 't'){
-        //Ta bort ett item i kundvagnen
+        show_stock(store);
+        int nr_merch = ask_question_int("Skriv in nummret på varan du vill ta bort från lagret: \n");
+        //bool hej = ioopm_hash_table_has_key(store->merch_db, ptr_elem(name_merch)); 
+        //bool hej = merch_in_stock(store, name_merch);
+        //printf("bool:%d", hej); 
+        //remove_shelf(store, "A10");
+        char *name_merch = get_merch_name_in_storage(store, nr_merch); 
+        printf("Du har valt att ta bort varan med namet: %s\n", name_merch); 
+        remove_item(store, name_merch);
     }
     if(*command == 'R' || *command == 'r'){
         //Redigera ett item i kundvagnen
     }
     
     if(*command == 'H' || *command == 'h'){
-        //lista alla items i kundvagnen
+        show_stock(store);
     }
     
     if(*command == 'G' || *command == 'g'){
-        //Ångra senaste ändringen
-    }
-    if(*command == 'A' || *command == 'a'){
-        exit(0);
+        puts("OBS! Den här funktionen har ej blivit implementerad ännu!");
     }
     
     if(*command == 'I' || *command == 'i'){

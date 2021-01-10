@@ -270,7 +270,7 @@ void display_cart(cart_t *cart){ //id?
     printf("------ Cart No.%d ------\n", cart->id);
     
     for (int i = 0; i < no_names; ++i) {
-        printf("No.%d | Name: %s, Amount: %d\n", (i+1), kv_array[i].key, kv_array[i].value);
+        printf("No.%d | Namn: %s, Mängd: %d\n", (i+1), kv_array[i].key, kv_array[i].value);
     }
     
     ioopm_linked_list_destroy(names);
@@ -333,21 +333,21 @@ bool merch_in_cart(cart_t *cart, char *merch_name){
 
 void add_to_cart_promt(webstore_t *store, int id){
     list_merchandise(store); 
-    int nr_merch  = ask_question_int("Enter the number of the merch you would like to add to the cart: "); 
+    int nr_merch  = ask_question_int("Skriv in nummret på varan som ni vill lägga till i kundvagnen: "); 
     char *merch_to_add_name = lookup_merch_name(store, nr_merch-1);
-    int merch_amount = ask_question_int("Enter the amount of this merch that you would like to add to the cart: "); 
+    int merch_amount = ask_question_int("Skriv in mängden varan som ni vill lägga till i kundvagnen: "); 
     add_to_cart(store, id, merch_to_add_name, merch_amount); 
 }
 
 void remove_from_cart_promt(webstore_t *store, int id){
     if(cart_is_empty(get_cart(store,id))){
-        puts("The cart is empty! There is nothing to remove!"); 
+        puts("Kundvagnen är tom!"); 
         return;
     }else{
         display_cart(get_cart(store,id)); 
-        int nr_merch  = ask_question_int("Enter the number of the merch you would like to remove from the cart: "); 
+        int nr_merch  = ask_question_int("Skriv in nummret på varan som ni vill ta bort från i kundvagnen: "); 
         char *merch_name = get_merch_name_in_cart(get_cart(store,id), nr_merch);
-        int merch_amount = ask_question_int("Enter the amount of this merch that you would like to remove from the cart: "); 
+        int merch_amount = ask_question_int("Skriv in den mängden varan som ni vill ta bort från kundvagnen: "); 
         remove_from_cart(store, id, merch_name, merch_amount); 
     }
 }
