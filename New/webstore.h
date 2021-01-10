@@ -101,7 +101,7 @@ size_t increase_stock(webstore_t *store, char *name,
 void show_stock(webstore_t *store);
 void rename_merch(webstore_t *store, char *name, char *new_name);
 
-int merch_stock(webstore_t *store, char *name);
+size_t merch_stock(webstore_t *store, char *name);
 void set_merch_stock(webstore_t *store, char *name,
 		     size_t amount, char* location);
 
