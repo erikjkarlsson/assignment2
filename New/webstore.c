@@ -584,11 +584,12 @@ void list_shelfs(webstore_t *store, char *name){
 
   shelf_t *shelf = get_elem_ptr(ioopm_iterator_current(iter));
 
-  printf("Shelfs containing'%s':\n", name);
+  printf("--- Shelfs containing '%s' ---\n", name);
   
   for (int i = 1;; i++){
     
-    printf("Shelf %s : %ld\n",
+    printf("No. %d | Shelf %s : %ldst\n",
+	   i,
 	   shelf->shelf,
 	   shelf->amount);
       
@@ -599,6 +600,39 @@ void list_shelfs(webstore_t *store, char *name){
     }else { break; }    
   }    
   ioopm_iterator_destroy(iter);
+}
+
+char *get_shelf_after_shelf_nr(webstore_t *store, int shelf_nr, char *name){
+  
+  merch_t *merch_data         =
+    get_elem_ptr(ioopm_hash_table_lookup(store->merch_db,
+					 ptr_elem(name)));  
+					 
+  ioopm_list_t *merch_data_locs    = merch_data->locs;
+  
+  if(ioopm_linked_list_size(merch_data_locs)<shelf_nr){
+    return NULL; 
+  }
+  ioopm_list_iterator_t *iter = ioopm_list_iterator(merch_data_locs);
+
+  shelf_t *shelf = get_elem_ptr(ioopm_iterator_current(iter));
+  
+  for (int i = 1;; i++){
+    if(shelf_nr == i){
+      ioopm_iterator_destroy(iter);
+      return shelf->shelf; 
+    }
+    
+    if(ioopm_iterator_has_next(iter)){
+        
+      shelf   = get_elem_ptr(ioopm_iterator_next(iter));
+
+    }else { break; }    
+  }    
+  
+  return NULL; 
+  ioopm_iterator_destroy(iter);
+  
 }
 
 /// /// /// /// /// /// /// /// /// /// /// /// /// /// 
@@ -861,7 +895,7 @@ void show_stock(webstore_t *store){
       // Next shelf
       shelf         = shelf->next;
     } while (shelf != NULL);
-
+    
   ioopm_linked_list_destroy(shelfs);
 
 }
@@ -870,15 +904,9 @@ char *get_merch_name_in_storage(webstore_t *store, int nr_merch){
   
   ioopm_list_t *shelfs = ioopm_hash_table_keys(store->storage_db);
 
-  if (ioopm_linked_list_size(shelfs) < nr_merch) {
-    perror("  GET MERCH NAME IN STORAGE: Number of merch is invalid .\n");
-    return "";
-  }
-
   ioopm_link_t *shelf  = shelfs->first;
   ioopm_link_t *name;
   char *current_name;
-  int current_stock;
   int current_nr = 0; 
   
     do {
@@ -890,6 +918,7 @@ char *get_merch_name_in_storage(webstore_t *store, int nr_merch){
 	
 	current_nr += 1;
 	if(current_nr == nr_merch){ 
+	  ioopm_linked_list_destroy(shelfs);
 	  return current_name; 
 	}
 
@@ -900,8 +929,9 @@ char *get_merch_name_in_storage(webstore_t *store, int nr_merch){
       // Next shelf
       shelf         = shelf->next;
     } while (shelf != NULL);
-
-  ioopm_linked_list_destroy(shelfs);
+    
+    return NULL; 
+    ioopm_linked_list_destroy(shelfs);
 }
 
 /*

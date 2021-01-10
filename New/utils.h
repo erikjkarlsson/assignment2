@@ -32,5 +32,6 @@ int    ask_question_int(char *question);
 char *ask_question_menu_cart();
 int ask_question_menu();
 char *ask_question_menu_webstore();
+int ask_question_edit(); 
 
 #endif

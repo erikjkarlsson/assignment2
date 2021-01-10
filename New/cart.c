@@ -230,9 +230,100 @@ int calculate_cost(webstore_t *store, int id){
 
     return total_price;
 }
+        
+char *shelf_with_most_stock(webstore_t *store, char *name){
+    ioopm_list_t *locs = merch_locs(store, name);
+    
+    shelf_t *current_shelf;
+    int current_amount;
+    int most_stock = 0; 
+    shelf_t *shelf_max = NULL;  
+    size_t no_locs = ioopm_linked_list_size(locs);
+    
+    printf("no_locs:%d\n", no_locs);
+    if(no_locs == 1){
+        
+        shelf_max = ioopm_linked_list_get(locs, 0).p;
+
+        
+    }else{
+            
+        ioopm_list_iterator_t *iter = ioopm_list_iterator(locs); 
+        
+        for (int i = 0; i < no_locs; i++) {
+            current_shelf = get_elem_ptr(ioopm_iterator_current(iter));
+            current_amount = merch_stock_on_shelf(store, name, current_shelf->shelf);
+            
+            if(current_amount > most_stock){
+                most_stock = current_amount; 
+                shelf_max = current_shelf; 
+            }
+            if(ioopm_iterator_has_next(iter)){
+                ioopm_iterator_next(iter); 
+            }
+        }
+        ioopm_iterator_destroy(iter);
+    }
+    
+    return shelf_max->shelf; 
+    ioopm_linked_list_destroy(locs);
+}
+
+void change_stock_in_webstore(webstore_t *store, char *current_name, int current_amount){
+    char *location; 
+    while(true){
+        location = shelf_with_most_stock(store, current_name); 
+        printf("location: %s\n", location); 
+        printf("current_amount: %d\n", current_amount); 
+        if(merch_stock_on_shelf(store, current_name, location) >= current_amount){
+            printf("merch_stock_on_shelf(store, current_name, location): %d\n", merch_stock_on_shelf(store, current_name, location)); 
+            int new_stock = (merch_stock_on_shelf(store, current_name, location)-current_amount); 
+            printf("stock: %d\n", new_stock); 
+            printf("location: %s\n", location); 
+            set_merch_stock(store, current_name, new_stock, location);
+            break; 
+        }else{
+            current_amount = current_amount - merch_stock_on_shelf(store, current_name, location);
+            printf("merch_stock_on_shelf(store, current_name, location): %d\n", merch_stock_on_shelf(store, current_name, location)); 
+            printf("current_amount after else: %d\n", current_amount); 
+            set_merch_stock(store, current_name, 0, location);
+        }
+    }
+}
 
 void checkout(webstore_t *store, int id){
+    cart_t *current_cart = get_cart(store, id);
     
+    char *current_name;
+    int current_amount;
+    ioopm_list_t *names = ioopm_hash_table_keys(current_cart->merch_in_cart);
+    
+    if(cart_size(current_cart) == 1){
+        current_name = get_elem_str(ioopm_linked_list_get(names, 0));
+        current_amount = amount_of_merch_in_cart(current_cart, current_name);
+        change_stock_in_webstore(store, current_name, current_amount); 
+    }
+    
+    else{
+        
+        size_t no_names = ioopm_linked_list_size(names);
+        
+        ioopm_list_iterator_t *iter_n = ioopm_list_iterator(names); 
+
+        for (int i = 0; i < no_names; i++) {
+                current_name = get_elem_str(ioopm_iterator_current(iter_n));
+                current_amount = amount_of_merch_in_cart(current_cart, current_name);
+                change_stock_in_webstore(store, current_name, current_amount); 
+                
+                if(ioopm_iterator_has_next(iter_n)){
+                    ioopm_iterator_next(iter_n); 
+                }
+            }
+        
+        ioopm_iterator_destroy(iter_n);
+    }
+    ioopm_linked_list_destroy(names);
+    remove_cart(store, current_cart->id); 
 }
 
 void display_cart(cart_t *cart){ //id?

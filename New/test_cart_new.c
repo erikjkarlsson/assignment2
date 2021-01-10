@@ -280,6 +280,61 @@ void display_cart_test(){
   store_destroy(store);
 }
 
+void checkout_test(){
+  webstore_t *store = store_create();  // --- Load hardcoded test merch
+  INIT_DATABASE(store);
+  
+  cart_t *cart = create_cart(store);
+    
+  add_to_cart(store, cart->id, "Apple", 10); 
+  add_to_cart(store, cart->id, "Orange", 8); 
+  add_to_cart(store, cart->id, "Coconut", 1); 
+  
+  int a_before = merch_stock_on_shelf(store, "Apple", "F12"); 
+  int o_before = merch_stock_on_shelf(store, "Orange", "F12");
+  int c_before = merch_stock_on_shelf(store, "Coconut", "F12");
+  
+  //show_stock(store); 
+  checkout(store, cart->id); 
+  
+  CU_ASSERT_EQUAL(merch_stock_on_shelf(store, "Apple", "F12"), a_before-10); 
+  CU_ASSERT_EQUAL(merch_stock_on_shelf(store, "Orange", "F12"), o_before-8); 
+  CU_ASSERT_EQUAL(merch_stock_on_shelf(store, "Coconut", "F12"), c_before-1); 
+
+  store_destroy(store);
+}
+
+void checkout_multi_locs_test(){
+  webstore_t *store = store_create();  // --- Load hardcoded test merch
+  INIT_DATABASE(store);
+  
+  //set_shelf(store, "Apple", "C99", 12);
+  set_shelf(store, "Coconut", "M01", 10);
+
+  
+  cart_t *cart = create_cart(store);
+    
+  //add_to_cart(store, cart->id, "Apple", 10); 
+  //add_to_cart(store, cart->id, "Orange", 8); 
+  add_to_cart(store, cart->id, "Coconut", 20); 
+  
+  //int a_before = merch_stock_on_shelf(store, "Apple", "F12"); 
+  //int o_before = merch_stock_on_shelf(store, "Orange", "F12");
+  int c_before = merch_stock_on_shelf(store, "Coconut", "F12");
+  
+  show_stock(store); 
+  checkout(store, cart->id); 
+  show_stock(store); 
+  
+  //CU_ASSERT_EQUAL(merch_stock_on_shelf(store, "Apple", "F12"), a_before-10); 
+  //CU_ASSERT_EQUAL(merch_stock_on_shelf(store, "Orange", "F12"), o_before-8); 
+  //printf("%d\n", merch_stock_on_shelf(store, "Coconut", "F12")); 
+  CU_ASSERT_EQUAL(merch_stock_on_shelf(store, "Coconut", "F12"), 0); 
+  printf("%d\n", merch_stock_on_shelf(store, "Coconut", "M01")); 
+  CU_ASSERT_EQUAL(merch_stock_on_shelf(store, "Coconut", "M01"), 10-(c_before+15)); 
+
+  store_destroy(store);
+}
 
 /////////////////////////////////////////////////////////////
 int main()
@@ -310,7 +365,9 @@ int main()
      
      (NULL == CU_add_test(test_suite1, "Calculate Cost Test",   calculate_cost_test)) ||
      (NULL == CU_add_test(test_suite1, "Calculate Cost Of Empty Cart Test",   calculate_cost_empty_cart)) ||
-     (NULL == CU_add_test(test_suite1, "Display Test",   display_cart_test)) 
+     (NULL == CU_add_test(test_suite1, "Display Test",   display_cart_test)) ||
+     (NULL == CU_add_test(test_suite1, "Checkout Test",   checkout_test)) ||
+     (NULL == CU_add_test(test_suite1, "Checkout Multi Locs Test",   checkout_multi_locs_test))
      )
      {
       CU_cleanup_registry();

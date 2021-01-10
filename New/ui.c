@@ -103,6 +103,34 @@ void event_loop_cart(webstore_t *store){
     puts(""); 
 }
 
+void event_edit(webstore_t *store, char *name_merch){
+    int command = ask_question_edit(); 
+    
+    if(command == 1){
+        char *desc_merch = ask_question_string("\n Skriv in den nya beskrivningen för varan: \n");
+        set_merch_description(store, name_merch, desc_merch);
+    }
+    if(command == 2){
+        size_t price = ask_question_int("\n Skriv in det nya priset på varan: \n");
+        set_merch_price(store, name_merch, price);
+    }
+    if(command == 3){
+        list_shelfs(store, name_merch); 
+        puts(""); 
+        int nr_shelf = ask_question_int("Skriv in nummret på den hyllan där du vill ändra varans stock: \n");
+        char *location = get_shelf_after_shelf_nr(store, nr_shelf, name_merch);
+        
+        while(location == NULL){
+            puts("\n Skriv in ett nummer på en giltig hylla:"); 
+            list_shelfs(store, name_merch); 
+            nr_shelf = ask_question_int("\n Skriv in nummret på den hyllan där du vill ändra varans stock: \n");
+            location = get_shelf_after_shelf_nr(store, nr_shelf, name_merch);
+        }
+        size_t amount = ask_question_int("Skriv in den nya mängden av varan som ska förvaras på hyllan: \n"); 
+        set_merch_stock(store, name_merch, amount, location);
+    }
+}
+
 void event_loop_webstore(webstore_t *store){
     char *command = ask_question_menu_webstore();
     
@@ -122,16 +150,21 @@ void event_loop_webstore(webstore_t *store){
     if(*command == 'T' || *command == 't'){
         show_stock(store);
         int nr_merch = ask_question_int("Skriv in nummret på varan du vill ta bort från lagret: \n");
-        //bool hej = ioopm_hash_table_has_key(store->merch_db, ptr_elem(name_merch)); 
-        //bool hej = merch_in_stock(store, name_merch);
-        //printf("bool:%d", hej); 
-        //remove_shelf(store, "A10");
         char *name_merch = get_merch_name_in_storage(store, nr_merch); 
         printf("Du har valt att ta bort varan med namet: %s\n", name_merch); 
         remove_item(store, name_merch);
     }
     if(*command == 'R' || *command == 'r'){
-        //Redigera ett item i kundvagnen
+        show_stock(store);
+        int nr_merch = ask_question_int("Skriv in nummret på varan du vill redigera i lagret: \n");
+        char *name_merch = get_merch_name_in_storage(store, nr_merch);
+        
+        if(name_merch != NULL){
+            printf("Du har valt att redigera varan med namet: %s\n", name_merch); 
+            event_edit(store, name_merch);
+        }else{
+            puts("Du skrev inte in ett gilitigt nummer! Avbryter!");
+        }
     }
     
     if(*command == 'H' || *command == 'h'){

@@ -244,6 +244,15 @@ int ask_question_menu(){
   return command; 
 }
 
+int ask_question_edit(){
+  puts("--- Redigera Vara ---"); 
+  int command = ask_question_int("[1] Ändra beskrivning \n[2] Ändra pris \n[3] Ändra stocken\n");
+  while(!valid_int(command)){
+    command = ask_question_int("Använd ett giltigt kommando: \n");
+  }
+  return command; 
+}
+
 char *ask_question_menu_webstore(){
   puts("--- Meny för Webstore ---"); 
   char *command = ask_question_string("[S]kapa en ny vara och lägg till den \n[T]a bort en vara \n[R]edigera en vara \nÅn[g]ra senaste ändringen \nLista [h]ela storage \nT[i]llbaka till huvudmenyn\n");
