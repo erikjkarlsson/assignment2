@@ -159,44 +159,4 @@ bool valid_index(webstore_t *store, int index);
 //For simplicity, there is no limit to the amount of storage locations nor is there a limit on the number of items a location can hold.
 //void replenish();
 
-//Creates a new shopping cart in the system which is empty.
-//A shopping cart represents a possible order.
-//Adding/removing merch to/from
-//a cart does not change the stock for that merch – stocks are changed only during checkout.
-//Shopping carts are identified by a monotonically increasing number,
-//i.e., the number of the i’th shopping cart created is i, regardless of how many shopping carts have been removed.
-//void create_cart();
-
-//Removes a shopping cart from the system.
-//void remove_cart();
-
-// Adds some quantity of a merch to a specific shopping cart.
-//All possible orders in the system must be fullfillable.
-//For example, we may only have one or more carts with 12 items of a merge M
-//if the total stock of M in the system at least 12.
-//Thus, if all users go to checkout at the same time, they should all succeed.
-void add_to_cart();
-
-//Removes zero or more items of some merch from a particular cart.
-void remove_from_cart();
-
-//Calculate the cost of a shopping cart.
-//If a cart holds 2 items of a merch M1 with a price of 50 and 8 items of a merch M2
-//with a price of 3 the cost of the cart is 2×50+8×3=124.
-void calculate_cost();
-
-//This action represent the user going through with a purchase of all the items in a particular shopping cart.
-//Decrease the stock for the merches in the cart.
-//Remove the shopping cart from the system.
-void checkout();
-
-//Undos an action.
-//Multiple undos should be supported (i.e., pressing undo N times undos the N last actions for N≤16.)
-//You cannot “undo an undo” (aka “redo”).
-void undo();
-
-//Quits the program.
-void Quit();
-
-
 #endif

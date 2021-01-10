@@ -29,6 +29,8 @@ char  *ask_question_string(char *question);
 double ask_question_float(char *question);
 int    ask_question_int_safe(char *question, int buffer_size);
 int    ask_question_int(char *question);
-char *ask_question_menu();
+char *ask_question_menu_cart();
+int ask_question_menu();
+char *ask_question_menu_webstore();
 
 #endif

@@ -63,13 +63,6 @@ merch_t *create_merch(char *name, char *desc, size_t price, ioopm_list_t *locs);
 shelf_t *create_shelf(char *shelf, size_t amount);
 void destroy_shelf(shelf_t *shelf);
 
-
-
-
-
-
-
-
   
 /// /// /// /// /// /// /// /// /// /// /// /// /// /// 
 // MERCH                                            ///
@@ -566,7 +559,6 @@ void display_shelf(webstore_t *store, char *shelf){
     perror("display_storage: Unallowed NULL arguments.\n");
     return; 
   }  
-
   // Names stored at requested shelf location
   ioopm_list_t *db_names = get_locations(store, shelf);
   ioopm_link_t *db_item = db_names->first;
@@ -603,6 +595,29 @@ void list_shelfs(webstore_t *store, char *name){
     if(ioopm_iterator_has_next(iter)){
         
       shelf   = get_elem_ptr(ioopm_iterator_next(iter));
+
+    }else { break; }    
+  }    
+  ioopm_iterator_destroy(iter);
+}
+void  remove_name_from_shelf(webstore_t *store, char *shelf, char *name){
+  ioopm_list_t *list         =
+    ioopm_hash_table_lookup(store->storage_db,
+			    ptr_elem(shelf)).p;  
+  ioopm_list_iterator_t *iter = ioopm_list_iterator(list);
+
+  char *current_name = get_elem_ptr(ioopm_iterator_current(iter));
+  
+  for (int i = 1;; i++){
+    
+    if(STR_EQ(current_name, name)){
+      ioopm_iterator_remove(iter);
+      ioopm_iterator_destroy(iter);
+      return;
+    }
+    if(ioopm_iterator_has_next(iter)){
+        
+      shelf = get_elem_ptr(ioopm_iterator_next(iter));
 
     }else { break; }    
   }    

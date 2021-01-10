@@ -20,9 +20,16 @@ run:
 
 dbgt: dbg
 	valgrind --leak-check=full ./dbg
+
 cart:
 	gcc cart.c utils.c common.c hash_table.c list_linked.c webstore.c iterator.c
 
+ui:
+	gcc ui.c merch.c cart.c utils.c common.c hash_table.c list_linked.c webstore.c iterator.c
+
+run_ui: ui
+	./a.out
+	
 clean:
 	rm ./main
 	@echo "Removed Binary"
@@ -36,6 +43,13 @@ test:
 	hash_table.c webstore.c utils.c  test.c -lcunit  -o ./bin
 
 memtest: test
+	valgrind --leak-check=full ./bin
+	
+test_cart: 
+	gcc -g -Wall -std=c11 list_linked.c common.c iterator.c \
+	hash_table.c webstore.c utils.c cart.c merch.c test_cart_new.c -lcunit  -o ./bin
+
+memtest_cart: test_cart
 	valgrind --leak-check=full ./bin
 
 runl: main

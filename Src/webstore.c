@@ -180,7 +180,7 @@ merch_t *merch_change_locs_function(merch_t *merch_data,
   return merch_data;
 }
 
-void merchendise_new_internal_name(webstore_t *store,
+void xebstore_t *store,
 				   char *name,
 				   char *new_name){
   merchendise_modify(store, (char*)name,
@@ -679,7 +679,7 @@ void change_shelf(webstore_t *store, char *name,
   ioopm_link_t *merch_locs = merch_data->locs->first;
    
   if(merch_data->locs == NULL){ 
-    perror("change_shelf: Merch Database is NULL.\n"); return;    
+    perror("change_shelf: Merch Database is NULL.\n"); return;  
   }if(amount < 0){
     perror("change_shelf: Negative stock.\n"); return;
   }
