@@ -178,7 +178,7 @@ void set_merch_stock(webstore_t *store, char *name,
 			    ptr_elem(name));
   
   merch_t      *merch_data = get_elem_ptr(elem_data);
-  merch_data->total_amount += amount;
+
   ioopm_link_t *merch_data_locs = merch_data->locs->first;
    
   if (merch_data->locs->size > 0){
@@ -188,16 +188,17 @@ void set_merch_stock(webstore_t *store, char *name,
 
       if (STR_EQ(shelf_data->shelf, location)){
 	// Found existing shelf, set new amount, and exit
-	shelf_data->amount = amount;
+	merch_data->total_amount += (merch_data->total_amount + amount) - shelf_data->amount;
+	
 	return;
       }     
 
       merch_data_locs = merch_data_locs->next;
            
     } while (merch_data_locs != NULL);
-
+    
   }
-
+  merch_data->total_amount += amount;
   shelf_t *new_shelf = create_shelf(location, amount);  
   ioopm_linked_list_append(merch_data->locs,
 			   ptr_elem(new_shelf));
@@ -791,7 +792,7 @@ void set_shelf(webstore_t *store, char *name,
 
   set_merch_stock(store, name, amount, shelf);
 
-  //  sync_merch_stock(store, name);
+  sync_merch_stock(store, name);
 }
 
 bool sync_merch_stock(webstore_t *store, char *name){
