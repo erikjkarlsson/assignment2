@@ -58,6 +58,10 @@ bool cart_is_empty(cart_t *cart){
     return ioopm_hash_table_is_empty(cart->merch_in_cart);
 }
 
+size_t cart_size(cart_t *cart){
+    return ioopm_hash_table_size(cart->merch_in_cart);
+}
+
 ///
 /*FUNCTIONS*/
 ///
@@ -127,15 +131,20 @@ void add_to_cart(webstore_t *store, int id, char *merch_to_add_name, int amount)
     }
 }
 
-void remove_from_cart(webstore_t *store, int id, int nr_merch, int amount_to_remove){
+void remove_from_cart(webstore_t *store, int id, char *merch_to_remove_name, int amount_to_remove){
     
+    cart_t *current_cart = get_cart(store, id);
+    
+    if(!merch_in_cart(current_cart, merch_to_remove_name)){
+        perror("REMOVE FROM CART: There is no such merch in the cart.\n");
+        return; 
+    }
     if(!valid_id(store,id)){
         perror("REMOVE FROM CART: The id of the cart is invalid.\n");
         return; 
     }
     
-    char *merch_to_remove_name = lookup_merch_name(store, nr_merch);
-    cart_t *current_cart = get_cart(store, id);
+    //char *merch_to_remove_name = lookup_merch_name(store, nr_merch);
     
     int amount_of_merch =  amount_of_merch_in_cart(current_cart, merch_to_remove_name);
     
@@ -147,8 +156,8 @@ void remove_from_cart(webstore_t *store, int id, int nr_merch, int amount_to_rem
     
     //if the amount of merch in the cart is 0 then remove the merch, else just decrease the amount
     if(amount_of_merch == amount_to_remove){
-        char *removed = get_elem_str(ioopm_hash_table_remove(current_cart->merch_in_cart, str_elem(merch_to_remove_name)));
-        printf("You have removed %s from cart with id %d", removed, current_cart->id);
+        ioopm_hash_table_remove(current_cart->merch_in_cart, str_elem(merch_to_remove_name));;
+        //printf("You have removed %s from cart with id %d", removed, current_cart->id);
     }else{
         ioopm_hash_table_insert(current_cart->merch_in_cart, str_elem(merch_to_remove_name), int_elem(amount_of_merch-amount_to_remove)); 
     }
@@ -166,38 +175,52 @@ int calculate_cost(webstore_t *store, int id){
     
     //if the cart is empty
     if(cart_is_empty(current_cart)){
+        puts("empoty!"); 
         return total_price;
     }
     
+
     ioopm_list_t *names = ioopm_hash_table_keys(current_cart->merch_in_cart);
     ioopm_list_t *amounts = ioopm_hash_table_values(current_cart->merch_in_cart);
-    
-    size_t no_names = ioopm_linked_list_size(names);
-    
-    ioopm_list_iterator_t *iter_n = ioopm_list_iterator(names); 
-    ioopm_list_iterator_t *iter_a = ioopm_list_iterator(amounts);
     
     int price; 
     char *current_name;
     int current_amount;
     
-    //checks the price for each merch in the cart
-    //and multiplies it with the amount
-    for (int i = 0; i < no_names; i++) {
-        if(ioopm_iterator_has_next(iter_n) && ioopm_iterator_has_next(iter_a)){
-            current_name = get_elem_str(ioopm_iterator_next(iter_n));
-            current_amount = get_elem_int(ioopm_iterator_next(iter_a));
-            
-            price = merch_price(store, current_name);
-            total_price += (price*current_amount);
-        }
+    if(cart_size(current_cart) == 1){
+        price = merch_price(store, get_elem_str(ioopm_linked_list_get(names, 0)));
+        current_amount = get_elem_int(ioopm_linked_list_get(amounts, 0));
+        total_price = price * current_amount; 
+    }
+    
+    else{
+        size_t no_names = ioopm_linked_list_size(names);
+        
+        ioopm_list_iterator_t *iter_n = ioopm_list_iterator(names); 
+        ioopm_list_iterator_t *iter_a = ioopm_list_iterator(amounts);
+        
+        //checks the price for each merch in the cart
+        //and multiplies it with the amount
+        for (int i = 0; i < no_names; i++) {
+                current_name = get_elem_str(ioopm_iterator_current(iter_n));
+                current_amount = get_elem_int(ioopm_iterator_current(iter_a));
+                price = merch_price(store, current_name);
+                total_price += (price*current_amount);
+                
+                if(ioopm_iterator_has_next(iter_n) && ioopm_iterator_has_next(iter_a)){
+                    ioopm_iterator_next(iter_n); 
+                    ioopm_iterator_next(iter_a);
+                }
+
+            }
+        
+        ioopm_iterator_destroy(iter_n);
+        ioopm_iterator_destroy(iter_a);
     }
     
     ioopm_linked_list_destroy(names);
     ioopm_linked_list_destroy(amounts);
-    ioopm_iterator_destroy(iter_n);
-    ioopm_iterator_destroy(iter_a);
-    
+
     return total_price;
 }
 
@@ -206,6 +229,13 @@ void checkout(webstore_t *store, int id){
 }
 
 void display_cart(cart_t *cart){ //id?
+
+    if(cart_is_empty(cart)){
+        printf("------ Cart No.%d ------\n", cart->id);
+        puts("Is Empty!"); 
+        return;
+    }
+    
     ioopm_list_t *names = ioopm_hash_table_keys(cart->merch_in_cart);
     ioopm_list_t *amounts = ioopm_hash_table_values(cart->merch_in_cart);
     size_t no_names = ioopm_linked_list_size(names);
@@ -216,22 +246,24 @@ void display_cart(cart_t *cart){ //id?
     entry_ht_t kv_array[no_names];
     
     elem_t current_name;
-    elem_t current_amount; 
+    elem_t current_amount;
+    
     for (int i = 0; i < no_names; i++) {
+        current_name = ioopm_iterator_current(iter_n);
+        current_amount = ioopm_iterator_current(iter_a);
+        entry_ht_t keyval = (entry_ht_t) {.key = (char *) current_name.p, .value = current_amount.i};
+        kv_array[i] = keyval;
         if(ioopm_iterator_has_next(iter_n) && ioopm_iterator_has_next(iter_a)){
-          current_name = ioopm_iterator_next(iter_n);
-          current_amount = ioopm_iterator_next(iter_a);
-          entry_ht_t keyval = (entry_ht_t) {.key = (char *) current_name.p, .value = current_amount.i};
-          kv_array[i] = keyval;
+            ioopm_iterator_next(iter_n); 
+            ioopm_iterator_next(iter_a);
         }
     }
     
     sort_keys(kv_array, no_names);
+    printf("------ Cart No.%d ------\n", cart->id);
     
-    printf("------ Cart No.%d ------", cart->id);
     for (int i = 0; i < no_names; ++i) {
         printf("| Name: %s, Amount: %d\n", kv_array[i].key, kv_array[i].value);
-        free(kv_array[i].key);
     }
     
     ioopm_linked_list_destroy(names);
@@ -245,7 +277,7 @@ size_t nr_of_merch_in_cart(cart_t *cart){
     return ioopm_hash_table_size(cart->merch_in_cart);
 }
 
-int get_amount_of_merch(cart_t *cart, char *merch_name){
+int get_amount_of_merch_in_cart(cart_t *cart, char *merch_name){
     return get_elem_int(ioopm_hash_table_lookup(cart->merch_in_cart, str_elem(merch_name))); 
 }
 

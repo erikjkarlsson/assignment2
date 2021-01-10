@@ -28,7 +28,7 @@ void remove_cart(webstore_t *store, int id);
 
 void add_to_cart(webstore_t *store, int id, char *merch_to_add_name, int amount);
 
-void remove_from_cart(webstore_t *store, int id, int nr_merch, int amount_to_remove);
+void remove_from_cart(webstore_t *store, int id, char *merch_to_remove_name, int amount_to_remove);
 
 int calculate_cost(webstore_t *store, int id);
 
@@ -42,6 +42,6 @@ void display_cart(cart_t *cart);
 
 size_t nr_of_merch_in_cart(cart_t *cart);
 
-int get_amount_of_merch(cart_t *cart, char *merch_name); 
+int get_amount_of_merch_in_cart(cart_t *cart, char *merch_name); 
 
 bool merch_in_cart(cart_t *cart, char *merch_name);
