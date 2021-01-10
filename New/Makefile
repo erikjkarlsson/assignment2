@@ -8,9 +8,6 @@ main: merch.h main.c webstore.c webstore.h merch.c merch.h
 	@echo "::::::::::: Finished :::::::::::"
 
 
-min:   main.c webstore.c webstore.h 
-	gcc -g -Wall -pedantic -std=c11 list_linked.c common.c iterator.c \
-	hash_table.c webstore.c utils.c main.c -o ./bin
 
 dbg: debug.c webstore.c webstore.h merch.h merch.c
 	gcc -g -Wall -pedantic -std=c11 list_linked.c common.c iterator.c \
