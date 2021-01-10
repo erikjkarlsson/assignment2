@@ -79,6 +79,7 @@ void index_lookup_test(){
  store_destroy(store);
   
 }
+
 void num_shelf_validation_test(){
   CU_ASSERT_FALSE((!is_shelf("A00")) || (is_shelf("AA0")) ||
 		  (is_shelf("000"))  || (is_shelf("0A0")) ||
@@ -103,9 +104,17 @@ void test_add_remove_storage(){
   CU_ASSERT_TRUE(storage_contains(store, "A10", "A"));
   CU_ASSERT_TRUE(storage_contains(store, "A10", "B"));
   CU_ASSERT_TRUE(storage_contains(store, "A10", "C"));
+  
+  CU_ASSERT_TRUE(ioopm_linked_list_size(get_locations(store, "A10")) == 3);
 
+  remove_name_from_shelf(store, "A10", "A");
+  remove_name_from_shelf(store, "A10", "B");
+  
+  CU_ASSERT_FALSE(storage_contains(store, "A10", "A"));
+  CU_ASSERT_FALSE(storage_contains(store, "A10", "B"));
+  CU_ASSERT_TRUE(storage_contains(store, "A10", "C"));
+ 
   add_to_storage(store, "A", "A10");
-  add_to_storage(store, "B", "A10");
   add_to_storage(store, "C", "A10");
 
   remove_shelf(store, "A10");
@@ -200,7 +209,8 @@ int main()
       (NULL == CU_add_test(test_suite1, "Add Merch Test",   test_add_merch))   ||
       (NULL == CU_add_test(test_suite1, "Storage Test", test_storage)) ||
       (NULL == CU_add_test(test_suite1, "Locs Test",    test_locs))    ||
-      (NULL == CU_add_test(test_suite1, "Set Shelf Test",    set_shelf_test))    ||
+      (NULL == CU_add_test(test_suite1, "Set Shelf Test",    set_shelf_test))  ||
+      (NULL == CU_add_test(test_suite1, "Add Remove Storage Test", test_add_remove_storage)) ||
       (NULL == CU_add_test(test_suite1, "Sync Test",    test_sync))    ||
       (NULL == CU_add_test(test_suite1, "Index Lookup (Misc) Test",    index_lookup_test))){
       CU_cleanup_registry();

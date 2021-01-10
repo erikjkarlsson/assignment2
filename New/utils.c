@@ -8,7 +8,7 @@
 
 #include "utils.h"
 
-
+
 /// String and Chars:
 
 int read_string(char *buf, int buf_siz){
@@ -53,7 +53,7 @@ char *ask_question_string(char *question){
 
 
 
-
+
 /// Integers:
 
 bool is_shelf(char *str){
@@ -155,7 +155,7 @@ answer_t make_float(char *str){
   return (answer_t) { .float_value = atof(str) };
 }
 
-
+
 /// General:
 
 void clear_buffer(char *buffer, int buffer_size){

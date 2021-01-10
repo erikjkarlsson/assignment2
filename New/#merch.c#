@@ -1,0 +1,13 @@
+#include "webstore.h"
+
+#include "merch.h"
+
+webstore_t *initialize_database(){
+  webstore_t *store = store_create();
+
+  
+
+  
+  return store;
+}
+
