@@ -36,6 +36,10 @@ void checkout(webstore_t *store, int id);
 
 void display_cart(cart_t *cart); 
 
+bool valid_id(webstore_t *store, int id);
+
+void list_all_cart_id(webstore_t *store); 
+
 //
 /* USEFUL FUNCTIONS FOR TESTS*/
 //
@@ -45,3 +49,13 @@ size_t nr_of_merch_in_cart(cart_t *cart);
 int get_amount_of_merch_in_cart(cart_t *cart, char *merch_name); 
 
 bool merch_in_cart(cart_t *cart, char *merch_name);
+
+cart_t *get_cart(webstore_t *store, int id);
+
+//
+/*PROMT FUNCTIONS*/
+//
+
+void add_to_cart_promt(webstore_t *store, int id); 
+
+void remove_from_cart_promt(webstore_t *store, int id); 

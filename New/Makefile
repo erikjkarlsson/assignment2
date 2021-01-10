@@ -23,9 +23,16 @@ run:
 
 dbgt: dbg
 	valgrind --leak-check=full ./dbg
+
 cart:
 	gcc cart.c utils.c common.c hash_table.c list_linked.c webstore.c iterator.c
 
+ui:
+	gcc ui.c merch.c cart.c utils.c common.c hash_table.c list_linked.c webstore.c iterator.c
+
+run_ui: ui
+	./a.out
+	
 clean:
 	rm ./main
 	@echo "Removed Binary"

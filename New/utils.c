@@ -198,7 +198,7 @@ int random_number(int range){
 bool valid_command(char *command){
   // Check if command is a valid command
   // of ask_question_menu
-  char *string = "SsLlTtRrGgHhAa";
+  char *string = "SsLlTtGgHhAIiBb";
   char *ptr = strstr(string, command);
   if (ptr != NULL){//command found    
     return true;
@@ -207,11 +207,48 @@ bool valid_command(char *command){
   }
 }
 
-char *ask_question_menu(){
+bool valid_command_webstore(char *command){
+  // Check if command is a valid command
+  // of ask_question_menu
+  char *string = "SsTtRrGgHhAIi";
+  char *ptr = strstr(string, command);
+  if (ptr != NULL){//command found    
+    return true;
+  }else{
+    return false;
+  }
+}
+
+bool valid_int(int command){
+  if(command == 1 || command == 2 || command == 3){
+    return true;
+  }
+  return false; 
+}
+
+char *ask_question_menu_cart(){
   puts("--- Meny för kundvagnen ---"); 
-  char *command = ask_question_string("[S]kapa en ny kundvagn \n[L]ägga till en vara \n[T]a bort en vara \n[R]edigera en vara \nÅn[g]ra senaste ändringen \nLista [h]ela kundvagnen \n[A]vsluta och checka ut\n");
+  char *command = ask_question_string("[S]kapa en ny kundvagn \n[B]yt cart id \n[L]ägga till en vara \n[T]a bort en vara \nÅn[g]ra senaste ändringen \nLista [h]ela kundvagnen \n[A]vsluta och checka ut nuvarande kundvagn\n T[i]llbaka till huvudmenyn\n");
   while(!valid_command(command)){
-    command = ask_question_string("Använd ett giltigt kommando: ");
+    command = ask_question_string("Använd ett giltigt kommando: \n");
+  }
+    return command;
+}
+
+int ask_question_menu(){
+  puts("--- Huvudmeny ---"); 
+  int command = ask_question_int("[1] Meny för Webstore \n[2] Meny för Cart \n[3] Avsluta körning utan att checka ut\n");
+  while(!valid_int(command)){
+    command = ask_question_int("Använd ett giltigt kommando: \n");
+  }
+  return command; 
+}
+
+char *ask_question_menu_webstore(){
+  puts("--- Meny för Webstore ---"); 
+  char *command = ask_question_string("[S]kapa en ny vara och lägg till den \n[T]a bort en vara \n[R]edigera en vara \nÅn[g]ra senaste ändringen \nLista [h]ela storage \nT[i]llbaka till huvudmenyn\n");
+  while(!valid_command_webstore(command)){
+    command = ask_question_string("Använd ett giltigt kommando: \n");
   }
     return command;
 }
