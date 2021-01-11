@@ -16,7 +16,8 @@ void event_loop_cart(webstore_t *store);
 void change_cart_id_menu(webstore_t *store);
 int final_cost_menu(webstore_t *store);
 
-int current_cart_id = -1; 
+#define current_cart_id \
+  store->active_cart
 
 #define LANG 1
 #define SWE(thing) if (LANG == 0) { thing; }
@@ -179,6 +180,7 @@ char unicode_edit_cart_menu(webstore_t *store){
       else if ((command[0] == 'R') || (command[0] == 'r')) return 'r';
       else if ((command[0] == 'B') || (command[0] == 'b')) return 'b';    
       else if ((command[0] == 'S') || (command[0] == 's')) change_cart_id_menu(store);
+      // Change this up if time
       
     } while (true));
   SWE(do {
@@ -302,7 +304,9 @@ void event_loop_cart(webstore_t *store){
 	  remove_from_cart_promt(store, current_cart_id);
           
 	else if(command == 'd')              // Display Cart
-	  display_cart(get_cart(store, current_cart_id));
+	  if (valid_id(store, store->active_cart)){
+	    display_cart(get_cart(store, current_cart_id));
+	  }
 	
       } while (command != 'b');              // Back
      command = ' ';
@@ -311,7 +315,7 @@ void event_loop_cart(webstore_t *store){
       display_cart(get_cart(store, current_cart_id));
     
     if(command == 'c')                       // Checkout
-      checkout(store, current_cart_id);
+      checkout(store);
     
     else if(command == 'f')                  // Final Cost
       final_cost_menu(store);

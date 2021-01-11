@@ -5,6 +5,7 @@
 #include <stdio.h>
 #include <string.h>
 #include <stdbool.h>
+#include "webstore.h"
 
 //used to place keys and values in one
 struct entry_ht
@@ -26,13 +27,13 @@ cart_t *create_cart(webstore_t *store);
 
 void remove_cart(webstore_t *store, int id);
 
-void add_to_cart(webstore_t *store, int id, char *merch_to_add_name, int amount);
+void add_to_cart(webstore_t *store, char *merch_to_add_name, int amount);
 
 void remove_from_cart(webstore_t *store, int id, char *merch_to_remove_name, int amount_to_remove);
 
 int calculate_cost(webstore_t *store, int id);
 
-void checkout(webstore_t *store, int id); 
+void checkout(webstore_t *store); 
 
 void display_cart(cart_t *cart); 
 
