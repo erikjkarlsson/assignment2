@@ -41,7 +41,8 @@ struct webstore
   arg_opt_t *opt; // Logging library
   ioopm_hash_table_t *merch_db;
   ioopm_hash_table_t *storage_db;
-  ioopm_list_t *all_shopping_carts; 
+  ioopm_list_t *all_shopping_carts;
+  int active_cart;
 };
 typedef struct webstore webstore_t;
 typedef struct database database_t;
@@ -89,7 +90,7 @@ void set_shelf(webstore_t *store, char *name,
 
 void store_destroy(webstore_t *store);
 webstore_t *store_create();
-
+size_t increase_equal_stock(webstore_t *store, char *name, size_t amount);
 void list_merchandise(webstore_t *store);
 
 bool merch_in_stock(webstore_t *store, char *name);

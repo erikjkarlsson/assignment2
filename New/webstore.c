@@ -7,6 +7,7 @@
 #include "list_linked.h"
 #include "common.h"
 #include "utils.h"
+#include "cart.h"
 #include "webstore.h"
 
 
@@ -472,6 +473,11 @@ webstore_t *store_create(){
   //linked list that holds all shopping carts
   new_webstore->all_shopping_carts = 
     ioopm_linked_list_create();
+  ioopm_linked_list_append(new_webstore->all_shopping_carts,
+			   ptr_elem(create_cart(new_webstore)));
+  
+
+
 
   return new_webstore;
 }
@@ -882,6 +888,50 @@ bool sync_merch_stock(webstore_t *store, char *name){
     return false;
 }
 
+size_t increase_equal_stock(webstore_t *store, char *name, size_t amount){
+  // Increase (or decrease) the stock at an existing
+  // shelf. A negative (amount) decreases stock, positive
+  // increases.  
+  if ((store == NULL) || (name == NULL)){
+    perror("increase_stock: Unallowed NULL argument\n");
+    return 0;
+  } else if (!ioopm_hash_table_has_key(store->merch_db,
+				       ptr_elem(name))){
+    perror("increase_stock: Non existing merch.\n");
+    return 0;
+  }
+  // Add a specified amount of an item at a shelf.
+  merch_t *merch_data =
+    get_elem_ptr(ioopm_hash_table_lookup(store->merch_db,
+					 ptr_elem(name)));  
+  // Get the current amount of the item on the shelf
+  int new_amount = 0;
+
+  ioopm_link_t *db_item  = merch_data->locs->first;
+
+  do {
+    shelf_t *shelf = get_elem_ptr(db_item->element);
+   
+    // Remove stock gradually from shelfs
+    if (shelf->amount > 0){
+      new_amount = shelf->amount - amount;
+      if (new_amount < 0){
+	shelf->amount = 0;
+	amount = -new_amount;
+      }else{
+	shelf->amount = new_amount;
+        break;
+      }
+    }
+					      
+    db_item = db_item->next;           
+  } while (db_item != NULL);
+
+  // Update the total stock
+  merch_data->total_amount += (size_t)amount;
+  // Return the new stock at the shelf
+  return new_amount;
+}
 size_t increase_stock(webstore_t *store, char *name,
 		      char *shelf_name, size_t amount){
   // Increase (or decrease) the stock at an existing
