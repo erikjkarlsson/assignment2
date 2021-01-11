@@ -304,6 +304,7 @@ void checkout_test(){
 
   store_destroy(store);
 }
+
 /*
 void checkout_multi_locs_test(){
   webstore_t *store = store_create();  // --- Load hardcoded test merch

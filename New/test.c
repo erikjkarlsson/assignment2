@@ -27,11 +27,105 @@ void test(){
 }
 /////////////////////////////////////////////////////////////
 
+// Store 
+
 //passes if there is no memory leaks
 void create_destroy_store(){
   webstore_t *store = store_create();
   store_destroy(store);
+  store_destroy(store);
 }
+
+//Merch
+
+void create_destoy_merch(){
+  webstore_t *store = store_create();
+  add_merchendise(store, "Bike", "A sports bike from Brazil",
+		  (size_t)4);
+	remove_merchendise(store, "Bike");
+	store_destroy(store);
+}
+
+void test_add_merch(){
+  
+  webstore_t *store = store_create();
+  
+  add_merchendise(store, "Bike", "A sports bike from Brazil",
+		  (size_t)4);
+  add_merchendise(store, "Car", "A fast car",
+		  (size_t)2);
+
+  // --- Bike
+  CU_ASSERT_TRUE(merch_in_stock(store, "Bike"));
+    
+  CU_ASSERT_TRUE(STR_EQ(merch_description(store, "Bike"),
+			"A sports bike from Brazil"));
+  set_merch_description(store, "Bike", "x");  
+  CU_ASSERT_TRUE(STR_EQ(merch_description(store, "Bike"),
+			"x"));
+
+  CU_ASSERT_TRUE(merch_price(store, "Bike") == (size_t)4);
+  set_merch_price(store, "Bike", 2);
+  CU_ASSERT_TRUE(merch_price(store, "Bike") == (size_t)2);
+  
+  // --- Car
+  CU_ASSERT_TRUE(merch_in_stock(store, "Car"));
+  
+  CU_ASSERT_TRUE(STR_EQ(merch_description(store, "Car"),
+			"A fast car"));
+  set_merch_description(store, "Car", "x");  
+  CU_ASSERT_TRUE(STR_EQ(merch_description(store, "Car"),
+			"x"));
+
+  CU_ASSERT_TRUE(merch_price(store, "Car") == (size_t)2);
+  set_merch_price(store, "Car", 4);
+  CU_ASSERT_TRUE(merch_price(store, "Car") == (size_t)4);
+  
+  remove_merchendise(store, "Car");
+  remove_merchendise(store, "Bike");
+
+  CU_ASSERT_FALSE(merch_in_stock(store, "Car"));
+  CU_ASSERT_FALSE(merch_in_stock(store, "Bike"));
+
+    
+  CU_ASSERT_FALSE(STR_EQ(merch_description(store, "Car"),
+			"A fast car"));
+  CU_ASSERT_FALSE(merch_price(store, "Car") == (size_t)2);
+
+  CU_ASSERT_FALSE(STR_EQ(merch_description(store, "Bike"),
+			"A sports bike from Brazil"));
+  CU_ASSERT_FALSE(merch_price(store, "Bike") == (size_t)4);
+
+  store_destroy(store);
+}
+
+void test_destroy_all_merch(){
+  webstore_t *store = store_create();
+  
+  add_merchendise(store, "Bike", "A sports bike from Brazil",
+		  (size_t)4);
+  
+  add_merchendise(store, "Car", "A fast car",
+		  (size_t)2);
+	
+	add_merchendise(store, "Airplane", "A fast Airplane",
+		  (size_t)1000);
+	
+	CU_ASSERT_TRUE(merch_in_stock(store, "Car"));
+  CU_ASSERT_TRUE(merch_in_stock(store, "Bike"));
+	CU_ASSERT_TRUE(merch_in_stock(store, "Airpalne"));
+		  
+	destroy_all_merch(store);
+	
+	CU_ASSERT_FALSE(merch_in_stock(store, "Car"));
+  CU_ASSERT_FALSE(merch_in_stock(store, "Bike"));
+  CU_ASSERT_FALSE(merch_in_stock(store, "Airplane"));
+  
+  store_destroy(store);
+	
+}
+
+//Shelf
 
 //passes if there is no memory leaks
 void create_destroy_shelf(){
@@ -89,10 +183,8 @@ void num_shelf_validation_test(){
   CU_ASSERT_FALSE((is_number("A111")) || is_number("1A11") ||
 		  (is_number("111A")) || is_number("11A1") ||
 		  (is_number("")) || is_number("AAAA"));
-
-
-
 }
+
 void test_add_remove_storage(){
   webstore_t *store = store_create();
 
@@ -124,60 +216,8 @@ void test_add_remove_storage(){
   CU_ASSERT_FALSE(storage_contains(store, "A10", "C"));
 
   store_destroy(store);
-  
 }
-void test_add_merch(){
-  
-  webstore_t *store = store_create();
-  
-  add_merchendise(store, "Bike", "A sports bike from Brazil",
-		  (size_t)4);
-  add_merchendise(store, "Car", "A fast car",
-		  (size_t)2);
 
-  // --- Bike
-  CU_ASSERT_TRUE(merch_in_stock(store, "Bike"));
-    
-  CU_ASSERT_TRUE(STR_EQ(merch_description(store, "Bike"),
-			"A sports bike from Brazil"));
-  set_merch_description(store, "Bike", "x");  
-  CU_ASSERT_TRUE(STR_EQ(merch_description(store, "Bike"),
-			"x"));
-
-  CU_ASSERT_TRUE(merch_price(store, "Bike") == (size_t)4);
-  set_merch_price(store, "Bike", 2);
-  CU_ASSERT_TRUE(merch_price(store, "Bike") == (size_t)2);
-  
-  // --- Car
-  CU_ASSERT_TRUE(merch_in_stock(store, "Car"));
-  
-  CU_ASSERT_TRUE(STR_EQ(merch_description(store, "Car"),
-			"A fast car"));
-  set_merch_description(store, "Car", "x");  
-  CU_ASSERT_TRUE(STR_EQ(merch_description(store, "Car"),
-			"x"));
-
-  CU_ASSERT_TRUE(merch_price(store, "Car") == (size_t)2);
-  set_merch_price(store, "Car", 4);
-  CU_ASSERT_TRUE(merch_price(store, "Car") == (size_t)4);
-  
-  remove_merchendise(store, "Car");
-  remove_merchendise(store, "Bike");
-
-  CU_ASSERT_FALSE(merch_in_stock(store, "Car"));
-  CU_ASSERT_FALSE(merch_in_stock(store, "Bike"));
-
-    
-  CU_ASSERT_FALSE(STR_EQ(merch_description(store, "Car"),
-			"A fast car"));
-  CU_ASSERT_FALSE(merch_price(store, "Car") == (size_t)2);
-
-  CU_ASSERT_FALSE(STR_EQ(merch_description(store, "Bike"),
-			"A sports bike from Brazil"));
-  CU_ASSERT_FALSE(merch_price(store, "Bike") == (size_t)4);
-
-  store_destroy(store);
-}
 /////////////////////////////////////////////////////////////
 void test_storage(){
   
@@ -205,6 +245,8 @@ int main()
   }
 
   if ((NULL == CU_add_test(test_suite1, "Create Destroy Store Test",   create_destroy_store))   ||
+      (NULL == CU_add_test(test_suite1, "Create Destroy Merch Test",   create_destoy_merch))   ||
+      (NULL == CU_add_test(test_suite1, "Destroy All Merch Test",   test_destroy_all_merch))   ||
       (NULL == CU_add_test(test_suite1, "Create Destroy Shelf Test",   create_destroy_shelf))   ||
       (NULL == CU_add_test(test_suite1, "Add Merch Test",   test_add_merch))   ||
       (NULL == CU_add_test(test_suite1, "Storage Test", test_storage)) ||
@@ -216,7 +258,6 @@ int main()
       CU_cleanup_registry();
       return CU_get_error();
     }
-
   CU_basic_set_mode(CU_BRM_VERBOSE);
   CU_basic_run_tests();
   CU_cleanup_registry();

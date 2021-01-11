@@ -86,7 +86,8 @@ bool cart_is_empty(cart_t *cart){
     return ioopm_hash_table_is_empty(cart->merch_in_cart);
 }
 
-size_t cart_db_size(cart_t *cart){
+//size_t cart_db_size(cart_t *cart){
+size_t cart_size(cart_t *cart){
     return ioopm_hash_table_size(cart->merch_in_cart);
 }
 
@@ -137,6 +138,7 @@ void remove_cart(webstore_t *store, int id){
     free(cart);
 }
 
+/*
 void add_to_cart(webstore_t *store, char *name, int amount){
     
     if(amount <= 0){
@@ -179,6 +181,40 @@ void add_to_cart(webstore_t *store, char *name, int amount){
 	// This should only happen if the current_stock == 0 	  
 	  ioopm_hash_table_insert(current_cart->merch_in_cart,
 				  str_elem(name), int_elem(amount));
+    }
+}
+*/
+
+
+void add_to_cart(webstore_t *store, int id, char *merch_to_add_name, int amount){
+    
+    if(amount <= 0){
+        perror("ADD TO CART: The amount of merch added to the cart must be 0 or higher.\n");
+        return;
+    }
+    
+    if(!valid_id(store,id)){
+        perror("ADD TO CART: The id of the cart is invalid.\n");
+        return; 
+    }
+    
+    cart_t *current_cart = get_cart(store, id);
+    
+    int amount_of_merch_in_cart_already =  amount_of_merch_in_cart(current_cart, merch_to_add_name);
+    int amount_of_merch_in_store = merch_stock(store, merch_to_add_name);//the amount of this merch in the store
+    
+    //If the asked amount and the amount already in the cart exceeds the amount of merch in the store
+    if(amount_of_merch_in_store-(amount_of_merch_in_cart_already+amount) < 0){
+        perror("ADD TO CART: Try to get more merch than there is in the store.\n");
+        return;
+    }
+    
+    //add merch to cart
+    if(amount_of_merch_in_cart_already > 0){
+        ioopm_hash_table_insert(current_cart->merch_in_cart, str_elem(merch_to_add_name), int_elem(amount_of_merch_in_cart_already + amount));
+    }
+    else{
+        ioopm_hash_table_insert(current_cart->merch_in_cart, str_elem(merch_to_add_name), int_elem(amount));
     }
 }
 
@@ -322,7 +358,7 @@ char *shelf_with_most_stock(webstore_t *store, char *name){
     return shelf_max->shelf; 
     ioopm_linked_list_destroy(locs);
 }
-
+/*
 void change_stock_in_webstore(webstore_t *store, char *current_name, int current_amount){
     char *location; 
     while(true){
@@ -379,8 +415,9 @@ void checkout(webstore_t *store, int id){
     }
     ioopm_linked_list_destroy(names);
     remove_cart(store, current_cart->id); 
+}
+*/
 
-/*
 void checkout(webstore_t *store){
   cart_t *cart = get_cart(store, store->active_cart);
 
@@ -416,7 +453,7 @@ void checkout(webstore_t *store){
     ITER_DEST(iter_a);
   
 }
-*/
+
 void display_cart(cart_t *cart){ //id?
 
   if(cart_is_empty(cart)){

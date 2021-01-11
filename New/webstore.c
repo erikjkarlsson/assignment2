@@ -11,7 +11,7 @@
 #include "webstore.h"
 
 
-bool valid_index(webstore_t *store, int index);
+//bool valid_index(webstore_t *store, int index);
 char *lookup_merch_name(webstore_t *store, int index); 
 
 void print_merch(merch_t *merch);
@@ -342,7 +342,6 @@ int merch_price(webstore_t *store, char *name){
 }
 
 void set_merch_price(webstore_t *store, char *name, size_t price){
-  // Return the price of the specified merch name
   if (!ioopm_hash_table_has_key(store->merch_db, ptr_elem(name))){
     perror("merch_price: Non existing merch.\n");
     return;
@@ -888,7 +887,7 @@ bool sync_merch_stock(webstore_t *store, char *name){
     return false;
 }
 
-size_t increase_equal_stock(webstore_t *store, char *name, size_t amount){
+size_t change_stock_relative_amount(webstore_t *store, char *name, size_t amount){
   // Increase (or decrease) the stock at an existing
   // shelf. A negative (amount) decreases stock, positive
   // increases.  
@@ -932,6 +931,7 @@ size_t increase_equal_stock(webstore_t *store, char *name, size_t amount){
   // Return the new stock at the shelf
   return new_amount;
 }
+
 size_t increase_stock(webstore_t *store, char *name,
 		      char *shelf_name, size_t amount){
   // Increase (or decrease) the stock at an existing
@@ -969,8 +969,6 @@ size_t increase_stock(webstore_t *store, char *name,
   // Return the new stock at the shelf
   return new_amount;
 }
-
-
 void show_stock(webstore_t *store){
   // Prettyprint all shelfs, together with all merchendise metadata.
   // Displays: All shelfs, All merch (in shelfs), their;
@@ -1178,6 +1176,7 @@ merch_t *merch_change_locs_function(merch_t *merch_data,
 }
 */
 
+
 char *lookup_merch_name(webstore_t *store, int index){ 
   // Return the name of the merch at a specified
   // index in the list returned by hash_table_values
@@ -1208,6 +1207,7 @@ char *lookup_merch_name(webstore_t *store, int index){
   return merch_name;
 }
 
+
 bool valid_index(webstore_t *store, int index){
   // Return true if index is less or equal to
   // the amount of merch in the merch database
@@ -1230,7 +1230,6 @@ bool valid_index(webstore_t *store, int index){
   ioopm_linked_list_destroy(list);
   return true;
 }
-
 
 
 void print_merch(merch_t *merch){
