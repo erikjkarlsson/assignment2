@@ -441,8 +441,10 @@ void add_to_cart_promt(webstore_t *store, int id){
       perror("add_to_cart_promt: Merch ID under 0.\n");
       return;
     }
-
     char *merch_name        = lookup_merch_name(store, nr_merch-1);
+    printf("┏─╸Cart Nr.%d; Set Amount of %s \n",
+	   (int)store->active_cart, merch_name);
+	
     size_t merch_amount     = ask_question_int("┃ Amount: "); 
     add_to_cart(store, merch_name, merch_amount); 
 }
@@ -452,7 +454,10 @@ void remove_from_cart_promt(webstore_t *store, int id){
         puts("┃ The cart is empty! There is nothing to remove!"); 
         return;
     }else{
-        display_cart(get_cart(store,id)); 
+        display_cart(get_cart(store,id));
+	
+	printf("┏─╸Remove From Cart Nr.%d\n",
+	       (int)store->active_cart);
         int nr_merch     = ask_question_int("┃ Merch Id."); 
         char *merch_name = get_merch_name_in_cart(get_cart(store,id), nr_merch);
         int merch_amount = ask_question_int("┃ Amount: ");
