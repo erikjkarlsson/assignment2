@@ -271,6 +271,7 @@ void new_cart_menu(webstore_t *store){
   cart_t *new_cart = create_cart(store); 
   current_cart_id = new_cart->id;  // Change later
 }
+
 void event_loop_cart(webstore_t *store){
   char command = ' ';
 
