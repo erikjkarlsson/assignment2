@@ -12,6 +12,12 @@
 #include "webstore.h"
 #include "cart.h"
 
+
+#define SAFESET(what, check, error)				\
+  do { what; } while (!choice_prompt("Satisfied?"));		\
+  if (!(check)) error; 
+
+
 void event_loop_webstore(webstore_t *store);
 void event_loop_cart(webstore_t *store);
 int final_cost_menu(webstore_t *store);
@@ -110,9 +116,11 @@ void unicode_cart_menu(webstore_t *store){
 
   ENG(do {
       puts("┏──╸Webstore ╺────────┓");
-      puts("┃ [N]ew Cart          ┃");
+      printf("┃ [N]ew Cart    Id. %d ┃\n",
+	     store->active_cart);
       puts("┃ [R]emove Cart       ┃");
       puts("┃ [E]dit Cart         ┃");
+      puts("┃ [A]ll Items         ┃");
       puts("┃ [D]isplay Cart      ┃");
       puts("┃ [F]inal cost        ┃");
       puts("┃ [C]heck out  [B]ack ┃");
@@ -128,7 +136,9 @@ void unicode_cart_menu(webstore_t *store){
 	unicode_edit_cart_menu(store);   
       else if (((command[0] == 'D') || (command[0] == 'd')) &&
 	       (valid_id(store, store->active_cart)))
-	display_cart(get_cart(store, store->active_cart));	
+	display_cart(get_cart(store, store->active_cart));
+      else if ((command[0] == 'A') || (command[0] == 'a'))
+	show_stock(store);
       else if ((command[0] == 'F') || (command[0] == 'f'))
 	final_cost_menu(store);
       else if ((command[0] == 'B') || (command[0] == 'b'))
@@ -139,10 +149,12 @@ void unicode_cart_menu(webstore_t *store){
     } while (true));
   SWE(do {
       puts("┏──╸Webb Butik ╺───────────┓");
-      puts("┃ [N]y Kundvagn            ┃");
+      printf("┃ [N]y Kundvagn     Id. %d ┃\n",
+	     store->active_cart);
       puts("┃ [R]adera Kundvagn        ┃");
       puts("┃ [E]dita Kundvagn         ┃");
       puts("┃ [V]isa Kundvagn          ┃");
+      puts("┃ [A]lla Varor             ┃");
       puts("┃ [T]otal Kostnad          ┃");
       puts("┃ [K]öp            [B]akåt ┃");
       puts("┗━━━━━━━━━━━━━━━━━━━━━━━━━━┛");
@@ -153,6 +165,8 @@ void unicode_cart_menu(webstore_t *store){
 	add_to_active_cart_prompt(store); 
       else if ((command[0] == 'R') || (command[0] == 'r'))
 	remove_from_cart_prompt(store);
+      else if ((command[0] == 'A') || (command[0] == 'a'))
+	show_stock(store);
       else if ((command[0] == 'E') || (command[0] == 'e'))
 	unicode_edit_cart_menu(store);   
       else if (((command[0] == 'V') || (command[0] == 'v')) &&
@@ -221,6 +235,7 @@ char unicode_edit_cart_menu(webstore_t *store){
       puts("┏──╸Merch Edit ╺──────┓");
       puts("┃ [A]dd to Cart       ┃");
       puts("┃ [R]emove from Cart  ┃");
+      puts("┃ [D]isplay Cart      ┃");
       puts("┃ [S]et ID            ┃");
       puts("┃ [B]ack              ┃");
       puts("┗━━━━━━━━━━━━━━━━━━━━━┛");
@@ -233,17 +248,20 @@ char unicode_edit_cart_menu(webstore_t *store){
 	remove_from_cart_prompt(store);
       else if ((command[0] == 'S') || (command[0] == 's'))
 	change_cart_id_prompt(store);
+      else if ((command[0] == 'D') || (command[0] == 'd'))
+	display_cart_id_prompt(store);
       else if ((command[0] == 'B') || (command[0] == 'b')) return 'b';    
       // Change this up if time
       
     } while (true));
   SWE(do {
-      puts("┏──╸Redigera Vara ╺───┓");
-      puts("┃ [L]ägg Till Vara    ┃");
-      puts("┃ [T]a Bort Vara      ┃");
-      puts("┃ [S]ätt ID           ┃");
-      puts("┃ [B]akåt             ┃");
-      puts("┗━━━━━━━━━━━━━━━━━━━━━┛");
+      puts("┏──╸Redigera Kundvagn ╺───┓");
+      puts("┃ [L]ägg Till Vara        ┃");
+      puts("┃ [T]a Bort Vara          ┃");
+      puts("┃ [V]isa kundvagn         ┃");
+      puts("┃ [S]ätt ID               ┃");
+      puts("┃ [B]akåt                 ┃");
+      puts("┗━━━━━━━━━━━━━━━━━━━━━━━━━┛");
       printf("> ");
       read_string(command, 10);
     
@@ -251,7 +269,9 @@ char unicode_edit_cart_menu(webstore_t *store){
       if ((command[0] == 'T') || (command[0] == 't')) 
 	remove_from_cart_prompt(store);
       else if ((command[0] == 'L') || (command[0] == 'l'))
-	add_to_active_cart_prompt(store);     
+	add_to_active_cart_prompt(store);
+      else if ((command[0] == 'V') || (command[0] == 'v'))
+	display_cart_id_prompt(store);
       else if ((command[0] == 'S') || (command[0] == 's'))
 	change_cart_id_prompt(store);
       else if ((command[0] == 'B') || (command[0] == 'b'))
@@ -310,26 +330,28 @@ void change_cart_id_prompt(webstore_t *store){
   int new_id;
   // Prompt and change the cart ID  
    
-  puts("┏──╸ Change Cart ID");
+  ENG(puts("┏──╸ Change Active Cart"));
+  SWE(puts("┏──╸ Ändra Aktiv Kundvagn"))
 
-  SAFESET(SWE(new_id = ask_question_int("┃ Nytt ID: "))
-	  ENG(new_id = ask_question_int("┃ New ID: ")),
+  SAFESET(SWE(new_id = ask_question_int("┃ Byt till ID: "))
+	  ENG(new_id = ask_question_int("┃ Change to ID: ")),
 	  valid_id(store, new_id), return);
   
 
   store->active_cart = new_id;
-
-  if (choice_prompt("Show Active ID?"))
-    print_cart_id(store);
+  //  display_cart_id_prompt(store);
+  //  if (choice_prompt("Show Active ID?"))
+  //    print_cart_id(store);
   
   puts("┗──────────────────────────╸");
 }
 
 void display_cart_id_prompt(webstore_t *store){
-  if (choice_prompt("Print Active Cart?"))
+ if (choice_prompt("Print All Carts?"))
+    list_all_cart_id(store);
+ else if (choice_prompt("Print Active Cart?"))
     print_cart_id(store);  
-  else if (choice_prompt("Print All Carts?"))
-    list_all_cart_id(store);  
+
 }
 
 

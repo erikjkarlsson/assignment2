@@ -646,7 +646,6 @@ void list_shelfs(webstore_t *store, char *name){
   printf("--- Shelfs containing '%s' ---\n", name);
   
   for (int i = 1;; i++){
-    
     printf("No. %d | Shelf %s : %ldst\n",
 	   i,
 	   shelf->shelf,
@@ -660,7 +659,7 @@ void list_shelfs(webstore_t *store, char *name){
   }    
   ioopm_iterator_destroy(iter);
 }
-void  remove_name_from_shelf(webstore_t *store, char *shelf, char *name){
+void remove_name_from_shelf(webstore_t *store, char *shelf, char *name){
 
   if (!ioopm_hash_table_has_key(store->storage_db, ptr_elem(shelf))){
     perror("remove_name_from_shelf: Non existing shelf name.\n");
@@ -700,7 +699,8 @@ char *get_shelf_after_shelf_nr(webstore_t *store, int shelf_nr, char *name){
 					 
   ioopm_list_t *merch_data_locs    = merch_data->locs;
   
-  if(ioopm_linked_list_size(merch_data_locs)<shelf_nr){
+  if(ioopm_linked_list_size(merch_data_locs) < shelf_nr){
+    perror("get_shelf_after_shelf_nr: Shelf Number Out of Bounds.\n");
     return NULL; 
   }
   ioopm_list_iterator_t *iter = ioopm_list_iterator(merch_data_locs);
@@ -906,7 +906,7 @@ size_t increase_equal_stock(webstore_t *store, char *name, size_t amount){
 					 ptr_elem(name)));  
   // Get the current amount of the item on the shelf
   int new_amount = 0;
-
+  int tmp_amount = amount;
   ioopm_link_t *db_item  = merch_data->locs->first;
 
   do {
@@ -914,10 +914,10 @@ size_t increase_equal_stock(webstore_t *store, char *name, size_t amount){
    
     // Remove stock gradually from shelfs
     if (shelf->amount > 0){
-      new_amount = shelf->amount - amount;
-      if (new_amount < 0){
+      new_amount = shelf->amount - tmp_amount;
+      if (new_amount < 0){	
 	shelf->amount = 0;
-	amount = -new_amount;
+	tmp_amount = -new_amount;
       }else{
 	shelf->amount = new_amount;
         break;
@@ -928,7 +928,7 @@ size_t increase_equal_stock(webstore_t *store, char *name, size_t amount){
   } while (db_item != NULL);
 
   // Update the total stock
-  merch_data->total_amount += (size_t)amount;
+  sync_merch_stock(store, name);
   // Return the new stock at the shelf
   return new_amount;
 }
