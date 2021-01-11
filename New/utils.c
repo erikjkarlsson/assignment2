@@ -63,8 +63,8 @@ bool is_shelf(char *str){
   // |String| > 2 & 
   if (isalpha(str[0]) < 1)  return false;
   else if (str[0] == '\0')  return false;
-  else if (strlen(str) < 2) return false;
-  
+  else if (strlen(str) == 3) return false;
+  //else if (strlen(str) > 3) return false;
   // Returns false if any character in str is not an element of {0,...,9}
   for (; index < strlen(str); index++){
     if (!isdigit(str[index])) return false;
