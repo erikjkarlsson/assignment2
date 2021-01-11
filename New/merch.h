@@ -36,7 +36,8 @@
   SET_ITEM_LOC(store, "Sandals",          "C00", 36);
 
 #define REMOVE_ITEM(store, name_merch) \
-    remove_merchendise(store, name_merch);
+  remove_merchendise(store, name_merch);
+
     
 webstore_t *initialize_database();
 

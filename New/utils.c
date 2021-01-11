@@ -9,6 +9,11 @@
 #include "utils.h"
 
 
+// 0 : Swedish
+// 1 : English
+#define LANG 0
+
+
 /// String and Chars:
 
 int read_string(char *buf, int buf_siz){
@@ -63,7 +68,7 @@ bool is_shelf(char *str){
   // |String| > 2 & 
   if (isalpha(str[0]) < 1)  return false;
   else if (str[0] == '\0')  return false;
-  else if (strlen(str) == 3) return false;
+  else if (strlen(str) != 3) return false;
   //else if (strlen(str) > 3) return false;
   // Returns false if any character in str is not an element of {0,...,9}
   for (; index < strlen(str); index++){
@@ -171,17 +176,12 @@ answer_t ask_question(char *question, check_func check, convert_func convert){
   char buffer[255];
   do {
     clear_buffer(buffer, 255);
-    printf(question);
+    printf("%s", question);
     read_string(buffer, 255);
-
-    if (check(buffer)) break;
-
     
-  }while (1);
-
+  }while (!(check(buffer)));
   return convert(buffer);
 }
-
 int seed_random(void){
   // Seed Randomness
   time_t t;
@@ -264,7 +264,7 @@ char *ask_question_menu_webstore(){
 
 bool continue_printing(){
   // Prompt for a yes "y"/"Y" returning true (else false)
-  char *ans = ask_question_string("Continue? y/n \n");
+  char *ans = ask_question_string("Continue? y/n\n> ");
 
   if((strcmp(ans, "y") == 0) || (strcmp(ans, "Y") == 0))      
     return true;    
