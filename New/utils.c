@@ -186,8 +186,10 @@ answer_t ask_question(char *question, check_func check, convert_func convert){
 }
 int seed_random(void){
   // Seed Randomness
-  time_t t;
-  srandom((unsigned)time(&t));
+  // change to srandom if error on runtime
+  // time_t t; and replace time(NULL) with time(t)
+  
+  srand((unsigned)time(NULL));
   return 0;
 }
 

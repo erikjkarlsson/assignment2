@@ -2,9 +2,13 @@
 
 #include "merch.h"
 
-webstore_t *initialize_database(){
-  webstore_t *store = store_create();
+#define NEW_ITEM(store, name, description, price)	\
+  add_merchendise(store, name, description, price);
 
+#define SET_ITEM_LOC(store, name, shelf_name, amount)		\
+  set_shelf(store, name, shelf_name, amount); 
+
+void initialize_database(webstore_t *store){
   // Fruits
 
   NEW_ITEM(store, "Apple",    "Edible fruit.", 10);
@@ -33,16 +37,5 @@ webstore_t *initialize_database(){
   SET_ITEM_LOC(store, "Used Jacket",      "C99", 1);
   SET_ITEM_LOC(store, "Sandals",          "C00", 36);
 
-  return store;
-}
-
-
-void new_item(webstore_t *store, char *name, char *desc, size_t price, char *shelf, int storage_amount){
-  NEW_ITEM(store, name, desc, price);
-  SET_ITEM_LOC(store, name, shelf, storage_amount); 
-}
-
-void remove_item(webstore_t *store, char *name){
-  REMOVE_ITEM(store, name); 
 }
 
