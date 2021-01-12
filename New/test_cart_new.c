@@ -312,7 +312,8 @@ void checkout_multi_locs_test(){
   
   //set_shelf(store, "Apple", "C99", 12);
   set_shelf(store, "Coconut", "M01", 10);
-
+  // M01: Coconut 10st
+  // F12: Coconut 16st
   
   cart_t *cart = create_cart(store);
     
@@ -323,6 +324,7 @@ void checkout_multi_locs_test(){
   //int a_before = merch_stock_on_shelf(store, "Apple", "F12"); 
   //int o_before = merch_stock_on_shelf(store, "Orange", "F12");
   int c_before = merch_stock_on_shelf(store, "Coconut", "F12");
+  // 16st
   
   show_stock(store); 
   checkout(store, cart->id); 
@@ -331,9 +333,9 @@ void checkout_multi_locs_test(){
   //CU_ASSERT_EQUAL(merch_stock_on_shelf(store, "Apple", "F12"), a_before-10); 
   //CU_ASSERT_EQUAL(merch_stock_on_shelf(store, "Orange", "F12"), o_before-8); 
   //printf("%d\n", merch_stock_on_shelf(store, "Coconut", "F12")); 
-  CU_ASSERT_EQUAL(merch_stock_on_shelf(store, "Coconut", "F12"), 0); 
-  printf("%d\n", merch_stock_on_shelf(store, "Coconut", "M01")); 
-  CU_ASSERT_EQUAL(merch_stock_on_shelf(store, "Coconut", "M01"), 10-(c_before+15)); 
+  CU_ASSERT_EQUAL(merch_stock_on_shelf(store, "Coconut", "F12"), 16); 
+  //printf("%d\n", merch_stock(store, "Coconut")); 
+  CU_ASSERT_EQUAL(merch_stock_on_shelf(store, "Coconut", "M01"), 10); 
 
   store_destroy(store);
 }*/

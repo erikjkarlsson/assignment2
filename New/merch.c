@@ -43,6 +43,6 @@ void new_item(webstore_t *store, char *name, char *desc, size_t price, char *she
 }
 
 void remove_item(webstore_t *store, char *name){
-  REMOVE_ITEM(store,name); 
+  REMOVE_ITEM(store, name); 
 }
 

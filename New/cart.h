@@ -1,11 +1,43 @@
-#pragma once
+#ifndef __CART_H__
+#define __CART_H__
+
 #include <stddef.h>
 #include <stdint.h>
 #include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
 #include <stdbool.h>
+
 #include "webstore.h"
+
+
+#define LANG 1
+#define SWE(thing) if (LANG == 0) { thing; }
+#define ENG(thing) if (LANG == 1) { thing; }
+#define clear() printf("\033[H\033[J")
+#define newline puts("")
+#define AMOUNT_UPPER_MAX 100000
+
+#define EITHER_CHAR(str, a, c)			\
+  if ((str == a) || (str == b)) return c
+
+#define UNTIL_CORRECT(what, check) \
+  do { what; } while (!check)
+
+#define SET_UNTIL(what, check)					\
+  do { what; } while ((!(check)) && (!choice_prompt("Correct?")))
+
+#define SAFESET(what, check, error)				\
+  do { what; } while (!choice_prompt("Satisfied?"));		\
+  if (!(check)) error; 
+
+#define UNTIL_PLEASED(what) \
+  do { what; } while (!choice_prompt("Correct?"))
+
+#define BIPROMPT(swe, eng, what) \
+  SWE(puts(swe)); \
+  ENG(puts(eng)); \
+  what
 
 //used to place keys and values in one
 struct entry_ht
@@ -44,6 +76,7 @@ void add_to_cart(webstore_t *store, char *merch_to_add_name, int amount);
 Removes compleatly or removes a given amount of merch in the cart
 */
 void remove_from_cart(webstore_t *store, int id, char *merch_to_remove_name, int amount_to_remove);
+int active_cart_cost(webstore_t *store);
 
 /*
 Calculates the cost of the shopping cart
@@ -65,7 +98,12 @@ void display_cart(cart_t *cart);
 /*
 Determines if the given id of a cart represents an existing cart
 */
+
+bool is_merch(webstore_t *store, int id);
+bool is_money(int size);
+
 bool valid_id(webstore_t *store, int id);
+bool valid_merch_index(webstore_t *store, int id);
 
 /*
 Lists all existing carts with their ID in the store
@@ -89,7 +127,11 @@ int get_amount_of_merch_in_cart(cart_t *cart, char *merch_name);
 /*
 Returns true or false depending if a merch exists in the given cart
 */
+char *get_merch_name_in_cart(cart_t *cart, int nr_merch);
+  
 bool merch_in_cart(cart_t *cart, char *merch_name);
+bool cart_is_empty(cart_t *cart);
+size_t cart_db_size(cart_t *cart);
 
 /*
 Gets the cart with the given ID
@@ -97,7 +139,7 @@ Gets the cart with the given ID
 cart_t *get_cart(webstore_t *store, int id);
 
 //
-/*PROMT FUNCTIONS*/
+/*PROMPT FUNCTIONS*/
 //
 
 /*
@@ -105,11 +147,16 @@ Uses add_to_cart
 Asks for the name and amount of a merch that the user wants to 
 add to in a specific cart
 */
-void add_to_cart_promt(webstore_t *store, int id); 
+void add_to_cart_prompt(webstore_t *store, int id);
+void add_to_active_cart_prompt(webstore_t *store);
 
 /*
 Uses remove_from_cart
 Asks for name and amount of a merch that the user wants to remove or remove
 a ceratin amount from in the cart
 */
-void remove_from_cart_promt(webstore_t *store, int id); 
+void remove_from_cart_prompt(webstore_t *store); 
+void remove_from_active_cart_prompt(webstore_t *store);
+
+void sort_keys(entry_ht_t *keys, size_t no_keys);
+#endif

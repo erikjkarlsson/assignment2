@@ -11,8 +11,10 @@
 
 // 0 : Swedish
 // 1 : English
-#define LANG 0
-
+// #define LANG 0
+#define LANG 1
+#define SWE(thing) if (LANG == 0) { thing; }
+#define ENG(thing) if (LANG == 1) { thing; }
 
 /// String and Chars:
 
@@ -224,6 +226,23 @@ bool valid_int(int command){
     return true;
   }
   return false; 
+}
+bool choice_prompt(char *prompt){
+  char command[10];
+
+  printf("┏──╸%s \n", prompt);
+  ENG(puts("┃ [Y]es   [N]o  "));
+  SWE(puts("┃ [J]a    [N]ej "));    
+  printf(">");
+    
+  read_string(command, 10);
+
+  if      ((command[0] == 'Y') || (command[0] == 'y'))
+    return true;
+  else if ((command[0] == 'J') || (command[0] == 'j'))
+    return true;
+  else
+    return false;
 }
 
 char *ask_question_menu_cart(){

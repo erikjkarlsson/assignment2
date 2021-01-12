@@ -10,8 +10,8 @@
 #include <stdlib.h>
 #include <string.h>
 #include <errno.h>
-#include "hash_table.h"
 
+#include "hash_table.h"
 #include "utils.h"
 #include "common.h"
 

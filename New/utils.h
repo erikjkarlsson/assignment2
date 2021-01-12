@@ -10,7 +10,7 @@ typedef union {
 typedef  bool (*check_func) (char*);
 typedef  answer_t (*convert_func) (char*);
 extern   char *strdup(const char *);
-
+bool choice_prompt(char *prompt);
 int seed_random(void);
 int random_number(int range);
 int read_string(char *buf, int buf_siz);
