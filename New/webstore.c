@@ -97,17 +97,11 @@ void remove_merchendise(webstore_t *store, char *name){
   shelf_t *shelf = NULL;
   // Free Locs  
 
-
   merch_t *merch_data =
     get_elem_ptr(ioopm_hash_table_lookup(store->merch_db,
 					 ptr_elem(name)));
-
-
   
   ioopm_link_t *merch_data_locs = merch_data->locs->first;
-   
-
-
     
     do {
       shelf = get_elem_ptr(merch_data_locs->element);
@@ -342,6 +336,10 @@ int merch_price(webstore_t *store, char *name){
 }
 
 void set_merch_price(webstore_t *store, char *name, size_t price){
+  if (price <= 0){
+    perror("merch_price: Invalid price.\n");
+    return;
+  }
   if (!ioopm_hash_table_has_key(store->merch_db, ptr_elem(name))){
     perror("merch_price: Non existing merch.\n");
     return;
@@ -469,14 +467,13 @@ webstore_t *store_create(){
     ioopm_hash_table_create(extract_int_hash_key,
 			    eq_elem_int, eq_elem_string);	
 
+
   //linked list that holds all shopping carts
   new_webstore->all_shopping_carts = 
     ioopm_linked_list_create();
+    
   ioopm_linked_list_append(new_webstore->all_shopping_carts,
 			   ptr_elem(create_cart(new_webstore)));
-  
-
-
 
   return new_webstore;
 }
@@ -484,6 +481,7 @@ webstore_t *store_create(){
 void store_destroy(webstore_t *store){
   // Deallocate the argument handler, both hash tables
   // and the shopping cart list. And the whole webstore.
+  
   if (store == NULL){
     perror("store_destroy: Webstore is NULL.\n");
     return;
@@ -499,8 +497,9 @@ void store_destroy(webstore_t *store){
   
   ioopm_hash_table_destroy(store->merch_db);
   ioopm_hash_table_destroy(store->storage_db);
-
-  ioopm_linked_list_destroy(store->all_shopping_carts);  
+  
+  destroy_all_carts(store);
+  //ioopm_linked_list_destroy(store->all_shopping_carts);  
 
   free(store);
 }

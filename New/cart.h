@@ -64,7 +64,7 @@ cart_t *create_cart(webstore_t *store);
 /*
 Removes a cart compleatly from the store 
 */
-void remove_cart(webstore_t *store, int id);
+void remove_cart(webstore_t *store);
 
 /*
 Adds a merchname and an amount of that to the cart
@@ -132,6 +132,10 @@ char *get_merch_name_in_cart(cart_t *cart, int nr_merch);
 bool merch_in_cart(cart_t *cart, char *merch_name);
 bool cart_is_empty(cart_t *cart);
 size_t cart_db_size(cart_t *cart);
+
+void cart_destroy(cart_t *cart); 
+
+void destroy_all_carts(webstore_t *store); 
 
 /*
 Gets the cart with the given ID

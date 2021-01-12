@@ -92,10 +92,6 @@ void add_merchendise(webstore_t *store, char *name, char *desc, size_t price);
 //Removes a merch completely from the store
 void remove_merchendise(webstore_t *store, char *name);
 
-// Frees up the list of all locations/shelfs a specific
-//merch exsits on given it´s name
-void destroy_locs(webstore_t *store, char *name);
-
 // Calculates the total stock of a merch item from
 // the locs list (Storage) and then updates the total_amount
 // of the merch reflecting that. If the amount was updated
@@ -106,7 +102,17 @@ bool sync_merch_stock(webstore_t *store, char *name);
 //A negative (amount) decreases stock, positive increases.  
 size_t change_stock_relative_amount(webstore_t *store, char *name, size_t amount);
 
+//Sets the given describtion to a specific merch given the name of the merch
+void set_merch_description(webstore_t *store, char *name, char *desc);
+
+//Sets the given price on the specified merch given the merch name
+void set_merch_price(webstore_t *store, char *name, size_t price);
+
 /// HELP FUNCTIONS///
+
+// Frees up the list of all locations/shelfs a specific
+//merch exsits on given it´s name
+void destroy_locs(webstore_t *store, char *name);
 
 //Return true if index is valid meaning 
 //less or equal to the amount of merch 
@@ -129,14 +135,8 @@ size_t merch_stock(webstore_t *store, char *name);
 // Returns the price of the specified merch name
 int merch_price(webstore_t *store, char *name);
 
-//Sets the given price on the specified merch given the merch name
-void set_merch_price(webstore_t *store, char *name, size_t price);
-
 // Return the description of merch item
 char *merch_description(webstore_t *store, char *name);
-
-//Sets the given describtion to a specific merch given the name of the merch
-void set_merch_description(webstore_t *store, char *name, char *desc);
 
 //Returns a list of all the locations/shelfs that
 //a specific merch is given it´s name
@@ -163,24 +163,22 @@ void destroy_shelf(shelf_t *shelf);
 //Deletes the storage database compleatly
 void destroy_storage(webstore_t *store);
 
-//Adds a shelf and a merch name connected to it into the 
-//storage database. 
-//If the shelf already exists the merch name is added to that shelf
-//if the merch name aldready exists on the shelf, happens nothing 
-void add_to_storage(webstore_t *store, char *name, char *shelf);
-
-
-//Removes a shelf name from the storage database and 
-//all merch names connected to it
-void remove_shelf(webstore_t *store, char *shelf);
-
-
 //Adds shelf to both the merch database and the
 //storage database. 
 //If the shelf and merch on this shelf already exists, 
 //the function updates amount of merch on this shelf.
 void set_shelf(webstore_t *store, char *name,
 	       char *shelf, size_t amount);
+
+//Removes a shelf name from the storage database and 
+//all merch names connected to it
+void remove_shelf(webstore_t *store, char *shelf);
+  
+//Adds a shelf and a merch name connected to it into the 
+//storage database. 
+//If the shelf already exists the merch name is added to that shelf
+//if the merch name aldready exists on the shelf, happens nothing 
+void add_to_storage(webstore_t *store, char *name, char *shelf);
 
 // Looks in the Merch database for the location (shelf)
 // if it exists its stock will be set to the given amount

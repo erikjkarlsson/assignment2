@@ -136,23 +136,27 @@ cart_t *create_cart(webstore_t *store){
 			      eq_elem_int); 
     
     //Set id of cart to the total existing amount 
-    new_cart->id = ioopm_linked_list_size(store->all_shopping_carts);
+    //new_cart->id = ioopm_linked_list_size(store->all_shopping_carts);
     
     //Add cart to the list of all shopping carts
-    ioopm_linked_list_append(store->all_shopping_carts, ptr_elem(new_cart));
+    //if its not the first time the cart is added, add!
+    if(ioopm_linked_list_size(store->all_shopping_carts) > 0){
+      ioopm_linked_list_append(store->all_shopping_carts, ptr_elem(new_cart));
+    }
+    
         
     return new_cart;
 }
 
-void remove_cart(webstore_t *store, int id){
-    cart_t *cart = get_cart(store,id);
+void remove_cart(webstore_t *store){
+    cart_t *cart = get_cart(store,store->active_cart);
     
     if(cart == NULL){
         perror("REMOVE CART: There is no cart to remove.\n");
         return;
     }
     
-    ioopm_linked_list_remove(store->all_shopping_carts, id);    
+    ioopm_linked_list_remove(store->all_shopping_carts, store->active_cart);    
     ioopm_hash_table_destroy(cart->merch_in_cart);
     
     free(cart);
@@ -238,6 +242,29 @@ void add_to_cart(webstore_t *store, int id, char *merch_to_add_name, int amount)
     }
 }*/
 
+void cart_destroy(cart_t *cart){    
+  ioopm_hash_table_destroy(cart->merch_in_cart);
+  free(cart);   
+  cart = NULL;
+}
+
+void destroy_all_carts(webstore_t *store){
+  
+  ioopm_link_t *current = (store->all_shopping_carts)->first;
+  cart_t *current_cart  = NULL;
+  
+  do {
+    current_cart = get_elem_ptr(current->element);    
+    cart_destroy(current_cart);
+    
+    current = current->next;    
+  } while (current != NULL);
+  
+
+  ioopm_linked_list_destroy(store->all_shopping_carts);  
+  
+}
+
 void remove_from_cart(webstore_t *store, int id, char *merch_to_remove_name, int amount_to_remove){
     
     cart_t *current_cart = get_cart(store, id);
@@ -269,6 +296,7 @@ void remove_from_cart(webstore_t *store, int id, char *merch_to_remove_name, int
         ioopm_hash_table_insert(current_cart->merch_in_cart, str_elem(merch_to_remove_name), int_elem(amount_of_merch-amount_to_remove)); 
     }
 }
+
 int active_cart_cost(webstore_t *store){
   return calculate_cost(store, store->active_cart);
 }
@@ -440,7 +468,7 @@ void checkout(webstore_t *store){
     ioopm_iterator_destroy(iter_n);
   }
   ioopm_linked_list_destroy(names);
-  remove_cart(store, current_cart->id); 
+  remove_cart(store); 
 }
 
 /*  void checkout(webstore_t *store){
