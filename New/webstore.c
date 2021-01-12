@@ -337,7 +337,7 @@ int merch_price(webstore_t *store, char *name){
 
 void set_merch_price(webstore_t *store, char *name, size_t price){
   if (price <= 0){
-    perror("merch_price: Invalid price.\n");
+    perror("merch_price: Invalid.\n");
     return;
   }
   if (!ioopm_hash_table_has_key(store->merch_db, ptr_elem(name))){

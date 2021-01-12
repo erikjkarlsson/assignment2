@@ -522,7 +522,8 @@ void edit_merch_prompt(webstore_t *store){
 }         
 
 int main(int argc, char *argv[]) {
-  webstore_t *store = store_create();  // --- Load hardcoded test merch
+  webstore_t *store = store_create();  
+  // --- Load hardcoded test merch
   INIT_DATABASE(store);
 
 
