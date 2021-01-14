@@ -105,8 +105,6 @@ void remove_merchendise(webstore_t *store, char *name){
 
   
   ioopm_link_t *merch_data_locs = merch_data->locs->first;
-   
-
 
     
     do {

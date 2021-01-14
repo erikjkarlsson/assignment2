@@ -7,6 +7,8 @@
 #include "list_linked.h"
 #include "webstore.h"
 #include "common.h"
+#include "cart.h"
+
 
 
 int init_suite(void)
