@@ -191,18 +191,12 @@ void destroy_all_merch(webstore_t *store){
    return;
  } 
  
- merch_t *current_merch = NULL;
-
  do {
-   current_merch = get_elem_ptr(current->element);
-   char *current_name = strdup(current_merch->name);  
-   free(current_merch);
-   ioopm_hash_table_remove(store->merch_db, ptr_elem(current_name));
+   remove_merchendise(store, get_elem_ptr(current->element));
    current = current->next;
  } while (current != NULL);
 
- ioopm_linked_list_destroy(names);
- 
+ ioopm_linked_list_destroy(names); 
 }
 
 void add_merchendise(webstore_t *store,
@@ -506,15 +500,12 @@ void destroy_locs(webstore_t *store, char *name){
 // STORE                                            ///
 /// /// /// /// /// /// /// /// /// /// /// /// /// ///
 
-void parse_args(webstore_t *store, int argc, char **argv){
-  arg_parse(argc, argv, store->opt);
-}
 webstore_t *store_create(){
   // Allocate the argument handler, both hash tables
   // and the shopping cart list. And the whole webstore.
 
   webstore_t *new_webstore = calloc(1, sizeof(webstore_t));
-
+  
   new_webstore->opt = create_arg_opt();
 
   // Storage and Merch databases
@@ -546,15 +537,18 @@ void store_destroy(webstore_t *store){
   }
   
   destroy_arg_opt(store->opt);
-  destroy_all_merch(store);
-  destroy_storage(store);  
 
+
+  destroy_all_merch(store);
+
+
+  destroy_storage(store);
+  
   ioopm_hash_table_destroy(store->merch_db);
   ioopm_hash_table_destroy(store->storage_db);
-  ioopm_linked_list_destroy(store->all_shopping_carts);
-  //For debugging: ioopm_linked_list_destroy(store->all_shopping_carts);  
-  destroy_all_carts(store);
 
+  destroy_all_carts(store);
+  //ioopm_linked_list_destroy(store->all_shopping_carts);  
 
   free(store);
 }
@@ -716,8 +710,10 @@ void list_shelfs(webstore_t *store, char *name){
 void remove_name_from_shelf(webstore_t *store, char *shelf, char *name){
 
   if (!ioopm_hash_table_has_key(store->storage_db, ptr_elem(shelf))){
+    perror("remove_name_from_shelf: Non existing shelf name.\n");
     return;
   }else if (!ioopm_hash_table_has_key(store->merch_db, ptr_elem(name))){
+    perror("remove_name_from_shelf: Non existing merch name.\n");
     return;
   }
   ioopm_list_t *list         =

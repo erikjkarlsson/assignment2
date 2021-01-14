@@ -352,8 +352,8 @@ int main()
       return CU_get_error();
   }
 
-  if ((NULL == CU_add_test(test_suite1, "Create Destroy Cart Test", create_destroy_cart))   ||
-     (NULL == CU_add_test(test_suite1, "Add to Cart Test", add_to_cart_test)) //||
+  if ((NULL == CU_add_test(test_suite1, "Create Destroy Cart Test", create_destroy_cart))  // ||
+     //(NULL == CU_add_test(test_suite1, "Add to Cart Test", add_to_cart_test)) //||
      //(NULL == CU_add_test(test_suite1, "Add Zero Amount to Cart Test",   add_zero_amount_to_cart))   ||
      //(NULL == CU_add_test(test_suite1, "Add Larger Than Stock to Cart Test",   add_larger_than_stock_to_cart))   ||
      //(NULL == CU_add_test(test_suite1, "Add Merch to Cart Multi Times Test",   add_merch_to_cart_multi_times))   ||

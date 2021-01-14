@@ -141,6 +141,7 @@ cart_t *create_cart(webstore_t *store){
     //Add cart to the list of all shopping carts
     //if its not the first time the cart is added, add!
     if(ioopm_linked_list_size(store->all_shopping_carts) > 0){
+      puts("create!");
       ioopm_linked_list_append(store->all_shopping_carts, ptr_elem(new_cart));
     }
     
@@ -249,7 +250,12 @@ void cart_destroy(cart_t *cart){
 }
 
 void destroy_all_carts(webstore_t *store){
-  
+  if((store->all_shopping_carts)==NULL){
+    puts("NULL!");
+    
+  }
+  //printf("size linked list: %d \n", store->all_shopping_carts->size);
+  printf("element: %s", (store->all_shopping_carts)->first->element);
   ioopm_link_t *current = (store->all_shopping_carts)->first;
   cart_t *current_cart  = NULL;
   
@@ -259,10 +265,10 @@ void destroy_all_carts(webstore_t *store){
     
     current = current->next;    
   } while (current != NULL);
-  
 
   ioopm_linked_list_destroy(store->all_shopping_carts);  
-  
+  //free(store->all_shopping_carts);
+  store->all_shopping_carts = NULL;
 }
 
 void remove_from_cart(webstore_t *store, int id, char *merch_to_remove_name, int amount_to_remove){
