@@ -61,9 +61,22 @@ void ioopm_clear_list(ioopm_list_t *list) // Internal
 
 void ioopm_linked_list_destroy(ioopm_list_t *list) // External
 {
-  /// Free the allocated memory of the linked list.
-  ioopm_clear_list(list);
-  free(list);
+  if(list != NULL){
+    /// Free the allocated memory of the linked list.
+    //ioopm_clear_list(list);
+    if(list->first == NULL){
+      puts("NULL!!!!!!!!!");
+    }
+      while (list->first != NULL) {
+        ioopm_link_t *tmp = list->first->next;
+        free(list->first);
+        list->first = NULL;
+        list->first = tmp;
+    }
+  }
+   
+   free(list);
+   list = NULL;
 }
 
 ioopm_link_t *create_link(elem_t value, ioopm_link_t *next) // Internal
