@@ -516,13 +516,13 @@ webstore_t *store_create(){
   
   new_webstore->opt = create_arg_opt();
 
-  // Storage and Merch databases
+    // Storage and Merch databases
   new_webstore->merch_db   =
     ioopm_hash_table_create(extract_int_hash_key,
-			    eq_elem_int, eq_elem_pstr);
+                eq_elem_int, eq_elem_pstr);
   new_webstore->storage_db =
     ioopm_hash_table_create(extract_int_hash_key,
-			    eq_elem_int, eq_elem_pstr);	
+                eq_elem_int, eq_elem_pstr);    
 
   //linked list that holds all shopping carts
   new_webstore->all_shopping_carts = 
@@ -910,6 +910,10 @@ void set_shelf(webstore_t *store, char *name,
   // storage database. If it already exists, update amount.
   
   // Add name to shelf if it already doesnt not contain it.
+  
+  if(!is_shelf(shelf)){
+    return;
+  }
   if (!storage_contains(store, name, shelf))
     add_to_storage(store, name, shelf);
 

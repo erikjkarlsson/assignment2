@@ -278,14 +278,14 @@ void set_shelf_test(){
 
   set_shelf(store, "Bike",shelf_name, amount);
 
-  /*CU_ASSERT_TRUE(merch_stock(store, "Bike") == amount);
+  CU_ASSERT_TRUE(merch_stock(store, "Bike") == amount);
   increase_stock(store, "Bike", shelf_name, 1);
   CU_ASSERT_TRUE(merch_stock(store, "Bike") == amount + 1);
   
   set_shelf(store, "Bike",  "", 2);
   CU_ASSERT_FALSE(merch_stock(store, "") == 2);
   set_shelf(store, "",  "Bike", 2);
-  CU_ASSERT_FALSE(merch_stock(store, "") == 2);*/
+  CU_ASSERT_FALSE(merch_stock(store, "") == 2);
   
   store_destroy(store);
 }
@@ -479,15 +479,14 @@ int main()
       return CU_get_error();
   }
 
-  if ((NULL == CU_add_test(test_suite1, "Create Destroy Store Test",   create_destroy_store)) //||
-      //(NULL == CU_add_test(test_suite1, "Create Destroy Merch Test",   create_destoy_merch))   ||
-      //(NULL == CU_add_test(test_suite1, "Destroy All Merch Test",   test_destroy_all_merch))   //||
-      //(NULL == CU_add_test(test_suite1, "Create Destroy Shelf Test",   create_destroy_shelf))   ||
-      //(NULL == CU_add_test(test_suite1, "Add Merch Test",   test_add_merch))  ||
+  if ((NULL == CU_add_test(test_suite1, "Create Destroy Store Test",   create_destroy_store)) ||
+      (NULL == CU_add_test(test_suite1, "Create Destroy Merch Test",   create_destoy_merch))  ||
+      (NULL == CU_add_test(test_suite1, "Create Destroy Shelf Test",   create_destroy_shelf)) ||
+      (NULL == CU_add_test(test_suite1, "Add Merch Test",   test_add_merch))  ||
       //(NULL == CU_add_test(test_suite1, "Storage Test", test_storage)) //||
       //(NULL == CU_add_test(test_suite1, "Locs Test",    test_locs))    ||
-      //(NULL == CU_add_test(test_suite1, "Set Shelf Test",    set_shelf_test))  //||
-      //(NULL == CU_add_test(test_suite1, "Add Remove Storage Test", test_add_remove_storage)) //||
+      (NULL == CU_add_test(test_suite1, "Set Shelf Test",    set_shelf_test))  ||
+      (NULL == CU_add_test(test_suite1, "Add Remove Storage Test", test_add_remove_storage)) //||
       //(NULL == CU_add_test(test_suite1, "Sync Test",    test_sync))    ||
       //(NULL == CU_add_test(test_suite1, "Index Lookup (Misc) Test",    index_lookup_test)))
       )
