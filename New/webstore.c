@@ -109,7 +109,7 @@ void remove_merchendise(webstore_t *store, char *name){
     
     do {
       shelf = get_elem_ptr(merch_data_locs->element);
-      remove_from_storage(store, name, shelf->shelf);
+      remove_name_from_shelf(store, name, shelf->shelf);
       merch_data_locs = merch_data_locs->next;           
     } while (merch_data_locs != NULL);
     
@@ -649,7 +649,7 @@ void remove_from_storage(webstore_t *store, char *name, char *shelf){
 
     if ((char*)get_elem_ptr(db_item->element) == name){
       db_prev->next = db_item->next;
-      free(db_item);
+      
       return;
     }
     db_prev = db_item;
@@ -705,6 +705,7 @@ void list_shelfs(webstore_t *store, char *name){
   }    
   ioopm_iterator_destroy(iter);
 }
+
 void remove_name_from_shelf(webstore_t *store, char *shelf, char *name){
 
   if (!ioopm_hash_table_has_key(store->storage_db, ptr_elem(shelf))){
