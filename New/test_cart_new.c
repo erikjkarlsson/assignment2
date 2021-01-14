@@ -28,9 +28,8 @@ void test(){
 }
 
 void create_destroy_cart(){
-  webstore_t *store = store_create();
-  cart_t *cart = create_cart(store);
-  remove_cart(store, cart->id);
+  webstore_t *store = store_create(); //already one cart created here
+  cart_t *cart = create_cart(store); 
   store_destroy(store);
 }
 
@@ -41,14 +40,14 @@ void add_to_cart_test(){
   cart_t *cart = create_cart(store);
   
   int stock_apple_before = merch_stock(store, "Apple");
-  add_to_cart(store, cart->id, "Apple", 10); 
+  add_to_cart(store, "Apple", 10); 
   int stock_apple_after = merch_stock(store, "Apple");
   CU_ASSERT_EQUAL(stock_apple_before, stock_apple_after); 
   CU_ASSERT_EQUAL(get_amount_of_merch_in_cart(cart, "Apple"), 10);
   CU_ASSERT_TRUE(merch_in_cart(cart, "Apple"));
   
   int stock_orange_before = merch_stock(store, "Orange");
-  add_to_cart(store, cart->id, "Orange", 8); 
+  add_to_cart(store, "Orange", 8); 
   int stock_orange_after = merch_stock(store, "Orange");
   CU_ASSERT_EQUAL(stock_orange_before,stock_orange_after); 
   CU_ASSERT_EQUAL(get_amount_of_merch_in_cart(cart, "Orange"), 8);
@@ -56,17 +55,16 @@ void add_to_cart_test(){
 
   
   int stock_coconut_before = merch_stock(store, "Coconut");
-  add_to_cart(store, cart->id, "Coconut", 1); 
+  add_to_cart(store, "Coconut", 1); 
   int stock_coconut_after = merch_stock(store, "Coconut");
   CU_ASSERT_EQUAL(stock_coconut_before, stock_coconut_after); 
   CU_ASSERT_EQUAL(get_amount_of_merch_in_cart(cart, "Coconut"), 1);
   CU_ASSERT_TRUE(merch_in_cart(cart, "Coconut"));
   
-  
-  remove_cart(store, cart->id);
   store_destroy(store);
 }
 
+/*
 void add_zero_amount_to_cart(){
   webstore_t *store = store_create();  // --- Load hardcoded test merch
   INIT_DATABASE(store);
@@ -304,6 +302,7 @@ void checkout_test(){
 
   store_destroy(store);
 }
+*/
 /*
 void checkout_multi_locs_test(){
   webstore_t *store = store_create();  // --- Load hardcoded test merch
@@ -354,22 +353,22 @@ int main()
   }
 
   if ((NULL == CU_add_test(test_suite1, "Create Destroy Cart Test", create_destroy_cart))   ||
-     (NULL == CU_add_test(test_suite1, "Add to Cart Test", add_to_cart_test)) ||
-     (NULL == CU_add_test(test_suite1, "Add Zero Amount to Cart Test",   add_zero_amount_to_cart))   ||
-     (NULL == CU_add_test(test_suite1, "Add Larger Than Stock to Cart Test",   add_larger_than_stock_to_cart))   ||
-     (NULL == CU_add_test(test_suite1, "Add Merch to Cart Multi Times Test",   add_merch_to_cart_multi_times))   ||
-     (NULL == CU_add_test(test_suite1, "Add Non Exsisting Merch to Cart Test",   add_non_existing_merch_to_cart)) ||
+     (NULL == CU_add_test(test_suite1, "Add to Cart Test", add_to_cart_test)) //||
+     //(NULL == CU_add_test(test_suite1, "Add Zero Amount to Cart Test",   add_zero_amount_to_cart))   ||
+     //(NULL == CU_add_test(test_suite1, "Add Larger Than Stock to Cart Test",   add_larger_than_stock_to_cart))   ||
+     //(NULL == CU_add_test(test_suite1, "Add Merch to Cart Multi Times Test",   add_merch_to_cart_multi_times))   ||
+     //(NULL == CU_add_test(test_suite1, "Add Non Exsisting Merch to Cart Test",   add_non_existing_merch_to_cart)) ||
      
-     (NULL == CU_add_test(test_suite1, "Remove From Cart Test",   remove_from_cart_test)) ||
-     (NULL == CU_add_test(test_suite1, "Remove From Cart Compleatly Test",   remove_merch_compleatly)) ||
-     (NULL == CU_add_test(test_suite1, "Remove From Cart Multi Times Test",   remove_merch_multiple_times)) ||
-     (NULL == CU_add_test(test_suite1, "Remove Zero From Cart Test",   remove_zero_from_merch)) ||
-     (NULL == CU_add_test(test_suite1, "Remove Non Existing From Cart Test",   remove_non_existing_merch)) ||
+     //(NULL == CU_add_test(test_suite1, "Remove From Cart Test",   remove_from_cart_test)) ||
+     //(NULL == CU_add_test(test_suite1, "Remove From Cart Compleatly Test",   remove_merch_compleatly)) ||
+     //(NULL == CU_add_test(test_suite1, "Remove From Cart Multi Times Test",   remove_merch_multiple_times)) ||
+     //(NULL == CU_add_test(test_suite1, "Remove Zero From Cart Test",   remove_zero_from_merch)) ||
+     //(NULL == CU_add_test(test_suite1, "Remove Non Existing From Cart Test",   remove_non_existing_merch)) ||
      
-     (NULL == CU_add_test(test_suite1, "Calculate Cost Test",   calculate_cost_test)) ||
-     (NULL == CU_add_test(test_suite1, "Calculate Cost Of Empty Cart Test",   calculate_cost_empty_cart)) ||
-     (NULL == CU_add_test(test_suite1, "Display Test",   display_cart_test)) ||
-     (NULL == CU_add_test(test_suite1, "Checkout Test",   checkout_test)) //||
+     //(NULL == CU_add_test(test_suite1, "Calculate Cost Test",   calculate_cost_test)) ||
+     //(NULL == CU_add_test(test_suite1, "Calculate Cost Of Empty Cart Test",   calculate_cost_empty_cart)) ||
+     //(NULL == CU_add_test(test_suite1, "Display Test",   display_cart_test)) ||
+     //(NULL == CU_add_test(test_suite1, "Checkout Test",   checkout_test)) //||
     // (NULL == CU_add_test(test_suite1, "Checkout Multi Locs Test",   checkout_multi_locs_test))
      )
      {
@@ -381,4 +380,30 @@ int main()
   CU_basic_run_tests();
   CU_cleanup_registry();
   return CU_get_error();
+}
+
+void store_destroy(webstore_t *store){
+  // Deallocate the argument handler, both hash tables
+  // and the shopping cart list. And the whole webstore.
+  
+  if (store == NULL){
+    perror("store_destroy: Webstore is NULL.\n");
+    return;
+  }
+  
+  destroy_arg_opt(store->opt);
+
+
+  destroy_all_merch(store);
+
+
+  destroy_storage(store);
+  
+  ioopm_hash_table_destroy(store->merch_db);
+  ioopm_hash_table_destroy(store->storage_db);
+  
+  destroy_all_carts(store);
+  //ioopm_linked_list_destroy(store->all_shopping_carts);  
+
+  free(store);
 }
