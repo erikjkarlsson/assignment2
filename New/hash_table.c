@@ -327,7 +327,7 @@ bool ioopm_hash_table_is_empty(ioopm_hash_table_t *ht)
 ioopm_list_t *ioopm_hash_table_values(ioopm_hash_table_t *ht)
 {
   ioopm_list_t *list = ioopm_linked_list_create(ht->comp_key);
-  int index;
+  int index = 0;
   for (size_t i = 0; i < ht->capacity; i++)
   {
     entry_t *entry = ht->buckets[i];
@@ -345,7 +345,7 @@ bool ioopm_hash_table_any(ioopm_hash_table_t *ht, ioopm_predicate p, void *x)
   {
     entry_t *entry = NULL;
     bool result = false;
-    for (int i = 0; i < ht->capacity && result == false; i++)
+    for (size_t i = 0; i < ht->capacity && result == false; i++)
       {
         entry = ht->buckets[i];
         while(entry && !result)
@@ -361,7 +361,7 @@ bool ioopm_hash_table_all(ioopm_hash_table_t *ht, ioopm_predicate p, void *x)
 {
   entry_t *entry = NULL;
   bool result = false;
-  for (int i = 0; i < ht->capacity; i++)
+  for (size_t i = 0; i < ht->capacity; i++)
   {
     entry = ht->buckets[i]->next;
     while(entry && !result)
@@ -381,7 +381,7 @@ return true;
 void ioopm_hash_table_apply_to_all(ioopm_hash_table_t *ht, ioopm_apply_function f, void *x)
 {
   entry_t *entry = NULL;
-  for (int i = 0; i < ht->capacity; i++)
+  for (size_t i = 0; i < ht->capacity; i++)
   {
     entry = ht->buckets[i]->next;
     while (entry)

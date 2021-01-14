@@ -27,7 +27,7 @@ int main(int argc, char *argv[]) {
   add_to_storage(store, "B", "A10");
   add_to_storage(store, "C", "A10");
 
-  display_storage(store, "A10");
+  display_shelf(store, "A10");
   list_merchandise(store);
   if(
   storage_contains(store, "A10", "A") &&
@@ -36,13 +36,11 @@ int main(int argc, char *argv[]) {
      ) printf("YES\n");
   
   // --- Remove Merch
-  remove_merchendise(store, "Bike");
-  remove_merchendise(store, "Chair");
-  remove_merchendise(store, "Cola");
-
-  remove_all_storage_locations(store);
+  //  remove_merchendise(store, "Bike");
+  //  remove_merchendise(store, "Chair");
+  //  remove_merchendise(store, "Cola");
   
-  store_destroy(store);
+
   
   printf("Finished Running!\n");
 

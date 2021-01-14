@@ -79,12 +79,27 @@
 #define int_elem(x) (elem_t) { .i=(x) }
 #define ptr_elem(x) (elem_t) { .p=(x) }
 #define char_elem(x) (elem_t) {.c=(x) }
+#define float_elem(x) (elem_t) {.f=(x) }
+#define uint_elem(x) (elem_t) {.u=(x) }
 #define str_elem(x) (elem_t) {.c=(x) }
+
+
+#define HASH_LOOKUP(ht, key) \
+  ioopm_hash_table_lookup(ht, key);
+
+#define HASH_REMOVE(ht, key) \
+  ioopm_hash_table_remove(ht, key)
+
+#define HASH_RESULT_VALID(option) \
+  ioopm_option_successful(option)
 
 
 typedef union elem elem_t;
 typedef bool (*ioopm_predicate)(elem_t key, elem_t value, void *extra);
 typedef void (*ioopm_apply_function)(elem_t key, elem_t *value, void *extra);
+
+typedef bool (*ioopm_eq_function)(elem_t lhs, elem_t rhs);
+typedef int (*ioopm_hash_function)(elem_t value);
 
 typedef unsigned int uint;
 

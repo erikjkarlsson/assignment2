@@ -1,0 +1,544 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <errno.h>
+#include "hash_table.h"
+#include "iterator.h"
+#include "list_linked.h"
+#include "common.h"
+#include "utils.h"
+#include "webstore.h"
+#include "cart.h"
+
+#define get_elem_ptr(e) e.p
+#define get_elem_int(e) e.i
+#define get_elem_str(e) e.c
+
+#define CURRENT_ITER_STR(iter) \
+  get_elem_str(ioopm_iterator_current(iter))
+
+#define CURRENT_ITER_INT(iter) \
+  get_elem_int(ioopm_iterator_current(iter))
+
+#define CURRENT_ITER_PTR(iter) \
+  get_elem_ptr(ioopm_iterator_current(iter))
+
+#define ITER_HAS_NXT(iter) \
+  ioopm_iterator_has_next(iter)
+
+#define ITER_NXT(iter) \
+  ioopm_iterator_next(iter)
+
+#define ITER_INIT(iter)	\
+  ioopm_list_iterator(iter)
+#define ITER_DEST(iter)	\
+  ioopm_iterator_destroy(iter)
+
+#define ID_BOUNDS_MAX 100000
+///
+/*HELP FUNCTIONS*/
+///
+
+#define CAPITAL_MAX 100000
+#define CAPITAL_MIN 0
+
+bool is_merch(webstore_t *store, int id){
+  return valid_index(store, id);
+}
+
+bool is_money(int size){
+  return ((size < CAPITAL_MAX) && (size > CAPITAL_MIN));
+}
+bool valid_id(webstore_t *store, int id){
+
+  if (ioopm_linked_list_size(store->all_shopping_carts) < 1)
+     return false;
+  
+  else if (id < 0){
+    perror("valid_id: Id is under 0.\n");
+    return false;
+  }
+  else if (id >= ID_BOUNDS_MAX){
+    perror("valid_id: Id is over the max-bounds.\n");
+    return false;
+  }
+
+  
+  ioopm_link_t *current = (store->all_shopping_carts)->first; 
+
+  do {
+    cart_t *cart = get_elem_ptr(current->element);
+    if (cart->id == id) return true;
+
+    current = current->next;
+  } while (current != NULL);
+  return false;  
+}
+
+bool valid_merch_index(webstore_t *store, int id){ //TODO
+  return ((0 < id) && (id <= ioopm_hash_table_size(store->merch_db)));
+}
+
+cart_t *get_cart(webstore_t *store, int id){
+    return get_elem_ptr(ioopm_linked_list_get(store->all_shopping_carts, id));
+}
+
+int amount_of_merch_in_cart(cart_t *cart, char *merch_name){
+    //checks if this merch is in the cart
+    if(ioopm_hash_table_has_key(cart->merch_in_cart, str_elem(merch_name)))
+        return get_elem_int(ioopm_hash_table_lookup(cart->merch_in_cart,
+						    str_elem(merch_name)));
+    else return 0;
+}
+
+static int cmpstringp(const void *p1, const void *p2)
+{
+  return strcmp(* (char * const *) p1, * (char * const *) p2);
+}
+
+void sort_keys(entry_ht_t *keys, size_t no_keys)
+{
+  qsort(keys, no_keys, sizeof(entry_ht_t), cmpstringp);
+}
+
+
+bool cart_is_empty(cart_t *cart){
+    return ioopm_hash_table_is_empty(cart->merch_in_cart);
+}
+
+size_t cart_db_size(cart_t *cart){
+    return ioopm_hash_table_size(cart->merch_in_cart);
+}
+
+void list_all_cart_id(webstore_t *store){
+  puts("┏──╸ Existing Cart ID's ");
+  ioopm_link_t *current = (store->all_shopping_carts)->first; 
+
+  do {
+    cart_t *cart = get_elem_ptr(current->element);
+    printf("┃ Cart Id.%d\n", cart->id);
+    current = current->next;
+  } while (current != NULL);
+}
+
+///
+/*FUNCTIONS*/
+///
+
+cart_t *create_cart(webstore_t *store){
+    cart_t *new_cart = calloc(1, sizeof(cart_t));
+    
+    //ht containing all merch in cart with string key and int elem 
+    new_cart->merch_in_cart =
+      ioopm_hash_table_create(string_knr_hash,
+			      eq_elem_string,
+			      eq_elem_int); 
+    
+    //Set id of cart to the total existing amount 
+    new_cart->id = ioopm_linked_list_size(store->all_shopping_carts);
+    
+    //Add cart to the list of all shopping carts
+    ioopm_linked_list_append(store->all_shopping_carts, ptr_elem(new_cart));
+        
+    return new_cart;
+}
+
+void remove_cart(webstore_t *store, int id){
+    cart_t *cart = get_cart(store,id);
+    
+    if(cart == NULL){
+        perror("REMOVE CART: There is no cart to remove.\n");
+        return;
+    }
+    
+    ioopm_linked_list_remove(store->all_shopping_carts, id);    
+    ioopm_hash_table_destroy(cart->merch_in_cart);
+    
+    free(cart);
+}
+
+void add_to_cart(webstore_t *store, char *name, int amount){
+    
+    if(amount <= 0){
+        perror("add_to_cart: Cannot add under 0 merch.\n");
+        return;
+    }
+    
+    if(!valid_id(store, store->active_cart)){
+        perror("add_to_cart: Invalid cart ID.\n");
+        return; 
+    }
+
+    int total_stock      = merch_stock(store, name);
+    cart_t *current_cart = get_cart(store, store->active_cart);
+    int current          =
+      get_elem_int(ioopm_hash_table_lookup(current_cart->merch_in_cart,
+					   str_elem(name)));
+			     
+    
+    // If the asked amount and the amount
+    // already in the cart exceeds the amount of merch in the store
+      if (total_stock < (current + amount)){
+        perror("add_to_cart: Not enough in stock.\n");
+        return;
+    }
+    
+    
+    // Avoid duplicate merch in db, update existing entry
+      if (!ioopm_hash_table_has_key(current_cart->merch_in_cart,
+				    ptr_elem(name))){
+	int existing_amount =
+	  get_elem_int(ioopm_hash_table_lookup(current_cart->merch_in_cart,
+					       str_elem(name)));
+	
+	ioopm_hash_table_insert(current_cart->merch_in_cart,
+				str_elem(name),
+				int_elem(existing_amount + amount));
+
+    } else {
+	// This should only happen if the current_stock == 0 	  
+	  ioopm_hash_table_insert(current_cart->merch_in_cart,
+				  str_elem(name), int_elem(amount));
+    }
+}
+
+void remove_from_cart(webstore_t *store, int id, char *merch_to_remove_name, int amount_to_remove){
+    
+    cart_t *current_cart = get_cart(store, id);
+    
+    if(!merch_in_cart(current_cart, merch_to_remove_name)){
+        perror("REMOVE FROM CART: There is no such merch in the cart.\n");
+        return; 
+    }
+    if(!valid_id(store,id)){
+        perror("REMOVE FROM CART: The id of the cart is invalid.\n");
+        return; 
+    }
+    
+    //char *merch_to_remove_name = lookup_merch_name(store, nr_merch);
+    
+    int amount_of_merch =  amount_of_merch_in_cart(current_cart, merch_to_remove_name);
+    
+    //Tries to remove more merch than there is
+    if(amount_of_merch < amount_to_remove){
+        perror("REMOVE FROM CART: Can´t reomve more merch than there is in the cart.\n");
+        return;
+    }
+    
+    //if the amount of merch in the cart is 0 then remove the merch, else just decrease the amount
+    if(amount_of_merch == amount_to_remove){
+        ioopm_hash_table_remove(current_cart->merch_in_cart, str_elem(merch_to_remove_name));;
+        //printf("You have removed %s from cart with id %d", removed, current_cart->id);
+    }else{
+        ioopm_hash_table_insert(current_cart->merch_in_cart, str_elem(merch_to_remove_name), int_elem(amount_of_merch-amount_to_remove)); 
+    }
+}
+int active_cart_cost(webstore_t *store){
+  return calculate_cost(store, store->active_cart);
+}
+
+int calculate_cost(webstore_t *store, int id){
+    
+  if(!valid_id(store,id)){
+    perror("calculate_cost: The cart id is invalid.\n");
+    return 0; 
+  }
+    
+  cart_t *current_cart = get_cart(store, id);
+
+  // Individual Merch Price
+  int price ;
+  // Stock amount
+  int current_amount;
+
+  int total_price      = 0;
+    
+  //if the cart is empty
+  if(cart_is_empty(current_cart)){
+    perror("calculate_cost: Cart contains nothing.\n"); 
+    return total_price;
+  }
+    
+  ioopm_list_t *names =
+    ioopm_hash_table_keys(current_cart->merch_in_cart);
+  ioopm_list_t *amounts =
+    ioopm_hash_table_values(current_cart->merch_in_cart);
+    
+    
+  if(cart_db_size(current_cart) == 1){
+    price = merch_price(store, get_elem_str(ioopm_linked_list_get(names, 0)));
+    current_amount = get_elem_int(ioopm_linked_list_get(amounts, 0));
+    total_price = price * current_amount; 
+  }
+    
+  else{
+
+    size_t no_names = ioopm_linked_list_size(names);
+        
+    ioopm_list_iterator_t *iter_n = ITER_INIT(names); 
+    ioopm_list_iterator_t *iter_a = ITER_INIT(amounts);
+        
+    //checks the price for each merch in the cart
+    //and multiplies it with the amount
+    for (int i = 0; i < no_names; i++) {      
+      char *current_name;
+      // Sum up all (of merch in cart)
+      // prices * amount 
+      // for the final price
+      current_name   = CURRENT_ITER_STR(iter_n);
+      current_amount = CURRENT_ITER_INT(iter_a);
+      price = merch_price(store, current_name);
+      total_price += (price*current_amount);
+
+      // Continue iterating through merch in cart 
+      if(ITER_HAS_NXT(iter_n) && ITER_HAS_NXT(iter_a)){
+	ITER_NXT(iter_n); ITER_NXT(iter_a);
+      }
+
+    }
+        
+    ITER_DEST(iter_n);
+    ITER_DEST(iter_a);
+  }
+    
+  ioopm_linked_list_destroy(names);
+  ioopm_linked_list_destroy(amounts);
+
+  return total_price;
+}
+
+void checkout(webstore_t *store){
+  cart_t *cart = get_cart(store, store->active_cart);
+
+
+    ioopm_list_t *names   =
+    ioopm_hash_table_keys(cart->merch_in_cart);
+
+  ioopm_list_t *amounts =
+    ioopm_hash_table_values(cart->merch_in_cart);
+
+  ioopm_list_iterator_t *iter_n = ITER_INIT(names); 
+    ioopm_list_iterator_t *iter_a = ITER_INIT(amounts);
+
+    // Transfer all stock amounts & merch names
+    // into an array for sorting    
+    for (size_t i = 0; i < ioopm_linked_list_size(names); i++) {
+      size_t current_amount = CURRENT_ITER_INT(iter_a);
+      char *current_name    = CURRENT_ITER_STR(iter_n);
+      
+      // Create value for array
+      increase_equal_stock(store, current_name, -current_amount);
+      // Iterate through all merch names and
+      // stock amounts
+      if(ITER_HAS_NXT(iter_n) && ITER_HAS_NXT(iter_a)){
+	ITER_NXT(iter_n); ITER_NXT(iter_a);
+      }
+    }
+    
+    
+    ioopm_linked_list_destroy(names);
+    ioopm_linked_list_destroy(amounts);
+    ITER_DEST(iter_n);
+    ITER_DEST(iter_a);
+  
+  
+  
+}
+
+void display_cart(cart_t *cart){ //id?
+
+  if(cart_is_empty(cart)){
+    puts("┃ Cart is Empty."); 
+    return;
+  }
+
+  printf("┏──╸ Cart Id.%d\n", cart->id);  
+
+    
+    ioopm_list_t *names   =
+      ioopm_hash_table_keys(cart->merch_in_cart);
+
+    ioopm_list_t *amounts =
+      ioopm_hash_table_values(cart->merch_in_cart);
+
+    size_t no_names               =
+      ioopm_linked_list_size(names);     
+
+    ioopm_list_iterator_t *iter_n = ITER_INIT(names); 
+    ioopm_list_iterator_t *iter_a = ITER_INIT(amounts);
+    
+    entry_ht_t kv_array[no_names];
+    
+    // Transfer all stock amounts & merch names
+    // into an array for sorting    
+    for (size_t i = 0; i < no_names; i++) {
+      int current_amount = CURRENT_ITER_INT(iter_a);;
+      char *current_name = CURRENT_ITER_STR(iter_n);
+      
+      // Create value for array
+      entry_ht_t keyval = (entry_ht_t) {
+	.key   = current_name,
+	.value = current_amount
+      };
+	
+      kv_array[i] = keyval;
+      // Iterate through all merch names and
+      // stock amounts
+      if(ITER_HAS_NXT(iter_n) && ITER_HAS_NXT(iter_a)){
+	ITER_NXT(iter_n); ITER_NXT(iter_a);
+      }
+    }
+    
+    sort_keys(kv_array, no_names);
+    
+    for (size_t i = 0; i < no_names; ++i) {
+      printf("┏─╸Item No.%d\n",(int)i+1);
+      printf("┃ Name: %s\n",   kv_array[i].key);
+      printf("┃ Amount: %d\n", kv_array[i].value);
+    }
+    
+    ioopm_linked_list_destroy(names);
+    ioopm_linked_list_destroy(amounts);
+    ITER_DEST(iter_n);
+    ITER_DEST(iter_a);
+        
+}
+
+char *get_merch_name_in_cart(cart_t *cart, int nr_merch){
+  // Return the merch item associated with nr_merch
+
+  ioopm_list_t *names = ioopm_hash_table_keys(cart->merch_in_cart);
+  ioopm_list_t *amounts = ioopm_hash_table_values(cart->merch_in_cart);
+    
+  size_t no_names = ioopm_linked_list_size(names);
+      
+  ioopm_list_iterator_t *iter_n = ITER_INIT(names); 
+  ioopm_list_iterator_t *iter_a = ITER_INIT(amounts);
+    
+  entry_ht_t kv_array[no_names];
+    
+  elem_t current_name;
+  elem_t current_amount;
+    
+  for (int i = 0; i < no_names; i++) {
+    current_name = ioopm_iterator_current(iter_n);
+    current_amount = ioopm_iterator_current(iter_a);
+    entry_ht_t keyval = (entry_ht_t) {.key = (char *) current_name.p, .value = current_amount.i};
+    kv_array[i] = keyval;
+    if(ITER_HAS_NXT(iter_n) && ITER_HAS_NXT(iter_a)){
+      ITER_NXT(iter_n); 
+      ITER_NXT(iter_a);
+    }
+  }
+    
+  sort_keys(kv_array, no_names);
+    
+  for (int i = 0; i < no_names; ++i) {
+    if((i+1) == nr_merch){
+      return kv_array[i].key;
+    }
+  }
+  perror("get_merch_name_in_cart: Merch not found.\n");
+  return "";
+}
+
+size_t nr_of_merch_in_cart(cart_t *cart){
+    return ioopm_hash_table_size(cart->merch_in_cart);
+}
+
+int get_amount_of_merch_in_cart(cart_t *cart, char *merch_name){
+    return get_elem_int(ioopm_hash_table_lookup(cart->merch_in_cart, str_elem(merch_name))); 
+}
+
+bool merch_in_cart(cart_t *cart, char *merch_name){
+    return ioopm_hash_table_has_key(cart->merch_in_cart, str_elem(merch_name));
+}
+
+////
+/* PROMPT FUNCTIONS */
+///
+void add_to_active_cart_prompt(webstore_t *store){
+  add_to_cart_prompt(store, store->active_cart);
+}
+
+
+void add_to_cart_prompt(webstore_t *store, int id){
+
+  
+  list_merchandise(store); 
+  int nr_merch  = ask_question_int("┃ Merch Nr.");
+  if (nr_merch <= 0){
+    perror("add_to_cart_prompt: Merch ID under 0.\n");
+    return;
+  }
+  char *merch_name        = lookup_merch_name(store, nr_merch-1);
+  printf("┏─╸Cart Nr.%d; Set Amount of %s \n",
+	 (int)id, merch_name);
+  size_t merch_amount;
+
+  // Set a correct amount, if incorrect return
+  SAFESET(merch_amount = ask_question_int("┃ Amount: "),
+	  is_money(merch_amount), return);
+  
+  add_to_cart(store, merch_name, merch_amount); 
+}
+
+void remove_from_cart_prompt(webstore_t *store){
+  int id = store->active_cart;
+  
+  int merch_amount = 0;
+  int nr_merch     = 0;
+
+  printf("┏─╸Remove From Cart Nr.%d\n",
+	 (int)store->active_cart);
+  
+  if(cart_is_empty(get_cart(store,id))){
+    puts("┃ The cart is empty! There is nothing to remove!"); 
+    return;
+    
+  }else{
+    // Disp cart if answer is yes 
+    if (choice_prompt("Display Cart?"))
+      display_cart(get_cart(store,id));
+	
+    // Re-ask until one is pleased return on error
+    SAFESET(nr_merch = ask_question_int("┃ Merch Id."), 
+	    is_merch(store, nr_merch), return);
+
+    
+    char *merch_name = get_merch_name_in_cart(get_cart(store,id), nr_merch);
+
+    // Re-ask until one is pleased return on error
+    SAFESET(merch_amount = ask_question_int("┃ Amount: "),
+	    merch_amount <= merch_stock(store, merch_name),
+	    return);
+
+    remove_from_cart(store, id, merch_name, merch_amount); 
+  }
+}
+
+void remove_from_active_cart_prompt(webstore_t *store){
+  remove_from_cart_prompt(store);
+}
+/*int main(int argc, char *argv[]) {
+    webstore_t *store = store_create();
+    arg_parse(argc, argv, store->opt);  
+    // Add Merch    
+    add_merchendise(store, "Cola", "from coca cola", (size_t)10);
+    add_merchendise(store, "Chair", "Usable", (size_t)8);
+    add_merchendise(store, "Bike", "A sports bike from Brazil", (size_t)4);
+    add_merchendise(store, "Car", "A fast car", (size_t)2);
+    add_merchendise(store, "Computer", "Gaming computer", (size_t)0);
+    
+    add_to_storage(store, "Cola", "A8");
+    add_to_storage(store, "Car", "A1");
+    add_to_storage(store, "Bike", "A1");
+    
+    list_merchandise(store);
+    create_cart(store);
+    //add_to_cart(store, 0, 1, 2);
+    
+    //display_cart(get_cart(store, 0));
+    
+    return 0; 
+}*/

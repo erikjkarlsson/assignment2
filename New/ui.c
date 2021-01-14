@@ -436,8 +436,8 @@ void remove_cart_by_id(webstore_t *store){
   } while (!valid_cart_id(store, id));
 
 
-  
-  remove_cart(store, id);
+  store->active_cart = id;
+  remove_cart(store);
 
   ENG(printf("┃──╸ Finished Removing Cart %d", id));
   ENG(printf("┃──╸ Klar med Borttagning av Kundvagn %d", id));
@@ -584,9 +584,10 @@ int main(int argc, char *argv[]) {
   webstore_t *store = store_create();  // --- Load hardcoded test merch
   //  INIT_DATABASE(store);
 
-//  event_loop_menu(store); 
+ event_loop_menu(store); 
     
-//  current_cart_id = -1;
+ //  current_cart_id = -1;
+
   store_destroy(store);
   return 0; 
 }

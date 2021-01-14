@@ -273,15 +273,11 @@ void arg_parse(int argc, char **argv, arg_opt_t *opt) {
 }
 
 bool eq_elem_string(elem_t a, elem_t b) {
-  char *p1 = a.c;
-  char *p2 = b.c;
-
-  if (p1 == NULL || p1 == p2) {
-    return true;
-  }
-  return false;
+  return STR_EQ(a.c, b.c);
 }
 bool eq_elem_void(elem_t a, elem_t b) {
+  if      (!a.p && !b.p) return false;
+  else if (!a.p || !b.p) return false;
   char *pointer1 = a.p;
   char *pointer2 = b.p;
 
