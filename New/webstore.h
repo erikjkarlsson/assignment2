@@ -68,101 +68,236 @@ typedef int *(merch_get_int_function)(merch_t *merch);
     merch_log(fun, "", msg, 0);
 
 
+////////////////////////////////////// Store //////////////////////////////////////
 
-/////// Merch
+//Deletes a store and destroyes everything in it
+void store_destroy(webstore_t *store);
+
+//Creates an empty store with empty databases
+webstore_t *store_create();
+
+////////////////////////////////////// Merch //////////////////////////////////////
+
+///@brief Creates a new merch given name, description, price and list of locations 
+///@param a char name of the merchendise
+///@param a char desciption of the merchendise
+///@param a price of the merchendise
+///@param a linked list of all the locations that the merch exists on, can be empty
+///@returns a merchendise 
+merch_t *create_merch(char *name, char *desc, size_t price, ioopm_list_t *locs);
+
+///@breif Destroys all the merchendise in the Merchendise database
+///@param the store where all the merchendise shoiuld be deleted
+void destroy_all_merch(webstore_t *store);
+
+///@breif Adds a merch to the Merch database
+// When added the stock of the merch is 0
+// An already existing merch can´t be added
+///@param 
+void add_merchendise(webstore_t *store, char *name, char *desc, size_t price);
+
+///@breif Removes an existing merchendise completely from the store
+///@param The store where the merchendise should be removed from
+///@param The name of the merchendise that should be removed
+void remove_merchendise(webstore_t *store, char *name);
+
+///@breif Calculates the total stock of a merchendise
+// and then updates the total_amount of the merch 
+// reflecting that. If the amount was updated
+// the function returns true.
+///@param The store 
+///@param The name of the merchendise that should be removed
+bool sync_merch_stock(webstore_t *store, char *name);
+
+///@breif Increases or decreases the stock at an existing merch
+// The stock is also removed from the shelfs
+// A negative amount decreases stock and a positive increases.  
+///@param The store 
+///@param The name of the merchendise in which the stock should be changed
+///@param The amount (+) or (-) that should change the stock 
+size_t change_stock_relative_amount(webstore_t *store, char *name, size_t amount);
+
+///@breif Sets the given describtion to a specific merch given the name of the merch
+///@param The store 
+///@param The name of the merchendise in which the description should be changed 
+///@param The new description
+void set_merch_description(webstore_t *store, char *name, char *desc);
+
+///@breif Sets the given price on the specified merch given the merch name
+///@param The store 
+///@param The name of the merchendise in which the price should be changed 
+///@param The new price
+void set_merch_price(webstore_t *store, char *name, size_t price);
+
+/// HELP FUNCTIONS///
+
+///@breif Frees up the list of all locations/shelfs a specific
+// merch exsits on given it´s name.
+///@param The store 
+///@param The name of the merchendise in which the linked list of 
+//locations should be destroyed
+void destroy_locs(webstore_t *store, char *name);
+
+///@breif Checks if a index ?????????? TODO
+//in the merch database
+///@param The store 
 bool valid_index(webstore_t *store, int index);
+
+/// @breif Used in combination with list_merch 
+// checks after merchendise in the Merchdendise database 
+// given an index
+///@param The store 
+///@param The index of the desired merchendise
+///@returns the name of the merch at a specified
+//index in the merch database
 char *lookup_merch_name(webstore_t *store, int index); 
 
+///@breif Ckecks if a merchendise given its name exists in the Merchendise database
+///@param The store 
+///@returns true if the merchendise is in the database and else, false
+bool merch_in_stock(webstore_t *store, char *name);
+
+///@breif Calculates total stock of a merch
+///@param The store 
+///@param The name of the merchendise
+///@returns The total stock of a given merchendise
+size_t merch_stock(webstore_t *store, char *name);
+
+///@breif Gets the price of an existing merch in the store
+///@param The store 
+///@param The name of the merchendise
+///@returns The price of the specified merch name
+int merch_price(webstore_t *store, char *name);
+
+///@breif Gets the description of a mercherdise
+///@param The store 
+///@param The name of the merchendise
+///@returns The description of merchendise
+char *merch_description(webstore_t *store, char *name);
+
+///@breif Gets all the locations/shelfs that
+// a specific merch is given it´s name
+///@param The store 
+///@param The name of the merchendise
+///@returns A list of all the locations/shelfs that
+// a specific merch is given it´s name
+ioopm_list_t *merch_locs(webstore_t *store, char *name);
+
+/// PRINT FUNCTIONS ///
+
+///@breif Prints the name,description, price and stock of one merch
+///@param The merchendise that should be printed
 void print_merch(merch_t *merch);
 
-void add_to_storage(webstore_t *store, char *name, char *shelf);
+///@breif Prints all the merchendise in the Merch database 
+//with their name, describtion, price and stock
+///@param The store 
+void list_merchandise(webstore_t *store);
+
+//////////////////////////////// Storage and Shelf ////////////////////////////////
+
+/// @breif Creates a new shelf given a name and amount it can hold
+///@param The name of the shelf
+///@param The amount that the shelf should hold
+///@returns The created shelf
+shelf_t *create_shelf(char *shelf, size_t amount);
+
+///@breif Destroys a given shelf compleatly
+///@param The shelf
+void destroy_shelf(shelf_t *shelf);
+
+///@breif Deletes the storage database compleatly
+///@param The store
 void destroy_storage(webstore_t *store);
 
-void remove_shelf(webstore_t *store, char *shelf);
-ioopm_list_t *get_locations(webstore_t *store, char *shelf);
-bool storage_contains(webstore_t *store, char *shelf, char *name);
-
-void list_shelfs(webstore_t *store, char *name);
-void display_shelf(webstore_t *store, char *shelf);
-
+///@breif Adds a shelf to both the Mercendise database and the
+//storage database. 
+//If the shelf and merchendise on this shelf already exists, 
+//the function updates amount of merch on this shelf.
+///@param The stpre
+///@param The name of the merchendise
+///@param The name of the shelf 
+///@param The amount of the merchendise that the shelf should hold
 void set_shelf(webstore_t *store, char *name,
 	       char *shelf, size_t amount);
 
-void store_destroy(webstore_t *store);
-webstore_t *store_create();
-size_t increase_equal_stock(webstore_t *store, char *name, size_t amount);
-void list_merchandise(webstore_t *store);
+///@breif Removes a shelf name from the storage database and 
+//all merch names connected to it
+///@param The store
+///@param The name of the shelf
+void remove_shelf(webstore_t *store, char *shelf);
+  
+///@breif Adds a shelf and a merch name connected to it into the 
+//storage database. 
+//If the shelf already exists the merch name is added to that shelf
+//if the merch name aldready exists on the shelf, nothing happens 
+///@param The store
+///@param The name of the merchendise
+///@param The name of the shelf
+void add_to_storage(webstore_t *store, char *name, char *shelf);
 
-bool merch_in_stock(webstore_t *store, char *name);
-int merch_stock_on_shelf(webstore_t *store, char *name, char *shelf);
-bool sync_merch_stock(webstore_t *store, char *name);
-size_t increase_stock(webstore_t *store, char *name,
-		      char *shelf_name, size_t amount);
-
-void show_stock(webstore_t *store);
-void rename_merch(webstore_t *store, char *name, char *new_name);
-
-size_t merch_stock(webstore_t *store, char *name);
+///@breif Looks in the Merchendise database for the location/shelf
+// if it exists its stock will be set to the given amount
+// else it will be added with its stock set to amount
+///@param The store
+///@param The name of the merchendise
+///@param The new amount of merchendise
+///@param The name of the shelf
 void set_merch_stock(webstore_t *store, char *name,
 		     size_t amount, char* location);
 
-void remove_name_from_shelf(webstore_t *store,
-			    char *shelf, char *name);
-int merch_price(webstore_t *store, char *name);
-void set_merch_price(webstore_t *store, char *name, size_t price);
+///@param The store
+///@param The name of the merchendise
+///@param The new amount of merchendise
+///@param The name of the shelf		     
+size_t increase_stock(webstore_t *store, char *name,
+		      char *shelf_name, size_t amount);
 
-char *merch_description(webstore_t *store, char *name);
-void set_merch_description(webstore_t *store, char *name, char *desc);
-
-ioopm_list_t *merch_locs(webstore_t *store, char *name);
-void destroy_locs(webstore_t *store, char *name);
+/// HELP FUNCTIONS ///
 
 
-void add_merchendise(webstore_t *store, char *name, char *desc, size_t price);
-void destroy_all_merch(webstore_t *store);
-void remove_merchendise(webstore_t *store, char *name);
-merch_t *create_merch(char *name, char *desc, size_t price, ioopm_list_t *locs);
+///@returns true or false depending if a merchendise is in the 
+// list of a given shelf name in the storage database
+// If the shelf doesn´t exist in the storage database, the function
+// returns false
+bool storage_contains(webstore_t *store, char *shelf, char *name);
 
-shelf_t *create_shelf(char *shelf, size_t amount);
-void destroy_shelf(shelf_t *shelf);
+//Returns the asscosiative list to a shelf in the storage database
+ioopm_list_t *get_locations(webstore_t *store, char *shelf);
 
-bool continue_printing();
-bool valid_index(webstore_t *store, int index);
+//Returns the amount merch at a specific shelf
+int merch_stock_on_shelf(webstore_t *store, char *name, char *shelf);
 
+
+//Used with show_stock
+//Gets a merch name given the index of the merch listed in 
+//show_stock
 char *get_merch_name_in_storage(webstore_t *store, int nr_merch);
+
+//Gets a shelf name given the index of the shelf_nr listed
+//and merch name
 char *get_shelf_after_shelf_nr(webstore_t *store, int shelf_nr, char *name);
 
+/// PRINT FUNCTIONS ///
 
-//void locs_delete(ioopm_list_t *locs);
-//void merch_delete(merch_t *merch_data);
+//Prints a list of all shelfs containing 
+//a specific merch
+void list_shelfs(webstore_t *store, char *name);
 
-//This should list all items in the store.
-//Items should preferably (soft requirement) be printed in alphabetical order on their names.
-//Because there may be more things in the database than might fit on a screen,
-//items should be printed 20 at a time, and the user is asked to continue listing (if possible)
-//or return to the main menu.
-//void list_merchandise();
+//Prints all the merches on the given shelf
+void display_shelf(webstore_t *store, char *shelf);
 
-//Removes an item completely from the warehouse, including all its stock.
-//void  remove_merchandise();
+// Prints all shelfs, together with all merchendise metadata.
+void show_stock(webstore_t *store);
 
-// Create merch
-//Allows changing the name, description and price of a merch. Note that this does not affect its stock.
-//Changing the name of a merch to the name of an existing merch is not allowed.
-//Note that changing the name may mean changing the key unless you use a unique id for each merch.
-//void edit_merchandise();
 
-//List all the storage locations for a particular merch,
-//along with the quantities stored on each location.
-//Storage locations should preferably be listed in alphabetical order (e.g., A20 before B01 and C01 before C10).
-//Names of storage locations follow this format always: one capital letter (A-Z) followed by two digits (0-9).
-//void show_stock();
 
-//Increases the stock of a merch by at least one.
-//You can replenish on an existing storage location or a new one.
-//The stock for a merch is the sum of all items on all storage locations holding that merch.
-//A storage location stocks items of one (type of) merch, never more.
-//For simplicity, there is no limit to the amount of storage locations nor is there a limit on the number of items a location can hold.
-//void replenish();
+
+
+void rename_merch(webstore_t *store, char *name, char *new_name); //används ej
+
+void remove_name_from_shelf(webstore_t *store,
+			    char *shelf, char *name); //används ej
+
 
 #endif
