@@ -547,7 +547,8 @@ void store_destroy(webstore_t *store){
   ioopm_hash_table_destroy(store->merch_db);
   ioopm_hash_table_destroy(store->storage_db);
 
-  ioopm_linked_list_destroy(store->all_shopping_carts);  
+  destroy_all_carts(store);
+  //ioopm_linked_list_destroy(store->all_shopping_carts);  
 
   free(store);
 }
