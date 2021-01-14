@@ -83,7 +83,7 @@ merch_t *create_merch(char *name, char *desc,
 
   return item;
 }
-
+/*
 void remove_merchendise(webstore_t *store, char *name){
   if (!ioopm_hash_table_has_key(store->merch_db, ptr_elem(name))){
     perror("remove_merchendise: Non existing item, \
@@ -125,6 +125,54 @@ void remove_merchendise(webstore_t *store, char *name){
 
   // Free Merchendise
   free(merch_data);
+}*/
+
+void remove_merchendise(webstore_t *store, char *name){
+  if (!ioopm_hash_table_has_key(store->merch_db, ptr_elem(name))){
+    perror("remove_merchendise: Non existing item, \
+            The name to be removed does not exist.\n");
+    return; // ERROR
+  }else if (!ioopm_hash_table_has_key(store->merch_db, ptr_elem(name))){
+    perror("remove_name_from_shelf: Non existing merch name.\n");
+    return;
+  }
+
+  // Free Locs  
+
+  merch_t *merch_data =
+    get_elem_ptr(ioopm_hash_table_lookup(store->merch_db,
+					 ptr_elem(name)));
+  
+  shelf_t *shelf = NULL;
+  ioopm_link_t *merch_data_locs = merch_data->locs->first;
+  printf("Size: %d\n", ioopm_linked_list_size(merch_data->locs));
+  //printf("sfelf:%s\n", get_elem_ptr(merch_data_locs->element));
+  if(ioopm_linked_list_size(merch_data->locs)>0){
+   do {
+      shelf = get_elem_ptr(merch_data_locs->element);
+      remove_from_storage(store, name, shelf->shelf);
+      merch_data_locs = merch_data_locs->next;   
+    } while (merch_data_locs != NULL);
+  }
+
+  //ioopm_linked_list_destroy(merch_data->locs);
+   /* ioopm_link_t *current = (store->all_shopping_carts)->first;
+  cart_t *current_cart  = NULL;
+  
+  do {
+    current_cart = get_elem_ptr(current->element);    
+    cart_destroy(current_cart);
+    
+    current = current->next;    
+  } while (current != NULL);
+  */
+    destroy_locs(store, name);
+ 
+  ioopm_hash_table_remove(store->merch_db,
+			  ptr_elem(name));
+  
+  free(merch_data);
+
 }
 
 void destroy_all_merch(webstore_t *store){
