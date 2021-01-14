@@ -406,6 +406,30 @@ void checkout(webstore_t *store){
   ioopm_linked_list_destroy(names);
   remove_cart(store, current_cart->id); 
 }
+
+void cart_destroy(cart_t *cart){    
+  ioopm_hash_table_destroy(cart->merch_in_cart);
+  free(cart);   
+  cart = NULL;
+}
+
+void destroy_all_carts(webstore_t *store){
+  
+  ioopm_link_t *current = (store->all_shopping_carts)->first;
+  cart_t *current_cart  = NULL;
+  
+  do {
+    current_cart = get_elem_ptr(current->element);    
+    cart_destroy(current_cart);
+    
+    current = current->next;    
+  } while (current != NULL);
+  
+
+  ioopm_linked_list_destroy(store->all_shopping_carts);  
+  
+}
+
 /*
   void checkout(webstore_t *store){
   cart_t *cart = get_cart(store, store->active_cart);
