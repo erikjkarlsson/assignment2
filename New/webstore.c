@@ -509,6 +509,10 @@ void destroy_locs(webstore_t *store, char *name){
 void parse_args(webstore_t *store, int argc, char **argv){
   arg_parse(argc, argv, store->opt);
 }
+bool eq_elem_pstr(elem_t a, elem_t b) {
+  return STR_EQ((char *)a.p, (char*)b.p);
+}
+
 webstore_t *store_create(){
   // Allocate the argument handler, both hash tables
   // and the shopping cart list. And the whole webstore.
@@ -520,10 +524,10 @@ webstore_t *store_create(){
   // Storage and Merch databases
   new_webstore->merch_db   =
     ioopm_hash_table_create(extract_int_hash_key,
-			    eq_elem_int, eq_elem_string);
+			    eq_elem_int, eq_elem_pstr);
   new_webstore->storage_db =
     ioopm_hash_table_create(extract_int_hash_key,
-			    eq_elem_int, eq_elem_string);	
+			    eq_elem_int, eq_elem_pstr);	
 
   //linked list that holds all shopping carts
   new_webstore->all_shopping_carts = 
@@ -1056,7 +1060,7 @@ void show_stock(webstore_t *store){
       char * current_shelf = (char *)get_elem_ptr(shelf->element);
       name          = get_locations(store, current_shelf)->first;
       
-      printf("====== Shelf:%s ======\n", current_shelf);      
+      printf("┅┅┅┅┅┅┅┅ SHELF %s ┅┅┅┅┅┅┅┅\n", current_shelf);      
       
       do {
 	current_name  = (char *)get_elem_ptr(name->element);
