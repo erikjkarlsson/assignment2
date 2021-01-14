@@ -936,7 +936,8 @@ bool sync_merch_stock(webstore_t *store, char *name){
     return false;
 }
 
-size_t increase_equal_stock(webstore_t *store, char *name, size_t amount){
+//increase_equal_stock
+size_t change_stock_relative_amount(webstore_t *store, char *name, size_t amount){
   // Increase (or decrease) the stock at an existing
   // shelf. A negative (amount) decreases stock, positive
   // increases.  

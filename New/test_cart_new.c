@@ -381,29 +381,3 @@ int main()
   CU_cleanup_registry();
   return CU_get_error();
 }
-
-void store_destroy(webstore_t *store){
-  // Deallocate the argument handler, both hash tables
-  // and the shopping cart list. And the whole webstore.
-  
-  if (store == NULL){
-    perror("store_destroy: Webstore is NULL.\n");
-    return;
-  }
-  
-  destroy_arg_opt(store->opt);
-
-
-  destroy_all_merch(store);
-
-
-  destroy_storage(store);
-  
-  ioopm_hash_table_destroy(store->merch_db);
-  ioopm_hash_table_destroy(store->storage_db);
-  
-  destroy_all_carts(store);
-  //ioopm_linked_list_destroy(store->all_shopping_carts);  
-
-  free(store);
-}
