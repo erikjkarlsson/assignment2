@@ -298,7 +298,7 @@ void event_loop_menu(webstore_t *store){
       if      ((command[0] == 'W') || (command[0] == 'w')) unicode_merch_menu(store);
       else if ((command[0] == 'C') || (command[0] == 'c')) unicode_cart_menu(store);
       else if ((command[0] == 'S') || (command[0] == 's')) change_cart_id_prompt(store);
-      else if ((command[0] == 'Q') || (command[0] == 'q')) exit(0);
+      else if ((command[0] == 'Q') || (command[0] == 'q')) return;
 
     } while (true));
 
@@ -316,7 +316,7 @@ void event_loop_menu(webstore_t *store){
       if      ((command[0] == 'V') || (command[0] == 'v')) event_loop_webstore(store);
       else if ((command[0] == 'K') || (command[0] == 'k')) event_loop_cart(store);
       else if ((command[0] == 'S') || (command[0] == 's')) change_cart_id_prompt(store);
-      else if ((command[0] == 'A') || (command[0] == 'a')) exit(0);
+      else if ((command[0] == 'A') || (command[0] == 'a')) return;
 
     } while (true));
 }
@@ -525,9 +525,7 @@ int main(int argc, char *argv[]) {
   webstore_t *store = store_create();  // --- Load hardcoded test merch
   INIT_DATABASE(store);
 
-
   event_loop_menu(store); 
-
     
   current_cart_id = -1;
   store_destroy(store);
