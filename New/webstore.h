@@ -51,7 +51,7 @@ typedef merch_t *(merch_modify_function)(merch_t *merch, void *extra);
 typedef char *(merch_get_str_function)(merch_t *merch);
 typedef int *(merch_get_int_function)(merch_t *merch);
 
-
+void parse_args(webstore_t *store, int argc, char **argv);
 
 #define get_elem_ptr(e) e.p
 

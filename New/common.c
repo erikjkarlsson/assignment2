@@ -281,6 +281,7 @@ bool eq_elem_string(elem_t a, elem_t b) {
   }
   return false;
 }
+
 bool eq_elem_void(elem_t a, elem_t b) {
   char *pointer1 = a.p;
   char *pointer2 = b.p;

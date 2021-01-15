@@ -34,20 +34,21 @@
 #define ITER_DEST(iter)	\
   ioopm_iterator_destroy(iter)
 
-#define ID_BOUNDS_MAX 100000
+
+
 ///
 /*HELP FUNCTIONS*/
 ///
 
-#define CAPITAL_MAX 100000
-#define CAPITAL_MIN 0
 
 bool is_merch(webstore_t *store, int id){
   return valid_index(store, id);
 }
-
 bool is_money(int size){
   return ((size < CAPITAL_MAX) && (size > CAPITAL_MIN));
+}
+bool valid_stock_size(int amount){
+  return ((amount < STOCK_MAX) && (amount > 0));
 }
 bool valid_id(webstore_t *store, int id){
 
@@ -75,9 +76,13 @@ bool valid_id(webstore_t *store, int id){
   return false;  
 }
 
+
+////// DONT USE THIS /////
+// Move this to webstore.c
 bool valid_merch_index(webstore_t *store, int id){ //TODO
   return ((0 < id) && (id <= ioopm_hash_table_size(store->merch_db)));
 }
+
 
 cart_t *get_cart(webstore_t *store, int id){
     return get_elem_ptr(ioopm_linked_list_get(store->all_shopping_carts, id));

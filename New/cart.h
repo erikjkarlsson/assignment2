@@ -14,7 +14,7 @@
 #define LANG 1
 #define SWE(thing) if (LANG == 0) { thing; }
 #define ENG(thing) if (LANG == 1) { thing; }
-#define clear() printf("\033[H\033[J")
+
 #define newline puts("")
 #define AMOUNT_UPPER_MAX 100000
 
@@ -39,6 +39,16 @@
   ENG(puts(eng)); \
   what
 
+// Max and minimum bounds for price
+#define CAPITAL_MAX   100000
+#define CAPITAL_MIN   0
+// Maximum bound for cart id
+// (preventing integer overflow)
+#define ID_BOUNDS_MAX 100000
+// Maximum allowed stock when creating new
+// merch using the prompt
+#define STOCK_MAX     1000
+
 //used to place keys and values in one
 struct entry_ht
 {
@@ -54,6 +64,14 @@ struct cart {
 }; 
 
 typedef struct cart cart_t;
+
+/* Validates the amount of 
+   stock entered in the TUI prompt 
+   
+   amount : Size of merch a stock.
+*/
+
+bool valid_stock_size(int amount);
 
 /*
 Creates an emoty cart in the store 
