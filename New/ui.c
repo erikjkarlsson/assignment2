@@ -398,16 +398,20 @@ void update_shelf_stock_menu(webstore_t *store, char *name){
   char *location = NULL;
   int shelf_id   = 0;
   int amount     = 0;
-  
+
+  puts("┏──╸  Edit Shelf Stock.");
+
   while(location == NULL){
 
         
-    if (choice_prompt("List Available Shelfs?"))
+    if (choice_prompt("┃ -- List Available Shelfs?"))
       list_shelfs(store, name);
-    	
-    ENG(puts("| Enter Shelf Id, and Update Stock."));
-    SWE(puts("| Skriv ett Giltigt Hylla ID."));
-    puts("┃ Correct Shelf Format; <A-Z><0-9><0-9>");  
+
+    puts("    ---------------------------------");
+    ENG(puts("┃>> Enter Shelf Id, and Update Stock."));
+    SWE(puts("┃   Skriv ett Giltigt Hylla ID."));
+        puts("┃   Format; <A-Z><0-9><0-9>\n");
+    
     // Enter Shelf Id until Valid, prompting for canceling
     
   do {    
@@ -415,46 +419,52 @@ void update_shelf_stock_menu(webstore_t *store, char *name){
     SWE(shelf_id = ask_question_int("| Hyll-ID : "));
     
     // wrong shelf format
-    if ((!is_shelf(shelf_name))  &&
-	(choice_prompt("Incorrect Shelf Format, Go back to Menu?")))
-
-    } while (!valid_id(store, shelf_id));
+    if ((!is_shelf(name))  &&
+	(!choice_prompt("Incorrect Shelf Format, Try Again?")))
+      return;
+  } while (!valid_id(store, shelf_id));
     
-    location = get_shelf_after_shelf_nr(store, shelf_id, name);	  
+  location = get_shelf_after_shelf_nr(store, shelf_id, name);	  
   }
 
   // Ask for stock amount
   do {
-  SWE(amount = ask_question_int("| Antal på Hyllan: "));
-  ENG(amount = ask_question_int("| Amount on Shelf: "));
+    SWE(amount = ask_question_int("| Antal på Hyllan: "));
+    ENG(amount = ask_question_int("| Amount on Shelf: "));
+
   } while ((amount < 0) || (amount > AMOUNT_UPPER_MAX));
   set_merch_stock(store, name, amount, location);
 }
 
-bool change_merch_shelf_prompt(webstore_t *store, char *name, int *amount, char *shelf_name){
+bool change_merch_shelf_prompt(webstore_t *store, char *name, int amount, char *shelf_name){
 
   ENG(puts("┏──╸ Enter Shelf "));
   SWE(puts("┏──╸ Fyll in Hylla "));
 
 
   do { // Enter shelf until it is valid    
-    SWE(*shelf_name = ask_question_string("┃ Hylla: "));
-    ENG(*shelf_name = ask_question_string("┃ Shelf: "));
+    SWE(shelf_name = ask_question_string("┃ Hylla: "));
+    ENG(shelf_name = ask_question_string("┃ Shelf: "));
     // Prompt for option to go back to menu on
     // wrong shelf format
-    if ((!is_shelf(*shelf_name))  &&
-	(!choice_prompt("Incorrect Shelf Format, Try Again?")))
-      return false;    
-  } while (!is_shelf(*shelf_name));
+    if (!is_shelf(shelf_name))
+      if (choice_prompt("Incorrect Shelf Format, Try Again?"))
+	puts("┃ Correct Shelf Format; <A-Z><0-9><0-9>");
+      
+	
+
+
+  } while (!is_shelf(shelf_name));
 
   do {
-    ENG(*amount = ask_question_int("┃ Amount: "));
-    SWE(*amount = ask_question_int("┃ Antal: "));
+    ENG(amount = ask_question_int("┃ Amount: "));
+    SWE(amount = ask_question_int("┃ Antal: "));
     // If price is invald, customer can choose to return to menu
-    if ((!valid_stock_size(*amount)) &&
-	(!choice_prompt("Amount not Allowed, Try Again?")))
-      return false;	
-  } while (!valid_stock_size(*amount));
+    if ((!valid_stock_size(amount)) ||
+	(!choice_prompt("Amount not Allowed, Go Back to Menu?")))
+      return false;
+      
+  } while (!valid_stock_size(amount));
 
   return true;
 }
@@ -496,7 +506,7 @@ void add_new_merch_prompt(webstore_t *store){
     }} while (!is_money(price));	 
 
   // Check if a shelf was indeed created
-  if (change_merch_shelf_prompt(store, name_merch, &amount, &shelf_name))
+  if (change_merch_shelf_prompt(store, name_merch, amount, shelf_name))
     new_item(store, name_merch, desc_merch, price, shelf_name, amount);
   else {
      puts("┃ Not Adding Merchendise\nReturning to Main Menu ...");
@@ -518,21 +528,21 @@ void remove_merch_prompt(webstore_t *store){
     ENG(id = ask_question_int("┃ Merch ID: "));
     SWE(id = ask_question_int("┃ Varu-Id: "));
 
-    if ((!valid_merch_index(store, id)) &&
+    if ((!valid_merch_index(store, id)) ||
 	(!choice_prompt("Invalid Merch ID, Try again?")))
       return;    
   } while (!valid_merch_index(store, id)); 
   
   name_merch = get_merch_name_in_storage(store, id);
     
-  printf("┃ Shelf '%s' Removed!\n", name_merch); 
+  printf("┃ '%s' Removed From Shelf %d\n", name_merch, id); 
   
   remove_item(store, name_merch);
   
   //  puts("┗───────────────────────────────╸");  
 }
 void lookup_merch_prompt(webstore_t *store){
-  int id           = 0;
+  int id           = store->active_cart;
   char *name_merch = NULL;
 
   ENG(puts("┏──╸Lookup Merch Id     "));
@@ -543,7 +553,7 @@ void lookup_merch_prompt(webstore_t *store){
 
     // On invalid merch index, prompt for a return
     // to menu
-    if ((!valid_merch_index(store, id)) &&
+    if ((!valid_merch_index(store, id)) ||
 	(!choice_prompt("Incorrect Merch ID, Try Again??")))
       return;	
   } while (!valid_merch_index(store, id));
