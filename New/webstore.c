@@ -177,7 +177,7 @@ void remove_merchendise(webstore_t *store, char *name){
 
 void destroy_all_merch(webstore_t *store){
   // Remove all shelfs in storage_db, but not the hash-table.
-  if ((store == NULL) || (store->merch_db == NULL)){
+  if ((!store) || (!store->merch_db)){
     perror("destroy_all_merch: Webstore is NULL\n");
     return;
   }
@@ -230,7 +230,7 @@ void set_merch_stock(webstore_t *store, char *name,
   // if it exists its stock will be set to amount
   // else it will be added with its stock set to amount
 
-  if((store->merch_db == NULL) || (name == NULL) || (location == NULL)){
+  if((!store->merch_db) || (!name) || (!location)){
     perror("set_merch_stock: NULL Argument.\n");
     return;
     
@@ -249,21 +249,20 @@ void set_merch_stock(webstore_t *store, char *name,
 
   ioopm_link_t *merch_data_locs = merch_data->locs->first;
    
-  if (merch_data->locs->size > 0){
+  {
     shelf_t *shelf_data = get_elem_ptr(merch_data_locs->element);
     
-    do {
+     while (merch_data_locs) {
 
       if (STR_EQ(shelf_data->shelf, location)){
+
 	// Found existing shelf, set new amount, and exit
-	merch_data->total_amount += (merch_data->total_amount + amount) - shelf_data->amount;
-	
+	merch_data->total_amount += (merch_data->total_amount + amount) - shelf_data->amount;	
 	return;
       }     
-
-      merch_data_locs = merch_data_locs->next;
-           
-    } while (merch_data_locs != NULL);
+      
+      merch_data_locs = merch_data_locs->next;           
+    }
     
   }
   merch_data->total_amount += amount;
@@ -518,12 +517,12 @@ webstore_t *store_create(){
 
     // Storage and Merch databases
   new_webstore->merch_db   =
-    ioopm_hash_table_create(extract_int_hash_key,
-                eq_elem_int, eq_elem_pstr);
+    ioopm_hash_table_create(string_knr_hash,
+			    eq_elem_void, eq_elem_void);
 
   new_webstore->storage_db =
-    ioopm_hash_table_create(extract_int_hash_key,
-                eq_elem_int, eq_elem_pstr);    
+    ioopm_hash_table_create(string_knr_hash,
+                eq_elem_void, eq_elem_void);    
 
   //			    eq_elem_void, eq_elem_void);
   //  new_webstore->storage_db =
@@ -736,8 +735,7 @@ void remove_name_from_shelf(webstore_t *store, char *shelf, char *name){
     perror("remove_name_from_shelf: Non existing shelf name.\n");
     return;
   }else if (!ioopm_hash_table_has_key(store->merch_db, ptr_elem(name))){
-    perror("remove_name_from_shelf: Non existing merch name.\n");
-    return;
+    perror("remove_name_from_shelf: Name does not exist in merch db.\n");
   }
   ioopm_list_t *list         =
     ioopm_hash_table_lookup(store->storage_db,
@@ -842,20 +840,16 @@ void destroy_storage(webstore_t *store){
     return;
   }
 
- ioopm_list_t *shelfs  = ioopm_hash_table_keys(store->storage_db);
+ ioopm_list_t *shelfs  = ioopm_hash_table_values(store->storage_db);
  ioopm_link_t *current = shelfs->first;
  
- if (current == NULL){
-   perror("destroy_storage:  Storage db is NULL.\n");
-   ioopm_linked_list_destroy(shelfs); 
-   return;
- }
-
- // Iterate all shelfs removing them
- do {  
-   remove_shelf(store, get_elem_ptr(current->element));
+ // Iterate all shelfs removing their linked list
+ while (current) {  
+     ioopm_linked_list_destroy(get_elem_ptr(current->element)); 
+     current->element = ptr_elem(NULL);
+     
    current = current->next;
- } while (current != NULL);
+ } 
 
   ioopm_linked_list_destroy(shelfs); 
 }
@@ -872,7 +866,9 @@ void add_to_storage(webstore_t *store, char *name, char *shelf){
   // Create a new storage list if shelf does not exist
   if (!ioopm_hash_table_has_key(store->storage_db, ptr_elem(shelf))){
     ioopm_list_t *storage_list = ioopm_linked_list_create();
+
     ioopm_linked_list_append(storage_list, ptr_elem(name));
+
     ioopm_hash_table_insert(store->storage_db,
 			    ptr_elem(shelf),
 			    ptr_elem(storage_list));    
@@ -927,7 +923,7 @@ void set_shelf(webstore_t *store, char *name,
   // Add name to shelf if it already doesnt not contain it.
   
   if(!is_shelf(shelf)){
-    return;
+    perror("set_shelf: Not a correctly formatted shelf.\n"); return;
   }
   if (!storage_contains(store, name, shelf))
     add_to_storage(store, name, shelf);
@@ -1287,9 +1283,25 @@ char *lookup_merch_name(webstore_t *store, int index){
   return merch_name;
 }
 
+bool valid_merch_shelf_id(webstore_t *store,
+			  char *merch_name,
+			  int index){
+
+  if (index <= 0) return false;
+  else {
+    merch_t *merch_data =
+     get_elem_ptr(ioopm_hash_table_lookup(store->merch_db,
+					  ptr_elem(merch_name)));
+  
+    size_t size =
+      ioopm_linked_list_size(merch_data->locs);
+    return (size >= (size_t)index);
+  }
+}
 bool valid_index(webstore_t *store, int index){
   // Return true if index is less or equal to
   // the amount of merch in the merch database
+
   ioopm_list_t *list = ioopm_hash_table_values(store->merch_db);
 
   if ((size_t)index > ioopm_linked_list_size(list)){

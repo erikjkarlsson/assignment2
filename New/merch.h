@@ -42,5 +42,4 @@
 webstore_t *initialize_database();
 
 void new_item(webstore_t *store, char *name, char *desc, size_t price, char *shelf, int storage_amount);
-
 void remove_item(webstore_t *store, char *name);

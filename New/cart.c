@@ -641,10 +641,9 @@ void add_to_active_cart_prompt(webstore_t *store){
 }
 
 
-void add_to_cart_prompt(webstore_t *store, int id){
-  
-  list_merchandise(store);
-  
+void add_to_cart_prompt(webstore_t *store, int id){  
+
+  show_stock(store);
   int nr_merch  = ask_question_int("┃ Merch Nr.");
   if (nr_merch <= 0){
     perror("add_to_cart_prompt: Merch ID under 0.\n");

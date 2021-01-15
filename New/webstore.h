@@ -253,6 +253,18 @@ void set_merch_stock(webstore_t *store, char *name,
 size_t increase_stock(webstore_t *store, char *name,
 		      char *shelf_name, size_t amount);
 
+
+///@breif, return true, if the provided index is
+///smaller or equal to the merch database location list
+///size, but larger then zero.
+///@param The store
+///@param The name of the merchendise
+///@param The index being of the merch names N’th
+/// shelf.
+bool valid_merch_shelf_id(webstore_t *store,
+			  char *merch_name,
+			  int index);
+
 /// HELP FUNCTIONS ///
 
 

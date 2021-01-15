@@ -43,7 +43,7 @@
   putc_str("]\n", RED, true);
 
 // Print (R/G/B) String 
-#define PUT_RSTR(STR) putc_str(STR, RED,   false);
+#define PUT_RSTR(STR) putc_str(STR, RED,   true);
 #define PUT_BSTR(STR) putc_str(STR, BLUE,  false);
 #define PUT_GSTR(STR) putc_str(STR, GREEN, false);
 
@@ -54,6 +54,10 @@
 
 // Do "DO" if the debugging flag is active
 #define DBG(FLAG, DO)  if (FLAG) {DO;}
+
+
+#define SLOG(store, str) \
+  if (store->opt->debug_p) PUT_RSTR(str)
 
 // Log a string to standard output if FLAG is true
 #define LOG(FLAG, STR) if (FLAG)	\
@@ -87,7 +91,7 @@ typedef bool (*ioopm_predicate)(elem_t key, elem_t value, void *extra);
 typedef void (*ioopm_apply_function)(elem_t key, elem_t *value, void *extra);
 
 typedef unsigned int uint;
-
+void putc_str(char *str, char *color, bool nl);
 
 typedef struct arg_opt arg_opt_t;
 
