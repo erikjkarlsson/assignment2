@@ -120,7 +120,7 @@ Determines if the given id of a cart represents an existing cart
 bool is_merch(webstore_t *store, int id);
 bool is_money(int size);
 
-bool valid_id(webstore_t *store, int id);
+bool valid_id(webstore_t *store, size_t id);
 bool valid_merch_index(webstore_t *store, int id);
 
 /*

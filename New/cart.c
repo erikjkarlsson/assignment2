@@ -45,14 +45,14 @@ bool is_merch(webstore_t *store, int id){
   return valid_index(store, id);
 }
 bool is_money(int size){
-  return ((size < CAPITAL_MAX) && (size > CAPITAL_MIN));
+  return ((size <= CAPITAL_MAX) && (size >= CAPITAL_MIN));
 }
 bool valid_stock_size(int amount){
   return ((amount < STOCK_MAX) && (amount > 0));
 }
-bool valid_id(webstore_t *store, int id){
+bool valid_id(webstore_t *store, size_t id){
 
-  if (ioopm_linked_list_size(store->all_shopping_carts) < 1)
+  if (ioopm_linked_list_size(store->all_shopping_carts) < 0)
      return false;
   
   else if (id < 0){
@@ -63,16 +63,16 @@ bool valid_id(webstore_t *store, int id){
     perror("valid_id: Id is over the max-bounds.\n");
     return false;
   }
-
+ 
   
   ioopm_link_t *current = (store->all_shopping_carts)->first; 
 
   do {
     cart_t *cart = get_elem_ptr(current->element);
-    if (cart->id == id) return true;
+    if ((size_t) cart->id == id) return true;
 
     current = current->next;
-  } while (current != NULL);
+  } while (current);
   return false;  
 }
 
@@ -80,7 +80,7 @@ bool valid_id(webstore_t *store, int id){
 ////// DONT USE THIS /////
 // Move this to webstore.c
 bool valid_merch_index(webstore_t *store, int id){ //TODO
-  return ((0 < id) && (id <= ioopm_hash_table_size(store->merch_db)));
+  return ((0 < id) && ((size_t) id <= ioopm_hash_table_size(store->merch_db)));
 }
 
 
@@ -146,7 +146,6 @@ cart_t *create_cart(webstore_t *store){
     //Add cart to the list of all shopping carts
     //if its not the first time the cart is added, add!
     if(ioopm_linked_list_size(store->all_shopping_carts) > 0){
-      puts("create!");
       ioopm_linked_list_append(store->all_shopping_carts, ptr_elem(new_cart));
     }
     
@@ -255,12 +254,13 @@ void cart_destroy(cart_t *cart){
 }
 
 void destroy_all_carts(webstore_t *store){
-  if((store->all_shopping_carts)==NULL){
-    puts("NULL!");
-    
+  if(!(store->all_shopping_carts->first)){
+    if (!store->all_shopping_carts)
+      ioopm_linked_list_destroy(store->all_shopping_carts);  
+    return;    
   }
   //printf("size linked list: %d \n", store->all_shopping_carts->size);
-  printf("element: %s", (store->all_shopping_carts)->first->element);
+  // ("element: %s", (char *)get_elem_ptr((store->all_shopping_carts)->first->element));
   ioopm_link_t *current = (store->all_shopping_carts)->first;
   cart_t *current_cart  = NULL;
   
@@ -355,7 +355,7 @@ int calculate_cost(webstore_t *store, int id){
         
     //checks the price for each merch in the cart
     //and multiplies it with the amount
-    for (int i = 0; i < no_names; i++) {      
+    for (size_t i = 0; i < no_names; i++) {      
       char *current_name;
       // Sum up all (of merch in cart)
       // prices * amount 
@@ -465,7 +465,7 @@ void checkout(webstore_t *store){
         
     ioopm_list_iterator_t *iter_n = ioopm_list_iterator(names); 
 
-    for (int i = 0; i < no_names; i++) {
+    for (size_t i = 0; i < no_names; i++) {
       current_name = get_elem_str(ioopm_iterator_current(iter_n));
       current_amount = amount_of_merch_in_cart(current_cart, current_name);
       change_stock_relative_amount(store, current_name, current_amount);
@@ -642,9 +642,9 @@ void add_to_active_cart_prompt(webstore_t *store){
 
 
 void add_to_cart_prompt(webstore_t *store, int id){
-
   
-  list_merchandise(store); 
+  show_stock(store);
+  
   int nr_merch  = ask_question_int("┃ Merch Nr.");
   if (nr_merch <= 0){
     perror("add_to_cart_prompt: Merch ID under 0.\n");
@@ -653,13 +653,16 @@ void add_to_cart_prompt(webstore_t *store, int id){
   char *merch_name        = lookup_merch_name(store, nr_merch-1);
   printf("┏─╸Cart Nr.%d; Set Amount of %s \n",
 	 (int)id, merch_name);
-  size_t merch_amount;
+  size_t merch_amount     = 0;
 
   // Set a correct amount, if incorrect return
-  SAFESET(merch_amount = ask_question_int("┃ Amount: "),
-	  is_money(merch_amount), return);
+  do {
+  merch_amount = ask_question_int("┃ Amount: ");  
+ } while ((!is_money(merch_amount)) &&
+	  (!choice_prompt("Unallowed Amount, Try Again?")));
   
-  add_to_cart(store, merch_name, merch_amount); 
+  if (!is_money(merch_amount)) return;
+  else add_to_cart(store, merch_name, merch_amount); 
 }
 
 void remove_from_cart_prompt(webstore_t *store){

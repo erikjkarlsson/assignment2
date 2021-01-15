@@ -192,7 +192,7 @@ void print_merch(merch_t *merch);
 ///@breif Prints all the merchendise in the Merch database 
 //with their name, describtion, price and stock
 ///@param The store 
-void list_merchandise(webstore_t *store);
+void list_merchendise(webstore_t *store);
 
 //////////////////////////////// Storage and Shelf ////////////////////////////////
 
