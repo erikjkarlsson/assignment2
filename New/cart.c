@@ -256,7 +256,7 @@ void cart_destroy(cart_t *cart){
 void destroy_all_carts(webstore_t *store){
   if(!(store->all_shopping_carts->first)){
     if (!store->all_shopping_carts)
-      ioopm_linked_list_destroy(store->all_shopping_carts);  
+    ioopm_linked_list_destroy(store->all_shopping_carts);  
     return;    
   }
   //printf("size linked list: %d \n", store->all_shopping_carts->size);
@@ -643,7 +643,7 @@ void add_to_active_cart_prompt(webstore_t *store){
 
 void add_to_cart_prompt(webstore_t *store, int id){
   
-  show_stock(store);
+  list_merchandise(store);
   
   int nr_merch  = ask_question_int("┃ Merch Nr.");
   if (nr_merch <= 0){

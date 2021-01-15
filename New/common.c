@@ -283,14 +283,10 @@ bool eq_elem_string(elem_t a, elem_t b) {
 }
 
 bool eq_elem_void(elem_t a, elem_t b) {
-  char *pointer1 = a.p;
-  char *pointer2 = b.p;
 
-  if (pointer1 == pointer2 || pointer1 == NULL) {
-    return pointer1 == pointer2;
-  }
+  return (STR_EQ((char *) a.p, (char *)b.p) ||
+	  STR_EQ((char *) a.c, (char *)b.c));
 
-  return strcmp(pointer1, pointer2) == 0;
 }
 
 bool eq_elem_int(elem_t a, elem_t b) { return a.i == b.i; }

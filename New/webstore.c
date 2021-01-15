@@ -524,10 +524,11 @@ webstore_t *store_create(){
   new_webstore->storage_db =
     ioopm_hash_table_create(extract_int_hash_key,
                 eq_elem_int, eq_elem_pstr);    
-			    //			    eq_elem_void, eq_elem_void);
-			    //  new_webstore->storage_db =
-			    //    ioopm_hash_table_create(string_knr_hash,
-			    //			    eq_elem_void, eq_elem_void);	
+
+  //			    eq_elem_void, eq_elem_void);
+  //  new_webstore->storage_db =
+  //    ioopm_hash_table_create(string_knr_hash,
+  //			    eq_elem_void, eq_elem_void);	
 
 
 
@@ -585,7 +586,7 @@ shelf_t *create_shelf(char *shelf, size_t amount){
   }
 
   shelf_t *new_shelf = calloc(1, sizeof(shelf_t));    
-  new_shelf->shelf   = strdup(shelf);
+  new_shelf->shelf   = shelf;
   new_shelf->amount  = amount;
 
   return new_shelf;
@@ -624,7 +625,7 @@ int merch_stock_on_shelf(webstore_t *store, char *name, char *shelf){
 
     shelf_data = get_elem_ptr(merch_data_locs->element);
     char *b    = shelf_data->shelf;
-
+    
     if ((!b) || (!a)) return 0;
     if (STR_EQ(a, b)){
 
