@@ -210,7 +210,9 @@ void set_merch_stock(webstore_t *store, char *name,
 
       if (STR_EQ(shelf_data->shelf, location)){
 	// Found existing shelf, set new amount, and exit
-	merch_data->total_amount += (merch_data->total_amount + amount) - shelf_data->amount;
+	
+	shelf_data->amount        = amount;
+	merch_data->total_amount -= shelf_data->amount;
 	
 	return;
       }     
