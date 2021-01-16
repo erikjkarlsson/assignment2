@@ -29,7 +29,8 @@
 
 #define SAFESET(what, check, error)				\
   do { what; } while (!choice_prompt("Satisfied?"));		\
-  if (!(check)) error; 
+  if (!(check)
+
 
 #define UNTIL_PLEASED(what) \
   do { what; } while (!choice_prompt("Correct?"))
@@ -45,7 +46,7 @@ struct entry_ht
   char *key; 
   int value;
 };
-
+bool valid_shelf_index(webstore_t *store, int id); 
 typedef struct entry_ht entry_ht_t;
 
 struct cart {

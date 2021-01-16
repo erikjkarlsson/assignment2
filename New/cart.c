@@ -51,17 +51,12 @@ bool is_money(int size){
 }
 bool valid_id(webstore_t *store, int id){
 
-  if (ioopm_linked_list_size(store->all_shopping_carts) < 1)
-     return false;
-  
-  else if (id < 0){
-    perror("valid_id: Id is under 0.\n");
-    return false;
-  }
-  else if (id >= ID_BOUNDS_MAX){
-    perror("valid_id: Id is over the max-bounds.\n");
-    return false;
-  }
+  // Out of id bounds 
+  if ((id >= ID_BOUNDS_MAX) || (id < 1) || (size_t)id <=
+      (ioopm_linked_list_size(store->all_shopping_carts)))
+    return false;  
+  else
+    return true;
 
   
   ioopm_link_t *current = (store->all_shopping_carts)->first; 
@@ -77,6 +72,9 @@ bool valid_id(webstore_t *store, int id){
 
 bool valid_merch_index(webstore_t *store, int id){ //TODO
   return ((0 < id) && (id <= ioopm_hash_table_size(store->merch_db)));
+}
+bool valid_shelf_index(webstore_t *store, int id){ //TODO
+  return ((0 < id) && (id <= ioopm_hash_table_size(store->storage_db)));
 }
 
 cart_t *get_cart(webstore_t *store, int id){
@@ -575,9 +573,10 @@ void add_to_cart_prompt(webstore_t *store, int id){
   size_t merch_amount;
 
   // Set a correct amount, if incorrect return
-  SAFESET(merch_amount = ask_question_int("┃ Amount: "),
-	  is_money(merch_amount), return);
-  
+  do {
+    merch_amount = ask_question_int("┃ Amount: ");
+  } while (!is_money(merch_amount));
+    
   add_to_cart(store, merch_name, merch_amount); 
 }
 
@@ -601,16 +600,17 @@ void remove_from_cart_prompt(webstore_t *store){
 	
 
     // Re-ask until one is pleased return on error
-    SAFESET(nr_merch = ask_question_int("┃ Merch Id."), 
-	    is_merch(store, nr_merch), return);
+    do {
+      nr_merch = ask_question_int("┃ Merch Id.");
+    } while (!is_merch(store, nr_merch));
 
     
     char *merch_name = get_merch_name_in_cart(get_cart(store,id), nr_merch);
 
     // Re-ask until one is pleased return on error
-    SAFESET(merch_amount = ask_question_int("┃ Amount: "),
-	    merch_amount <= merch_stock(store, merch_name),
-	    return);
+    do {
+      merch_amount = ask_question_int("┃ Amount: ");
+    } while (merch_amount <= merch_stock(store, merch_name));
 
     remove_from_cart(store, id, merch_name, merch_amount); 
   }
