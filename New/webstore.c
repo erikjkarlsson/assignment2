@@ -103,32 +103,37 @@ void remove_merchendise(webstore_t *store, char *name){
 					 ptr_elem(name)));
 
 
-  
   ioopm_link_t *merch_data_locs = merch_data->locs->first;
-   
+
+  while (merch_data_locs) {
+    shelf = get_elem_ptr(merch_data_locs->element);
+
+    merch_data_locs = merch_data_locs->next;              
+
+    ILOG(store, "Rem Merch Shelf Amount", shelf->amount);
+    remove_from_storage(store, name, shelf->shelf);
+
+    free(shelf); shelf = NULL;
+    merch_data->locs->size--;
+  } 
+
+    ioopm_linked_list_destroy(merch_data->locs);
+    merch_data->locs = NULL;
+    ioopm_hash_table_remove(store->merch_db,
+			    ptr_elem(name));
 
 
-    
-    do {
-      shelf = get_elem_ptr(merch_data_locs->element);
-      remove_from_storage(store, name, shelf->shelf);
-      merch_data_locs = merch_data_locs->next;           
-    } while (merch_data_locs != NULL);
-    
-  
-    destroy_locs(store, name);
- 
-  ioopm_hash_table_remove(store->merch_db,
-			  ptr_elem(name));
-  
   //  free(merch_data->desc);
   //free(merch_data->name);
 
-
+    
   // Free Merchendise
   free(merch_data);
-}
 
+}
+void parse_args(webstore_t *store, int argc, char *argv[]){
+  arg_parse(argc, argv, store->opt);
+}
 void destroy_all_merch(webstore_t *store){
   // Remove all shelfs in storage_db, but not the hash-table.
   if ((store == NULL) || (store->merch_db == NULL)){
@@ -551,14 +556,13 @@ int merch_stock_on_shelf(webstore_t *store, char *name, char *shelf){
 
   if (!ioopm_hash_table_has_key(store->merch_db,
 				     ptr_elem(name))){
-    perror("merch_stock_on_shelf: Non existing merch.\n");
+    perror("merch_stock_on_shelf: Non existing merch.");
     return 0;
   }
   
   merch_t *merch_data =
     get_elem_ptr(ioopm_hash_table_lookup(store->merch_db,
 					 ptr_elem(name)));  
-
   ioopm_link_t *merch_data_locs = merch_data->locs->first;  
 
   if (merch_data_locs == NULL){
@@ -590,28 +594,32 @@ void remove_from_storage(webstore_t *store, char *name, char *shelf){
   // Names stored at requested shelf location
   ioopm_list_t *db_names = get_locations(store, shelf);
 
-  if (ioopm_linked_list_size(db_names) < 1){
-    perror("remove_from_storage: No amounts on any shelf.\n");
-    return; 
-  }
+  // Return if empty
+
+  // dbnames size segfaults
+  if   ((!db_names)       ||
+       (!db_names->first) ||
+       (db_names->size < 1))
+    return;
+  
+  
   
   ioopm_link_t *db_item = db_names->first;
   ioopm_link_t *db_prev = db_names->first;
   // Print what shelf
   
   // Print all items
-  do {
+  while (db_item) {
     // Already exists in database
 
     if ((char*)get_elem_ptr(db_item->element) == name){
       db_prev->next = db_item->next;
+      db_names--;
       free(db_item);
-      return;
     }
     db_prev = db_item;
     db_item = db_item->next;    
-  } while (db_item != NULL);
-  
+  } 
 }
 
 void display_shelf(webstore_t *store, char *shelf){
@@ -671,8 +679,8 @@ void remove_name_from_shelf(webstore_t *store, char *shelf, char *name){
     return;
   }
   ioopm_list_t *list         =
-    ioopm_hash_table_lookup(store->storage_db,
-			    ptr_elem(shelf)).p;  
+    get_elem_ptr(ioopm_hash_table_lookup(store->storage_db,
+					 ptr_elem(shelf)));
   ioopm_list_iterator_t *iter = ioopm_list_iterator(list);
 
   char *current_name = get_elem_ptr(ioopm_iterator_current(iter));
@@ -701,7 +709,7 @@ char *get_shelf_after_shelf_nr(webstore_t *store, int shelf_nr, char *name){
 					 
   ioopm_list_t *merch_data_locs    = merch_data->locs;
   
-  if(ioopm_linked_list_size(merch_data_locs) < shelf_nr){
+  if(ioopm_linked_list_size(merch_data_locs) < (size_t)shelf_nr){
     perror("get_shelf_after_shelf_nr: Shelf Number Out of Bounds.\n");
     return NULL; 
   }
@@ -733,6 +741,7 @@ char *get_shelf_after_shelf_nr(webstore_t *store, int shelf_nr, char *name){
 
 ioopm_list_t *get_locations(webstore_t *store, char *shelf){
   // Return the associated list to a shelf in storage
+  
   if ((store == NULL) || (shelf == NULL)){
     perror("get_locations: Unallowed NULL arguments.\n");
     return NULL; // Can this be a problem??

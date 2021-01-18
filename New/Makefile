@@ -10,7 +10,7 @@ main: merch.h main.c webstore.c webstore.h merch.c merch.h
 
 
 dbg: debug.c webstore.c webstore.h merch.h merch.c
-	gcc -g -Wall -pedantic -std=c11 list_linked.c common.c iterator.c \
+	gcc -g -Wall -pedantic -std=c11list_linked.c common.c iterator.c \
 	hash_table.c webstore.c utils.c debug.c merch.c -o ./dbg 
 	./dbg
 	@echo "::::::::::: Finished :::::::::::"
@@ -25,11 +25,11 @@ cart:
 	gcc cart.c utils.c common.c hash_table.c list_linked.c webstore.c iterator.c
 
 ui:
-	gcc ui.c merch.c cart.c utils.c common.c hash_table.c list_linked.c webstore.c iterator.c
+	gcc -g -Wall -pedantic -std=c11 ui.c merch.c cart.c utils.c common.c hash_table.c list_linked.c webstore.c iterator.c
 
 run_ui: ui
 	./a.out
-	
+
 clean:
 	rm ./main
 	@echo "Removed Binary"
@@ -44,7 +44,7 @@ test:
 
 memtest: test
 	valgrind --leak-check=full ./bin
-	
+
 test_cart: 
 	gcc -g -Wall -std=c11 list_linked.c common.c iterator.c \
 	hash_table.c webstore.c utils.c cart.c merch.c test_cart_new.c -lcunit  -o ./bin

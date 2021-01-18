@@ -63,6 +63,22 @@
 // String equality test
 #define STR_EQ(STR1, STR2) (!strcmp(STR2, STR1))
 
+// Logging enabled by --log or -l flag, printing "str"
+#define SLOG(store, str) \
+  if (store->opt->log_p) putc_str(str, RED, true)
+
+#define ILOG(store, str, num)  \
+  if (store->opt->log_p) {     \
+    putc_str("[LOG] NUM: ",RED, false);		\
+  putc_int(num,            GREEN); \
+  putc_str("\n      MSG:", RED, true);     \
+  putc_str(str,            RED, true); } 
+ 
+
+// Executing "cmd" when enabled by --log or -l flag
+#define XLOG(store, cmd) \
+  if (store->opt->log_p) cmd
+
 // If X do "DO"
 #define IIF(X, DO)  if (X) {DO;}
 

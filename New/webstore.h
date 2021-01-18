@@ -68,6 +68,9 @@ typedef int *(merch_get_int_function)(merch_t *merch);
     merch_log(fun, "", msg, 0);
 
 
+// THis parses the arguments into the options sub structure
+void parse_args(webstore_t *store, int argc, char *argv[]);
+
 
 /////// Merch
 bool valid_index(webstore_t *store, int index);

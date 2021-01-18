@@ -459,10 +459,10 @@ void remove_merch_prompt(webstore_t *store){
   char *name_merch = NULL;
   
   show_stock(store);
-  ENG(puts("┏──╸Remove Shelf     "));
-  SWE(puts("┏──╸Ta Bort Hylla    "));
-  ENG(id = ask_question_int("┃ Remove Shelf With ID: "));
-  SWE(id = ask_question_int("┃ Ta Bord Hylla Med ID: "));
+  ENG(puts("┏──╸Remove Merch     "));
+  SWE(puts("┏──╸Ta Bort en Vara    "));
+  ENG(id = ask_question_int("┃Merch ID: "));
+  SWE(id = ask_question_int("┃ Varu ID: "));
   if (id < 1){
     perror("event_loop_webstore: Invalid index under 0.\n");
     return;
@@ -470,7 +470,7 @@ void remove_merch_prompt(webstore_t *store){
   name_merch = get_merch_name_in_storage(store, id);
     
   printf("┃ %s Removed!\n", name_merch); 
-  remove_item(store, name_merch);
+    remove_merchendise(store, name_merch);
   puts("┗───────────────────────────────╸");  
 }
 void lookup_merch_prompt(webstore_t *store){
@@ -523,7 +523,7 @@ void edit_merch_prompt(webstore_t *store){
 int main(int argc, char *argv[]) {
   webstore_t *store = store_create();  // --- Load hardcoded test merch
   INIT_DATABASE(store);
-
+  parse_args(store, argc, argv);
 
   event_loop_menu(store); 
 
