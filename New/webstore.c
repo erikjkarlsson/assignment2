@@ -110,8 +110,9 @@ void remove_merchendise(webstore_t *store, char *name){
 
     merch_data_locs = merch_data_locs->next;              
 
-    ILOG(store, "Rem Merch Shelf Amount", shelf->amount);
-    remove_from_storage(store, name, shelf->shelf);
+    SLOG(store, "rm_merch Amount");
+      
+    remove_name_from_shelf(store, name, shelf->shelf);
 
     free(shelf); shelf = NULL;
     merch_data->locs->size--;
@@ -513,8 +514,8 @@ void store_destroy(webstore_t *store){
   free(store);
 }
 
-/// /// /// /// /// /// /// /// /// /// /// /// /// /// 
-// SHELF                                            ///
+/// /// /// /// /// /// /// /// /// /// /// /// /// /// /// 
+// SHELF                                                  ///
 /// /// /// /// /// /// /// /// /// /// /// /// /// ///
 
 shelf_t *create_shelf(char *shelf, size_t amount){
@@ -1011,15 +1012,17 @@ void show_stock(webstore_t *store){
   int current_nr = 1; 
   
     do {
+
       char * current_shelf = (char *)get_elem_ptr(shelf->element);
+      
       name          = get_locations(store, current_shelf)->first;
       
-      printf("====== Shelf:%s ======\n", current_shelf);      
+      printf("|================= %s =================|\n ", current_shelf);      
       
       do {
 	current_name  = (char *)get_elem_ptr(name->element);
 	current_stock = merch_stock_on_shelf(store, (char*)current_name,
-					    (char *)current_shelf);      
+					     (char *)current_shelf);      
 	if (current_stock > 0){
 	printf("┏──╸Id.%d %s\n",
 	       current_nr, current_name); 
@@ -1042,6 +1045,7 @@ void show_stock(webstore_t *store){
       // Next shelf
       shelf         = shelf->next;
     } while (shelf != NULL);
+
 
     puts("");
   ioopm_linked_list_destroy(shelfs);
