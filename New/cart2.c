@@ -63,8 +63,6 @@ bool valid_id(webstore_t *store, int id){
     // The active cart is always valid
     return true;
   }    
-
-
   
   else if (id < ID_BOUNDS_MIN){
     perror("valid_id: Id is under 0.\n");
@@ -237,12 +235,12 @@ void add_to_cart(webstore_t *store, char *name, int amount){
     perror("add_to_cart: Cart database is deallocated.\n");
     return;
   }
-  if(amount <= 0){
+  else if(amount <= 0){
     perror("add_to_cart: Cannot add under 0 merch.\n");
     return;
   }
     
-  if(!valid_id(store, store->active_cart)){
+  else if(!valid_id(store, store->active_cart)){
     perror("add_to_cart: Invalid cart ID.\n");
     return; 
   }
@@ -363,11 +361,11 @@ void remove_from_cart(webstore_t *store, int id, char *merch_to_remove_name, int
       return;
     }
     
-    if(!merch_in_cart(current_cart, merch_to_remove_name)){
+    else if(!merch_in_cart(current_cart, merch_to_remove_name)){
         perror("REMOVE FROM CART: There is no such merch in the cart.\n");
         return; 
     }
-    if(!valid_id(store,id)){
+    else if(!valid_id(store,id)){
         perror("REMOVE FROM CART: The id of the cart is invalid.\n");
         return; 
     }
@@ -378,7 +376,7 @@ void remove_from_cart(webstore_t *store, int id, char *merch_to_remove_name, int
     
     //Tries to remove more merch than there is
     if(amount_of_merch < amount_to_remove){
-        perror("REMOVE FROM CART: Can´t reomve more merch than there is in the cart.\n");
+        perror("amount_of_merch: Can´t reomve more merch than there is in the cart.\n");
         return;
     }
     
@@ -405,8 +403,7 @@ int calculate_cost(webstore_t *store, int id){
     perror("calculate_cost: Cart database is deallocated.\n");
     return 0;
   }
-
-  if(!valid_id(store,id)){
+  else if(!valid_id(store,id)){
     perror("calculate_cost: The cart id is invalid.\n");
     return 0; 
   }
@@ -450,7 +447,7 @@ int calculate_cost(webstore_t *store, int id){
         
     //checks the price for each merch in the cart
     //and multiplies it with the amount
-    for (int i = 0; i < no_names; i++) {      
+    for (size_t i = 0; i < no_names; i++) {      
       char *current_name;
       // Sum up all (of merch in cart)
       // prices * amount 
@@ -606,6 +603,16 @@ void checkout(webstore_t *store){
 
 }
 
+bool cart_exists(webstore_t *store){
+  int id = store->active_cart;
+  cart_t *current_cart = get_cart(store, id);
+  if (!current_cart){
+    return false;
+  }else 
+    return true;
+}
+
+
 /*  void checkout(webstore_t *store){
     ioopm_linked_list_destroy(names);
     remove_cart(store, current_cart->id); 
@@ -651,7 +658,8 @@ void checkout(webstore_t *store){
 void display_cart(cart_t *cart){ //id?
 
   if (!cart){
-    perror("display_cart: Cart is deallocated.\n");
+    puts("┃ No active cart.");
+    //    perror("display_cart: Cart is deallocated.\n");
     return;
   }
 

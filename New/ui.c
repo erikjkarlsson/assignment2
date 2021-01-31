@@ -113,8 +113,12 @@ void unicode_cart_menu(webstore_t *store){
 
   ENG(do {
       puts("┏──╸Cart Interface ╺──┓");
-      printf("┃ [N]ew Cart    Id. %d ┃\n",
-	     store->active_cart);
+
+      if (cart_exists(store)){
+	printf("┃ [N]ew Cart    Id. %d ┃\n",
+	       store->active_cart);
+      }else { puts("┃ [N]ew Cart [No Cart]┃");      	
+      }
       puts("┃ [R]emove Cart       ┃");
       puts("┃ [E]dit Cart         ┃");
       puts("┃ [A]ll Items         ┃");
@@ -150,8 +154,12 @@ void unicode_cart_menu(webstore_t *store){
     } while (true));
   SWE(do {
       puts("┏──╸Webb Butik ╺───────────┓");
-      printf("┃ [N]y Kundvagn  nnn   Id. %d ┃\n",
-	     store->active_cart);
+
+      if (cart_exists(store)){
+	printf("┃ [N]y Kundvagn     Id. %d ┃\n",
+	       store->active_cart);
+      }else { puts("┃ [N]y Kundvagn  [Inget Id]┃"); }      
+
       puts("┃ [R]adera Kundvagn        ┃");
       puts("┃ [E]dita Kundvagn         ┃");
       puts("┃ [V]isa Kundvagn          ┃");
@@ -358,6 +366,7 @@ void change_cart_id_prompt(webstore_t *store){
 
       if ((!valid_id(store, new_id) &&
 	   choice_prompt("Incorrect ID, exit?")))
+
 	return;
 	
     } while(!valid_id(store, new_id));
