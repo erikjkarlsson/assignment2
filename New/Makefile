@@ -25,7 +25,10 @@ cart:
 	gcc cart.c utils.c common.c hash_table.c list_linked.c webstore.c iterator.c
 
 ui:
-	gcc -g -Wall -pedantic -std=c11 ui.c merch.c cart.c utils.c common.c hash_table.c list_linked.c webstore.c iterator.c
+	gcc -g -Wall -pedantic -std=c11 ui.c merch.c \
+	cart2.c utils.c common.c hash_table.c list_linked.c \
+	webstore.c iterator.c
+	./a.out
 
 run_ui: ui
 	./a.out
