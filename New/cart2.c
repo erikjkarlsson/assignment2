@@ -50,11 +50,12 @@ bool is_money(int size){
   return ((size < CAPITAL_MAX) && (size > CAPITAL_MIN));
 }
 bool valid_id(webstore_t *store, int id){
-
-  if (ioopm_linked_list_size(store->all_shopping_carts) < 1){
-     perror("valid_id: Bara en kundvagn finns tillgänglig.\n");
-     return false;
-  }
+  if ((ioopm_linked_list_size(store->all_shopping_carts) == 0) &&
+	    (id == 0)){
+    // Zero is always a valid cart id 
+     return true;
+ }
+    
   else if (id < 0){
     perror("valid_id: Id is under 0.\n");
     return false;
@@ -67,12 +68,13 @@ bool valid_id(webstore_t *store, int id){
   
   ioopm_link_t *current = (store->all_shopping_carts)->first; 
 
-  do {
+  while (current != NULL) {
     cart_t *cart = get_elem_ptr(current->element);
-    if (cart->id == id) return true;
+    if (!cart)          break;
+    else if (cart->id == id) return true;
 
     current = current->next;
-  } while (current != NULL);
+  } 
 
   return false;  
 }
@@ -137,17 +139,25 @@ cart_t *create_cart(webstore_t *store){
 			      eq_elem_string,
 			      eq_elem_int); 
     
-    //Set id of cart to the total existing amount 
-    //new_cart->id = ioopm_linked_list_size(store->all_shopping_carts);
+    // Set id of cart to the total existing amount
+
+    new_cart->id = ioopm_linked_list_size(store->all_shopping_carts);
+
+    if(!valid_id(store, new_cart->id)){
+      perror("create_cart: Automatic choice of cart ID failed.\n");
+      return NULL;
+    }
+    
+    // Set the new cart active
+    store->active_cart = new_cart->id;
     
     //Add cart to the list of all shopping carts
     //if its not the first time the cart is added, add!
-    if(ioopm_linked_list_size(store->all_shopping_carts) > 0){
-      puts("create!");
-      ioopm_linked_list_append(store->all_shopping_carts, ptr_elem(new_cart));
-    }
-    
-        
+
+      printf("A new cart with Id.%d has been created!\n",
+	     new_cart->id);
+      ioopm_linked_list_append(store->all_shopping_carts,
+			       ptr_elem(new_cart));
     return new_cart;
 }
 
@@ -253,8 +263,7 @@ void cart_destroy(cart_t *cart){
 
 void destroy_all_carts(webstore_t *store){
   if((store->all_shopping_carts)==NULL){
-    puts("NULL!");
-    
+    perror("destroy_all_carts: All carts are deallocated.\n");    
   }
   //printf("size linked list: %d \n", store->all_shopping_carts->size);
   //  printf("element: %ls", store->all_shopping_carts)->first->elemen
