@@ -88,6 +88,11 @@ bool valid_id(webstore_t *store, int id){
 }
 
 cart_t *get_cart(webstore_t *store, int id){
+  if (!store->all_shopping_carts){
+    perror("get_cart: Cart database is deallocated.\n");
+    return NULL;
+  }
+  
   ioopm_link_t *current = (store->all_shopping_carts)->first; 
  
   while (current != NULL) {
@@ -102,6 +107,10 @@ cart_t *get_cart(webstore_t *store, int id){
 }
 
 int amount_of_merch_in_cart(cart_t *cart, char *merch_name){
+  if (!cart){
+    perror("amount_of_merch_in_cart: No active cart.\n");
+    return 0;
+  }
     // Return the amount of stock a merch has in cart
     if(ioopm_hash_table_has_key(cart->merch_in_cart, str_elem(merch_name)))
         return get_elem_int(ioopm_hash_table_lookup(cart->merch_in_cart,
@@ -121,15 +130,30 @@ void sort_keys(entry_ht_t *keys, size_t no_keys)
 
 
 bool cart_is_empty(cart_t *cart){
+  if (!cart){
+    perror("add_to_cart: No active cart.\n");
+    return true;
+  }
+
     return ioopm_hash_table_is_empty(cart->merch_in_cart);
 }
 
 //size_t cart_db_size(cart_t *cart){
 size_t cart_db_size(cart_t *cart){
-    return ioopm_hash_table_size(cart->merch_in_cart);
+  if (!cart){
+    perror("cart_db_size: No active cart.\n");
+    return false;
+  }
+  return ioopm_hash_table_size(cart->merch_in_cart);
 }
 
 void list_all_cart_id(webstore_t *store){
+
+  if (!store->all_shopping_carts){
+    perror("list_all_cart_id: Cart database is deallocated.\n");
+    return;
+  }
+
   puts("┏──╸ Existing Cart ID's ");
   ioopm_link_t *current = (store->all_shopping_carts)->first; 
 
@@ -138,6 +162,7 @@ void list_all_cart_id(webstore_t *store){
     cart_t *cart = get_elem_ptr(current->element);
     if (!cart){
       perror("list_all_cart_id: Cart database contains unallocated cart");
+      return;
     }
     printf("┃ Cart Id.%d\n", cart->id);
     current = current->next;
@@ -149,6 +174,11 @@ void list_all_cart_id(webstore_t *store){
 ///
 
 cart_t *create_cart(webstore_t *store){
+  if (!store->all_shopping_carts){
+    perror("get_cart: Cart database is deallocated.\n");
+    return NULL;
+  }
+
     cart_t *new_cart = calloc(1, sizeof(cart_t));
     
     //ht containing all merch in cart with string key and int elem 
@@ -183,6 +213,11 @@ cart_t *create_cart(webstore_t *store){
 }
 
 void remove_cart(webstore_t *store){
+
+  if (!store->all_shopping_carts){
+    perror("remove_cart: Cart database is deallocated.\n");
+    return;
+  }
     cart_t *cart = get_cart(store, store->active_cart);
     
     if(!cart){
@@ -198,57 +233,66 @@ void remove_cart(webstore_t *store){
 
 
 void add_to_cart(webstore_t *store, char *name, int amount){
+  if (!store->all_shopping_carts){
+    perror("add_to_cart: Cart database is deallocated.\n");
+    return;
+  }
+  if(amount <= 0){
+    perror("add_to_cart: Cannot add under 0 merch.\n");
+    return;
+  }
     
-    if(amount <= 0){
-        perror("add_to_cart: Cannot add under 0 merch.\n");
-        return;
-    }
-    
-    if(!valid_id(store, store->active_cart)){
-        perror("add_to_cart: Invalid cart ID.\n");
-        return; 
-    }
+  if(!valid_id(store, store->active_cart)){
+    perror("add_to_cart: Invalid cart ID.\n");
+    return; 
+  }
 
-    int total_stock      = merch_stock(store, name);
-    cart_t *current_cart = get_cart(store, store->active_cart);
-    int current          =
-      get_elem_int(ioopm_hash_table_lookup(current_cart->merch_in_cart,
-					   str_elem(name)));
+  int total_stock      = merch_stock(store, name);
+  cart_t *current_cart = get_cart(store, store->active_cart);
+
+  if (!current_cart){
+    perror("add_to_cart: No active cart.\n");
+    return;
+  }
+  
+  int current          =
+    get_elem_int(ioopm_hash_table_lookup(current_cart->merch_in_cart,
+					 str_elem(name)));
 			     
     
-    // If the asked amount and the amount
-    // already in the cart exceeds the amount of merch in the store
-      if (total_stock < (current + amount)){
-        perror("add_to_cart: Not enough in stock.\n");
-        return;
-    }
+  // If the asked amount and the amount
+  // already in the cart exceeds the amount of merch in the store
+  if (total_stock < (current + amount)){
+    perror("add_to_cart: Not enough in stock.\n");
+    return;
+  }
     
     
-    // Avoid duplicate merch in db, update existing entry
-      if (!ioopm_hash_table_has_key(current_cart->merch_in_cart,
-				    ptr_elem(name))){
-	int existing_amount =
-	  get_elem_int(ioopm_hash_table_lookup(current_cart->merch_in_cart,
-					       str_elem(name)));
+  // Avoid duplicate merch in db, update existing entry
+  if (!ioopm_hash_table_has_key(current_cart->merch_in_cart,
+				ptr_elem(name))){
+    int existing_amount =
+      get_elem_int(ioopm_hash_table_lookup(current_cart->merch_in_cart,
+					   str_elem(name)));
 	
-	ioopm_hash_table_insert(current_cart->merch_in_cart,
-				str_elem(name),
-				int_elem(existing_amount + amount));
+    ioopm_hash_table_insert(current_cart->merch_in_cart,
+			    str_elem(name),
+			    int_elem(existing_amount + amount));
 
-    } else {
-	// This should only happen if the current_stock == 0 	  
-	  ioopm_hash_table_insert(current_cart->merch_in_cart,
-				  str_elem(name), int_elem(amount));
-    }
+  } else {
+    // This should only happen if the current_stock == 0 	  
+    ioopm_hash_table_insert(current_cart->merch_in_cart,
+			    str_elem(name), int_elem(amount));
+  }
 }
 
 
 /*
-void add_to_cart(webstore_t *store, int id, char *merch_to_add_name, int amount){
+  void add_to_cart(webstore_t *store, int id, char *merch_to_add_name, int amount){
     
-    if(amount <= 0){
-        perror("ADD TO CART: The amount of merch added to the cart must be 0 or higher.\n");
-        return;
+  if(amount <= 0){
+  perror("ADD TO CART: The amount of merch added to the cart must be 0 or higher.\n");
+  return;
     }
     
     if(!valid_id(store,id)){
@@ -276,14 +320,18 @@ void add_to_cart(webstore_t *store, int id, char *merch_to_add_name, int amount)
     }
 }*/
 
-void cart_destroy(cart_t *cart){    
+void cart_destroy(cart_t *cart){
+  if (!cart){
+    perror("merch_in_cart: No active cart.\n");
+    return;
+  }
   ioopm_hash_table_destroy(cart->merch_in_cart);
   free(cart);   
   cart = NULL;
 }
 
 void destroy_all_carts(webstore_t *store){
-  if((store->all_shopping_carts)==NULL){
+  if(!store->all_shopping_carts){
     perror("destroy_all_carts: All carts are deallocated.\n");    
   }
   //printf("size linked list: %d \n", store->all_shopping_carts->size);
@@ -304,8 +352,16 @@ void destroy_all_carts(webstore_t *store){
 }
 
 void remove_from_cart(webstore_t *store, int id, char *merch_to_remove_name, int amount_to_remove){
-    
+  if (!store->all_shopping_carts){
+    perror("remove_from_cart: Cart database is deallocated.\n");
+    return;
+  }
     cart_t *current_cart = get_cart(store, id);
+
+    if (!current_cart){
+      perror("remove_from_cart: No active cart.\n");
+      return;
+    }
     
     if(!merch_in_cart(current_cart, merch_to_remove_name)){
         perror("REMOVE FROM CART: There is no such merch in the cart.\n");
@@ -336,18 +392,30 @@ void remove_from_cart(webstore_t *store, int id, char *merch_to_remove_name, int
 }
 
 int active_cart_cost(webstore_t *store){
+  if (!store->all_shopping_carts){
+    perror("active_cart_cost: Cart database is deallocated.\n");
+    return 0;
+  }
+
   return calculate_cost(store, store->active_cart);
 }
 
 int calculate_cost(webstore_t *store, int id){
-    
+  if (!store->all_shopping_carts){
+    perror("calculate_cost: Cart database is deallocated.\n");
+    return 0;
+  }
+
   if(!valid_id(store,id)){
     perror("calculate_cost: The cart id is invalid.\n");
     return 0; 
   }
     
   cart_t *current_cart = get_cart(store, id);
-
+  if (!current_cart){
+    perror("calculate_cost: No active cart.\n");
+    return 0;
+  }
   // Individual Merch Price
   int price ;
   // Stock amount
@@ -582,6 +650,10 @@ void checkout(webstore_t *store){
 
 void display_cart(cart_t *cart){ //id?
 
+  if (!cart){
+    perror("display_cart: Cart is deallocated.\n");
+    return;
+  }
 
   // If cart is empty
   if(cart_is_empty(cart)){
@@ -644,6 +716,12 @@ void display_cart(cart_t *cart){ //id?
 char *get_merch_name_in_cart(cart_t *cart, int nr_merch){
   // Return the merch item associated with nr_merch
 
+  if (!cart){
+    perror("get_merch_name_in_cart: No active cart.\n");
+    return NULL;
+  }
+
+
   ioopm_list_t *names = ioopm_hash_table_keys(cart->merch_in_cart);
   ioopm_list_t *amounts = ioopm_hash_table_values(cart->merch_in_cart);
     
@@ -680,15 +758,31 @@ char *get_merch_name_in_cart(cart_t *cart, int nr_merch){
 }
 
 size_t nr_of_merch_in_cart(cart_t *cart){
-    return ioopm_hash_table_size(cart->merch_in_cart);
+  if (!cart){
+    perror("get_amount_of_merch_in_cart: No active cart.\n");
+    return 0;
+  }
+
+  return ioopm_hash_table_size(cart->merch_in_cart);
 }
 
 int get_amount_of_merch_in_cart(cart_t *cart, char *merch_name){
-    return get_elem_int(ioopm_hash_table_lookup(cart->merch_in_cart, str_elem(merch_name))); 
+  if (!cart){
+    perror("get_amount_of_merch_in_cart: No active cart.\n");
+    return 0;
+  }
+
+    
+  return get_elem_int(ioopm_hash_table_lookup(cart->merch_in_cart, str_elem(merch_name))); 
 }
 
 bool merch_in_cart(cart_t *cart, char *merch_name){
-    return ioopm_hash_table_has_key(cart->merch_in_cart, str_elem(merch_name));
+  if (!cart ){
+    perror("merch_in_cart: No active cart.\n");
+    return false;
+  }
+
+  return ioopm_hash_table_has_key(cart->merch_in_cart, str_elem(merch_name));
 }
 
 ////
@@ -721,6 +815,12 @@ void add_to_cart_prompt(webstore_t *store, int id){
 }
 
 void remove_from_cart_prompt(webstore_t *store){
+
+  if (!store->all_shopping_carts){
+    perror("Remove_from_cart: Cart database is deallocated.\n");
+    return;
+  }
+
   int id = store->active_cart;
   
   int merch_amount = 0;
