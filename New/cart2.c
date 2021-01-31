@@ -200,7 +200,7 @@ cart_t *create_cart(webstore_t *store){
     //Add cart to the list of all shopping carts
     //if its not the first time the cart is added, add!
 
-      printf("A new cart with Id.%d has been created!\n",
+      printf("┃ A new cart with Id.%d has been created!\n",
 	     new_cart->id);
       ioopm_linked_list_append(store->all_shopping_carts,
 			       ptr_elem(new_cart));
@@ -329,8 +329,8 @@ void destroy_all_carts(webstore_t *store){
   if(!store->all_shopping_carts){
     perror("destroy_all_carts: All carts are deallocated.\n");    
   }
-  //printf("size linked list: %d \n", store->all_shopping_carts->size);
-  //  printf("element: %ls", store->all_shopping_carts)->first->elemen
+  //printf("┃ size linked list: %d \n", store->all_shopping_carts->size);
+  //  printf("┃ element: %ls", store->all_shopping_carts)->first->elemen
   ioopm_link_t *current = (store->all_shopping_carts)->first;
   cart_t *current_cart  = NULL;
   
@@ -380,7 +380,7 @@ void remove_from_cart(webstore_t *store, int id, char *merch_to_remove_name, int
     //if the amount of merch in the cart is 0 then remove the merch, else just decrease the amount
     if(amount_of_merch == amount_to_remove){
         ioopm_hash_table_remove(current_cart->merch_in_cart, str_elem(merch_to_remove_name));;
-        //printf("You have removed %s from cart with id %d", removed, current_cart->id);
+        //printf("┃ You have removed %s from cart with id %d", removed, current_cart->id);
     }else{
         ioopm_hash_table_insert(current_cart->merch_in_cart, str_elem(merch_to_remove_name), int_elem(amount_of_merch-amount_to_remove)); 
     }
@@ -481,7 +481,7 @@ char *shelf_with_most_stock(webstore_t *store, char *name){
     shelf_t *shelf_max = NULL;  
     size_t no_locs = ioopm_linked_list_size(locs);
     
-    printf("no_locs:%d\n", no_locs);
+    printf("┃ no_locs:%d\n", no_locs);
     if(no_locs == 1){
         
         shelf_max = ioopm_linked_list_get(locs, 0).p;
@@ -514,20 +514,20 @@ void change_stock_in_webstore(webstore_t *store, char *current_name, int current
     char *location; 
     while(true){
         location = shelf_with_most_stock(store, current_name); 
-        printf("location: %s\n", location); 
-        printf("current_amount: %d\n", current_amount); 
+        printf("┃ location: %s\n", location); 
+        printf("┃ current_amount: %d\n", current_amount); 
         if(merch_stock_on_shelf(store, current_name, location) >= current_amount){
-            printf("merch_stock_on_shelf(store, current_name, location): %d\n", merch_stock_on_shelf(store, current_name, location)); 
+            printf("┃ merch_stock_on_shelf(store, current_name, location): %d\n", merch_stock_on_shelf(store, current_name, location)); 
             int new_stock = (merch_stock_on_shelf(store, current_name, location)-current_amount); 
-            printf("stock: %d\n", new_stock); 
-            printf("location: %s\n", location); 
+            printf("┃ stock: %d\n", new_stock); 
+            printf("┃ location: %s\n", location); 
             set_merch_stock(store, current_name, new_stock, location);
             
             break; 
         }else{
             current_amount = current_amount - merch_stock_on_shelf(store, current_name, location);
-            printf("merch_stock_on_shelf(store, current_name, location): %d\n", merch_stock_on_shelf(store, current_name, location)); 
-            printf("current_amount after else: %d\n", current_amount); 
+            printf("┃ merch_stock_on_shelf(store, current_name, location): %d\n", merch_stock_on_shelf(store, current_name, location)); 
+            printf("┃ current_amount after else: %d\n", current_amount); 
             set_merch_stock(store, current_name, 0, location);
         }
     }
@@ -563,7 +563,7 @@ void checkout(webstore_t *store){
     //    change_stock_in_webstore(store, current_name, current_amount);
     increase_equal_stock(store, current_name, current_amount);
     
-    printf("Buying %s (%dst)x(%dkr)\n",
+    printf("┃ Buying %s (%dst)x(%dkr)\n",
 	   current_name,
 	   current_amount,
 	   merch_price(store, current_name));
@@ -582,7 +582,7 @@ void checkout(webstore_t *store){
       increase_equal_stock(store, current_name, current_amount);
       //      change_stock_in_webstore(store, current_name, current_amount); 
 
-      printf("Buying %s (%dst)x(%dkr)\n",
+      printf("┃ Buying %s (%dst)x(%dkr)\n",
 	     current_name,
 	     current_amount,
 	     merch_price(store, current_name));
@@ -596,7 +596,7 @@ void checkout(webstore_t *store){
   }
   ioopm_linked_list_destroy(names);
   remove_cart(store);
-  printf("Total price: %d\n", total);
+  printf("┃ Total price: %d\n", total);
 
 }
 
@@ -655,19 +655,19 @@ void checkout(webstore_t *store){
 void display_cart(cart_t *cart){ //id?
 
   if (!cart){
-    puts("┃ No active cart.");
+    puts("┃ Non existing cart ID, create a new one.");
     //    perror("display_cart: Cart is deallocated.\n");
     return;
   }
 
   // If cart is empty
   if(cart_is_empty(cart)){
-    printf("┃ Cart Id.%d is Empty.\n",
+    printf("┃ Nothing to Show, Cart Id.%d is Empty.\n",
 	   cart->id);    
     return;
   }
 
-  printf("┏──╸ Cart Id.%d\n", cart->id);
+  printf("┃┏─────────╸ Cart Id.%d\n", cart->id);
   
     ioopm_list_t *names   =
       ioopm_hash_table_keys(cart->merch_in_cart);
@@ -706,9 +706,9 @@ void display_cart(cart_t *cart){ //id?
     sort_keys(kv_array, no_names);
     
     for (size_t i = 0; i < no_names; ++i) {
-      printf("┏─╸Item No.%d\n",(int)i+1);
-      printf("┃ Name: %s\n",   kv_array[i].key);
-      printf("┃ Amount: %d\n", kv_array[i].value);
+      printf("┃┏────╸Item No.%d\n",(int)i+1);
+      printf("┃┃ Name:   %s\n",   kv_array[i].key);
+      printf("┃┃ Amount: %d\n", kv_array[i].value);
     }
     
     ioopm_linked_list_destroy(names);
@@ -805,21 +805,21 @@ void add_to_cart_prompt(webstore_t *store, int id){
 
   // Set a correct amount, if incorrect return
 
-  printf("┏────╸ Select Merchendise\n");
+  printf("┃┏────╸ Select Merchendise\n");
   do {
-    nr_merch  = ask_question_int("┃ Number: ");    
+    nr_merch  = ask_question_int("┃┃ Number: ");    
   }while (!valid_index(store, nr_merch));
 
   char *merch_name        = lookup_merch_name(store, nr_merch-1);
 
-  printf("┏────╸ Adding %s [Cart %d]\n",
+  printf("┃┏────╸ Adding %s [Cart %d]\n",
 	 merch_name, (int)id);
   
   size_t merch_amount;
 
   // Set a correct amount, if incorrect return
   do {
-    merch_amount = ask_question_int("┃ Amount: ");
+    merch_amount = ask_question_int("┃┃ Amount: ");
     
   }while ((MAX_ALLOWED_STOCK < merch_amount) ||
 	  (MIN_ALLOWED_STOCK > merch_amount));
@@ -853,16 +853,19 @@ void remove_from_cart_prompt(webstore_t *store){
 	
 
     // Re-ask until one is pleased return on error
-    SAFESET(nr_merch = ask_question_int("┃ Merch Id."), 
-	    is_merch(store, nr_merch), return);
 
+
+  do {
+    nr_merch = ask_question_int("┃ Merch Id.");
+  }while (!is_merch(store, nr_merch));
     
     char *merch_name = get_merch_name_in_cart(get_cart(store,id), nr_merch);
 
     // Re-ask until one is pleased return on error
-    SAFESET(merch_amount = ask_question_int("┃ Amount: "),
-	    merch_amount <= merch_stock(store, merch_name),
-	    return);
+    do {
+      merch_amount = ask_question_int("┃ Amount: ");
+    } while (merch_amount <= (int)merch_stock(store, merch_name));
+
 
     remove_from_cart(store, id, merch_name, merch_amount); 
   }
