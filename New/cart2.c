@@ -41,16 +41,13 @@
 /*HELP FUNCTIONS*/
 ///
 
-#define CAPITAL_MAX 100000
-#define CAPITAL_MIN 0
-
+bool is_money(int size){
+  return (size < MAX_ALLOWED_PRICE) && (size > MIN_ALLOWED_PRICE);
+}
 bool is_merch(webstore_t *store, int id){
   return valid_index(store, id);
 }
 
-bool is_money(int size){
-  return ((size < CAPITAL_MAX) && (size > CAPITAL_MIN));
-}
 bool valid_id(webstore_t *store, int id){
   if ((ioopm_linked_list_size(store->all_shopping_carts) == 0) &&
 	    (id == 0)){
@@ -802,22 +799,30 @@ void add_to_active_cart_prompt(webstore_t *store){
 
 
 void add_to_cart_prompt(webstore_t *store, int id){
-
+  int nr_merch = 0;
   
   list_merchandise(store); 
-  int nr_merch  = ask_question_int("┃ Merch Nr.");
-  if (nr_merch <= 0){
-    perror("add_to_cart_prompt: Merch ID under 0.\n");
-    return;
-  }
+
+  // Set a correct amount, if incorrect return
+
+  printf("┏────╸ Select Merchendise\n");
+  do {
+    nr_merch  = ask_question_int("┃ Number: ");    
+  }while (!valid_index(store, nr_merch));
+
   char *merch_name        = lookup_merch_name(store, nr_merch-1);
-  printf("┏─╸Cart Nr.%d; Set Amount of %s \n",
-	 (int)id, merch_name);
+
+  printf("┏────╸ Adding %s [Cart %d]\n",
+	 merch_name, (int)id);
+  
   size_t merch_amount;
 
   // Set a correct amount, if incorrect return
-  SAFESET(merch_amount = ask_question_int("┃ Amount: "),
-	  is_money(merch_amount), return);
+  do {
+    merch_amount = ask_question_int("┃ Amount: ");
+    
+  }while ((MAX_ALLOWED_STOCK < merch_amount) ||
+	  (MIN_ALLOWED_STOCK > merch_amount));
   
   add_to_cart(store, merch_name, merch_amount); 
 }

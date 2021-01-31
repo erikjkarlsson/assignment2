@@ -71,6 +71,9 @@ bool is_shelf(char *str){
   if (isalpha(str[0]) < 1)  return false;
   else if (str[0] == '\0')  return false;
   else if (strlen(str) != 3) return false;
+  // First has to be a caputal letter
+  else if ((str[0] < 'A') || (str[0] > 'Z'))
+    return false;
   //else if (strlen(str) > 3) return false;
   // Returns false if any character in str is not an element of {0,...,9}
   for (; index < strlen(str); index++){
@@ -84,6 +87,21 @@ char *ask_question_shelf(char *question){
   return answer.string_value;
 }
 
+bool is_positive(char *str){
+  // Return true if the string "is a number"
+  unsigned long index = 0;
+  // Handle negative numbers
+  if (str[0] == '\0')
+    return false;
+  
+  // Returns false if any character
+  // in str is not an element of {0,...,9}
+  for (; index < strlen(str); index++){
+    if (!isdigit(str[index])) return false;
+  }
+  return true;
+  
+}
 bool is_number(char *str){
   // Return true if the string "is a number"
   unsigned long index = 0;

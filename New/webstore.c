@@ -7,7 +7,7 @@
 #include "list_linked.h"
 #include "common.h"
 #include "utils.h"
-#include "cart.h"
+#include "cart2.h"
 #include "webstore.h"
 
 
@@ -1268,7 +1268,7 @@ bool valid_index(webstore_t *store, int index){
   // the amount of merch in the merch database
   ioopm_list_t *list = ioopm_hash_table_values(store->merch_db);
 
-  if ((size_t)index > ioopm_linked_list_size(list)){
+  if (index > ioopm_linked_list_size(list)){
     perror("valid_index: Too Large index.\n");
     ioopm_linked_list_destroy(list);
     return false;

@@ -15,6 +15,15 @@
 #include "utils.h"
 #include "common.h"
 
+
+
+#define MAX_ALLOWED_STOCK 10000
+#define MIN_ALLOWED_STOCK 0
+
+#define MAX_ALLOWED_PRICE 100000
+#define MIN_ALLOWED_PRICE 0
+
+
 struct merch
 {
   char *name;
