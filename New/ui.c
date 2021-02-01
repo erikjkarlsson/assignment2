@@ -125,6 +125,7 @@ void unicode_cart_menu(webstore_t *store){
       puts("┃ [E]dit Cart         ┃");
       puts("┃ [A]ll Items         ┃");
       puts("┃ [D]isplay Cart      ┃");
+      puts("┃ [L]ist all Carts    ┃");
       puts("┃ [I]d of Cart        ┃");
       puts("┃ [F]inal cost        ┃");
       puts("┃ [C]heck out  [B]ack ┃");
@@ -133,11 +134,13 @@ void unicode_cart_menu(webstore_t *store){
       read_string(command, 10);
     
       if      ((command[0] == 'N') || (command[0] == 'n'))
-	create_cart(store);
+	append_cart(store);
       else if ((command[0] == 'R') || (command[0] == 'r'))
-	remove_from_cart_prompt(store);
+	remove_cart_prompt(store);
       else if ((command[0] == 'E') || (command[0] == 'e')) 
-	unicode_edit_cart_menu(store);   
+	unicode_edit_cart_menu(store);
+      else if ((command[0] == 'l') || (command[0] == 'L'))
+	list_all_cart_id(store);
       else if (((command[0] == 'D') || (command[0] == 'd')) &&
 	       (valid_id(store, store->active_cart)))
 	display_cart(get_cart(store, store->active_cart));
@@ -166,6 +169,7 @@ void unicode_cart_menu(webstore_t *store){
       puts("┃ [R]adera Kundvagn        ┃");
       puts("┃ [E]dita Kundvagn         ┃");
       puts("┃ [V]isa Kundvagn          ┃");
+      puts("┃ [S]e alla Kundvagnar     ┃");
       puts("┃ [I]d på Kundvagn         ┃");
       puts("┃ [A]lla Varor             ┃");
       puts("┃ [T]otal Kostnad          ┃");
@@ -177,11 +181,14 @@ void unicode_cart_menu(webstore_t *store){
       if      ((command[0] == 'N') || (command[0] == 'n'))
 	add_to_active_cart_prompt(store); 
       else if ((command[0] == 'R') || (command[0] == 'r'))
-	remove_from_cart_prompt(store);
+	remove_cart_prompt(store);
       else if ((command[0] == 'A') || (command[0] == 'a'))
 	show_stock(store);
       else if ((command[0] == 'E') || (command[0] == 'e'))
 	unicode_edit_cart_menu(store);
+      else if ((command[0] == 's') || (command[0] == 'S'))
+	list_all_cart_id(store);
+
       else if ((command[0] == 'I') || (command[0] == 'i'))
 	print_cart_id(store);         
       else if (((command[0] == 'V') || (command[0] == 'v')) &&

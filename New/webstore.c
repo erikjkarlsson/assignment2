@@ -481,8 +481,15 @@ webstore_t *store_create(){
   //linked list that holds all shopping carts
   new_webstore->all_shopping_carts = 
     ioopm_linked_list_create();
-  ioopm_linked_list_append(new_webstore->all_shopping_carts,
-			   ptr_elem(create_cart(new_webstore)));
+
+  // Default to cart index 0 as active
+  new_webstore->active_cart = 0;
+
+  // Append the first cart to the store
+  append_cart(new_webstore);
+  
+  //ioopm_linked_list_append(new_webstore->all_shopping_carts,
+  //			   ptr_elem(create_cart(new_webstore)));
   
 
 
@@ -1126,112 +1133,6 @@ char *get_merch_name_in_storage(webstore_t *store, int nr_merch){
   // <-----------------------------------------------------
   //    ioopm_linked_list_destroy(shelfs);
 }
-
-/*
-void merchendise_modify(webstore_t *store, char *name,
-			merch_modify_function *fun,
-			void *fun_arg){
-  if ((store == NULL) || (name == NULL) || (fun == NULL)){
-    perror("merchendise_modify: Unallowed NULL arguments.\n");
-  } else if(store->merch_db == NULL){
-    perror("merchendise_modify: Merch database is NULL.\n");
-  } else if (!ioopm_hash_table_has_key(store->merch_db, ptr_elem(name))){
-    perror("merchendise_modify: Non existing merch.\n");    
-  } else {
-    
-    merch_t *data =
-      get_elem_ptr(ioopm_hash_table_lookup(store->merch_db,
-					   ptr_elem(name)));    
-    merch_t *new_data = fun(data, fun_arg);
-
-   // Remove the old merch from the merch database
-   ioopm_hash_table_remove(store->merch_db,
-			   ptr_elem(name));
-
-   // Reinsert the modified merch into the database
-   ioopm_hash_table_insert(store->merch_db,
-			   ptr_elem(name),
-			   ptr_elem(new_data));   
-   return;
-  }    
-}
-void merchendise_new_internal_name(webstore_t *store,
-				   char *name,
-				   char *new_name){
-  merchendise_modify(store, (char*)name,
-			    merch_change_internal_name_function,
-			    (char*)new_name);
-}
-void merchendise_new_desc(webstore_t *store,
-			  char *name,
-			  char *edited_desc){
-  
-   merchendise_modify(store, (char*)name,
-			    merch_change_description_function,
-			    (char*)edited_desc);
-}
-void merchendise_new_price(webstore_t *store,
-			   char *name,
-			   size_t new_price){
-  
-   merchendise_modify(store, (char*)name,
-			    merch_change_price_function,
-			    (size_t*)new_price);
-}
-void merchendise_new_locs(webstore_t *store,
-			  char *name,
-			  ioopm_list_t *new_locs){
-  
-  merchendise_modify(store, (char*)name,
-			    merch_change_locs_function,
-			    (ioopm_list_t*)new_locs);
-}
-
-char *merch_get_desc_function(merch_t *merch_data){
-  // Helper function for extracting destription
-  // from a merch
-  return merch_data->desc;
-}
-  
-merch_t *merch_change_internal_name_function(merch_t *merch_data,
-					     void *new_name){
-  merch_data->name = (char*)new_name;
-  return merch_data;
-}
-
-merch_t *merch_change_description_function(merch_t *merch_data,
-					   void *new_desc){
-  if (merch_data == NULL){
-    perror("merch_change_description_function: Merch,\
-            the merchendise has not been initialized.\n");
-    exit(-1); // REMOVE THIS LATER
-  }
-  else { merch_data->desc = (char*)new_desc; }
-  return merch_data;
-}
-
-merch_t *merch_change_price_function(merch_t *merch_data,
-				     void *new_price){ 
-  if (merch_data == NULL){
-    perror("merch_change_price_function: Merch,\
-            the merchendise has not been initialized.\n");
-    exit(-1); // REMOVE THIS LATER
-  }
-  else { merch_data->price = (size_t)new_price; }
-  return merch_data;
-}
-
-merch_t *merch_change_locs_function(merch_t *merch_data,
-				    void *new_locs){ 
-  if (merch_data == NULL){
-    perror("merch_change_locs_function: Merch,\
-            the merchendise has not been initialized.\n");
-    exit(-1); // REMOVE THIS LATER
-  }
-  else { merch_data->locs = (ioopm_list_t*)new_locs; }
-  return merch_data;
-}
-*/
 
 char *lookup_merch_name(webstore_t *store, int index){ 
   // Return the name of the merch at a specified

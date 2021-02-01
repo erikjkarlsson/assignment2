@@ -56,10 +56,17 @@ struct cart {
 typedef struct cart cart_t;
 
 /*
-Creates an emoty cart in the store 
+Creates an empty cart
 The cart is assigned an ID
 */
 cart_t *create_cart(webstore_t *store);
+
+/*
+Creates an empty cart, and adds it to the store
+The cart is assigned an ID
+*/
+cart_t *append_cart(webstore_t *store);
+
 
 /*
 Removes a cart compleatly from the store 
@@ -166,6 +173,11 @@ a ceratin amount from in the cart
 */
 void remove_from_cart_prompt(webstore_t *store); 
 void remove_from_active_cart_prompt(webstore_t *store);
+
+/*
+Prompt for removal of the active shopping cart
+*/
+void remove_cart_prompt(webstore_t *store); 
 
 void sort_keys(entry_ht_t *keys, size_t no_keys);
 #endif
