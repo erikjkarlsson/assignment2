@@ -517,7 +517,7 @@ void add_new_merch_prompt(webstore_t *store){
     SWE(price = ask_question_int("┃ Pris: "));
     ENG(price = ask_question_int("┃ Price: "));
     // Check for validity of price
-  } while ((price < MIN_ALLOWED_PRICE) ||
+  } while ((price <= MIN_ALLOWED_PRICE) ||
 	   (price > MAX_ALLOWED_PRICE));
  
 
