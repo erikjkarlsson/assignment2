@@ -375,18 +375,19 @@ void print_cart_id(webstore_t *store){
 void change_cart_id_prompt(webstore_t *store){
   int new_id = 0;
   // Prompt and change the cart ID  
-  
-  ENG(puts("┏──╸ Change Active Cart"));
-  SWE(puts("┏──╸ Ändra Aktiv Kundvagn"))
+  list_all_cart_id(store);     
+  ENG(puts("┏──╸ Change Active Cart [-1 to cancel]"));
+  SWE(puts("┏──╸ Ändra Aktiv Kundvagn [-1 för att avbryta]"))
 
     do {
-      display_cart_id_prompt(store);   
+
       SWE(new_id = ask_question_int("┃ Byt till Kundvagn ID: "));
       ENG(new_id = ask_question_int("┃ Change to Cart ID: "));
-
-      if ((!valid_id(store, new_id) &&
+      if (new_id == -1){
+	return;
+      }
+      if ((!cart_id_exists(store, new_id) &&
 	   (!choice_prompt("Incorrect ID, Try again?"))))
-
 	return;
 	
     } while(!valid_id(store, new_id));

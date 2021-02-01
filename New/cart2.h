@@ -180,4 +180,10 @@ Prompt for removal of the active shopping cart
 void remove_cart_prompt(webstore_t *store); 
 
 void sort_keys(entry_ht_t *keys, size_t no_keys);
+
+
+/*
+Return true if a cart with id; id exists in the database.
+*/
+bool cart_id_exists(webstore_t *store, int id);
 #endif

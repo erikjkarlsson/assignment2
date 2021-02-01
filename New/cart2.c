@@ -169,7 +169,9 @@ void list_all_cart_id(webstore_t *store){
 
   puts("┏──╸ Existing Cart ID's ");
   ioopm_link_t *current = (store->all_shopping_carts)->first; 
-
+  if (current == NULL){
+    printf("┃ No carts exists\n");
+  }
   while (current != NULL) {
     
     cart_t *cart = get_elem_ptr(current->element);
@@ -179,7 +181,9 @@ void list_all_cart_id(webstore_t *store){
     }
     printf("┃ Cart Id.%d\n", cart->id);
     current = current->next;
-  } 
+  }
+
+  
 }
 
 ///
@@ -668,13 +672,14 @@ void checkout(webstore_t *store){
 }*/
 
 void display_cart(cart_t *cart){ //id?
+  
 
   if (!cart){
     puts("┃ Non existing cart ID, create a new one.");
     //    perror("display_cart: Cart is deallocated.\n");
     return;
   }
-
+  printf("┏─────────╸ Displaying cart Id %d\n", cart->id);
   // If cart is empty
   if(cart_is_empty(cart)){
     printf("┃ Nothing to Show, Cart Id.%d is Empty.\n",
@@ -682,7 +687,6 @@ void display_cart(cart_t *cart){ //id?
     return;
   }
 
-  printf("┃┏─────────╸ Cart Id.%d\n", cart->id);
   
     ioopm_list_t *names   =
       ioopm_hash_table_keys(cart->merch_in_cart);
