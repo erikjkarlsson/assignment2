@@ -54,7 +54,14 @@ bool cart_id_exists(webstore_t *store, int id){
 
   while (current != NULL) {
     cart_t *cart = get_elem_ptr(current->element);
-    if (!cart)          break;
+    if (!cart){
+      if (store->opt->log_p)
+	printf("┃ Lookup for cart id: %d returned non-existing!\n",
+	       id);
+      break;
+    }
+  
+  
     else if (cart->id == id) return true;
 
     current = current->next;
@@ -189,9 +196,18 @@ cart_t *append_cart(webstore_t *store){
     printf("┃ A new cart with Id %d has been added!\n",
 	   cart->id);
 
-  // Append cart  
+  // Append cart 
+  if (store->opt->log_p)
+    printf("┃ Cart list size before adding: %d\n",
+	   (int)ioopm_linked_list_size(store->all_shopping_carts));
   ioopm_linked_list_append(store->all_shopping_carts,
 			   ptr_elem(cart));
+
+  if (store->opt->log_p)
+    printf("┃ Cart list size after adding: %d\n",
+	   (int)ioopm_linked_list_size(store->all_shopping_carts));
+  
+
   return cart;
 }
 
@@ -220,7 +236,8 @@ cart_t *create_cart(webstore_t *store){
 			    eq_elem_string,
 			    eq_elem_int); 
     
-  // Set id of cart to the total amount of existing carts  
+  // Set id of cart to the total amount of existing carts
+  SLOG(store, "create_cart: Creating a new cart...\n");
   new_cart->id = ioopm_linked_list_size(store->all_shopping_carts);
 
   // Check that the creation of the cart went well
@@ -233,7 +250,7 @@ cart_t *create_cart(webstore_t *store){
     
   // Mark the new cart as active
   store->active_cart = new_cart->id;
-
+  SLOG(store, "create_cart: Created a new cart...\n");
     // Logging setup
   if (store->opt->log_p)
     printf("A new cart with Id %d has been created.\n",
@@ -249,7 +266,11 @@ void remove_cart(webstore_t *store){
   if (!store->all_shopping_carts){
     perror("remove_cart: Cart database is deallocated.\n");
     return;
-  }  
+  }else if(!cart_id_exists(store, store->active_cart)){
+    perror("remove_cart: Non existing active cart.\n");
+    return; 
+  }
+
 
   if (!ioopm_linked_list_is_empty(store->all_shopping_carts)){
     // Get the active cart
@@ -272,7 +293,8 @@ void remove_cart(webstore_t *store){
 	store->all_shopping_carts->size--;
 	free(current);
       } else {
-	prev->next = current->next;	
+	prev->next = current->next;
+	store->all_shopping_carts->size--;
 	free(current);
       }
       	break;
@@ -307,6 +329,11 @@ void add_to_cart(webstore_t *store, char *name, int amount){
     perror("add_to_cart: Invalid cart ID.\n");
     return; 
   }
+  else if(!cart_id_exists(store, store->active_cart)){
+    perror("add_to_cart: No active cart exists.\n");
+    return; 
+  }
+
 
   int total_stock      = merch_stock(store, name);
   cart_t *current_cart = get_cart(store, store->active_cart);
@@ -346,40 +373,6 @@ void add_to_cart(webstore_t *store, char *name, int amount){
 			    str_elem(name), int_elem(amount));
   }
 }
-
-
-/*
-  void add_to_cart(webstore_t *store, int id, char *merch_to_add_name, int amount){
-    
-  if(amount <= 0){
-  perror("ADD TO CART: The amount of merch added to the cart must be 0 or higher.\n");
-  return;
-    }
-    
-    if(!valid_id(store,id)){
-        perror("ADD TO CART: The id of the cart is invalid.\n");
-        return; 
-    }
-    
-    cart_t *current_cart = get_cart(store, id);
-    
-    int amount_of_merch_in_cart_already =  amount_of_merch_in_cart(current_cart, merch_to_add_name);
-    int amount_of_merch_in_store = merch_stock(store, merch_to_add_name);//the amount of this merch in the store
-    
-    //If the asked amount and the amount already in the cart exceeds the amount of merch in the store
-    if(amount_of_merch_in_store-(amount_of_merch_in_cart_already+amount) < 0){
-        perror("ADD TO CART: Try to get more merch than there is in the store.\n");
-        return;
-    }
-    
-    //add merch to cart
-    if(amount_of_merch_in_cart_already > 0){
-        ioopm_hash_table_insert(current_cart->merch_in_cart, str_elem(merch_to_add_name), int_elem(amount_of_merch_in_cart_already + amount));
-    }
-    else{
-        ioopm_hash_table_insert(current_cart->merch_in_cart, str_elem(merch_to_add_name), int_elem(amount));
-    }
-}*/
 
 void cart_destroy(cart_t *cart){
   // Deallocate one cart
@@ -423,6 +416,9 @@ void remove_from_cart(webstore_t *store, int id, char *merch_name,
   else if (!valid_id(store,id)){
     perror("remove_from_cart: The id of the cart is invalid.\n");
     return; 
+  }else if(!cart_id_exists(store,id)){
+    perror("remove_from_cart: No active cart exists.\n");
+    return;
   }
   
   cart_t *current_cart = get_cart(store, id);
@@ -473,6 +469,9 @@ int calculate_cost(webstore_t *store, int id){
     return 0;
   }
   else if(!valid_id(store,id)){
+    perror("calculate_cost: The cart id is invalid.\n");
+    return 0; 
+  }else if(!cart_id_exists(store,id)){
     perror("calculate_cost: The cart id is invalid.\n");
     return 0; 
   }
@@ -543,74 +542,17 @@ int calculate_cost(webstore_t *store, int id){
   return total_price;
 }
 
-/*
-char *shelf_with_most_stock(webstore_t *store, char *name){
-    ioopm_list_t *locs = merch_locs(store, name);
-    
-    shelf_t *current_shelf;
-    int current_amount;
-    int most_stock = 0; 
-    shelf_t *shelf_max = NULL;  
-    size_t no_locs = ioopm_linked_list_size(locs);
-    
-    printf("┃ no_locs:%d\n", no_locs);
-    if(no_locs == 1){
-        
-        shelf_max = ioopm_linked_list_get(locs, 0).p;
 
-        
-    }else{
-            
-        ioopm_list_iterator_t *iter = ioopm_list_iterator(locs); 
-        
-        for (int i = 0; i < no_locs; i++) {
-            current_shelf = get_elem_ptr(ioopm_iterator_current(iter));
-            current_amount = merch_stock_on_shelf(store, name, current_shelf->shelf);
-            
-            if(current_amount > most_stock){
-                most_stock = current_amount; 
-                shelf_max = current_shelf; 
-            }
-            if(ioopm_iterator_has_next(iter)){
-                ioopm_iterator_next(iter); 
-            }
-        }
-        ioopm_iterator_destroy(iter);
-    }
-    
-    return shelf_max->shelf; 
-    ioopm_linked_list_destroy(locs);
-}
-
-void change_stock_in_webstore(webstore_t *store, char *current_name, int current_amount){
-    char *location; 
-    while(true){
-        location = shelf_with_most_stock(store, current_name); 
-        printf("┃ location: %s\n", location); 
-        printf("┃ current_amount: %d\n", current_amount); 
-        if(merch_stock_on_shelf(store, current_name, location) >= current_amount){
-            printf("┃ merch_stock_on_shelf(store, current_name, location): %d\n", merch_stock_on_shelf(store, current_name, location)); 
-            int new_stock = (merch_stock_on_shelf(store, current_name, location)-current_amount); 
-            printf("┃ stock: %d\n", new_stock); 
-            printf("┃ location: %s\n", location); 
-            set_merch_stock(store, current_name, new_stock, location);
-            
-            break; 
-        }else{
-            current_amount = current_amount - merch_stock_on_shelf(store, current_name, location);
-            printf("┃ merch_stock_on_shelf(store, current_name, location): %d\n", merch_stock_on_shelf(store, current_name, location)); 
-            printf("┃ current_amount after else: %d\n", current_amount); 
-            set_merch_stock(store, current_name, 0, location);
-        }
-    }
-}
-*/
 void checkout(webstore_t *store){
   int id = store->active_cart;
   cart_t *current_cart = get_cart(store, id);
   
   if (!current_cart){
     perror("checkout: Cart requested is deallocated.\n");
+    return;
+  }
+  else if (!cart_id_exists(store, store->active_cart)){
+    perror("checkout: No active cart exists.\n");
     return;
   }
   else if (!current_cart->merch_in_cart){
@@ -959,7 +901,7 @@ void remove_cart_prompt(webstore_t *store){
     return;
   }
 
-  if (!cart_exists(store)){
+  if ((!cart_id_exists(store, store->active_cart))){
       printf("┃ No cart exists.\n");
       return;
   }
@@ -974,4 +916,30 @@ void remove_cart_prompt(webstore_t *store){
   
   printf("┃ Cart Id %d has been removed.\n", id);    
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 

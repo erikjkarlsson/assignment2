@@ -179,7 +179,7 @@ void unicode_cart_menu(webstore_t *store){
       read_string(command, 10);
     
       if      ((command[0] == 'N') || (command[0] == 'n'))
-	add_to_active_cart_prompt(store); 
+	append_cart(store); 
       else if ((command[0] == 'R') || (command[0] == 'r'))
 	remove_cart_prompt(store);
       else if ((command[0] == 'A') || (command[0] == 'a'))
