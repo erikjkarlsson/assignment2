@@ -1,19 +1,67 @@
 Ref: https://wrigstad.com/ioopm/assignments/assignment2.html
 
 * Frontend Actions [3/6]
- - [X] Add Merchandise
- - [X] List Merchendise
- - [X] Remove Merchendise
- - [-] Edit Merchendise [3/5]
-   - [X] Change Name 
-     - [X] Can’t change to an existing name.
-     - [X] Change the Hash Table Index
+ - [X] New Merch [3/3]
+   - [X] Price [2/2]
+     - [X] Too Large
+     - [X] Too Small
+       - [X] Zero
+       - [X] Negative
+   - [X] Shelf [9/9]
+     Tested that it does NOT accept;    
+     - [X] (lower char) num num
+     - [X] number
+     - [X] empty
+     - [X] char char char
+     - [X] num char char
+     - [X] (upper char) char num
+     - [X] (upper char) num num num
+     - [X] (upper char) num char
+
+     Accepts;
+     - [X] Tested {A, Z} num num     
+   - [X] Name & Description [1/1]
+     - [X] Empty string disallowed       
+ - [X] List Merchendise [2/2]
+   - [X] Merch added with =New Merch= showing up
+   - [X] All Preloaded merch showing up
+     =12/12= merch showing up.
+ - [-] Remove Merchendise [4/7]
+   - [X] Exit prompt
+   - [-] Removing too small index disallowed 
+     - [X] -1 allowed
+     - [ ] Correct error message on too small index
+   - [X] Removing too large index disallowed
+   - [X] First index [3/3]
+     - [X] Removal
+     - [X] Until empty
+     - [X] Correct printout 
+   - [-] Removing last index [2/3]
+     - [X] Removal
+     - [X] Until empty
+     - [ ] Correct Printout
+   - [X] Removing from empty database
+   - [ ] No error on (final) deallocation      
+ - [-] Edit Merchendise [3/4]
    - [X] Change Desc
-   - [X] Change Price
-   - [-] Create a interactive interface ?
-   - [ ] Update Storage list
- - [ ] Show Stock
+   - [X] Change Price [3/3]
+     - [X] Disallowing too small numbers
+     - [X] Disallowing too large numbers
+     - [X] Correct price shows up in =list=
+   - [-] Change Stock [2/3]
+     - [X] Only accepts correct shelf [3/3]
+       - [X] Accept setting amount to 0
+       - [X] Disallow negative and too large amounts
+       - [X] Exit with -1 working
+     - [ ] Accepts adding a new shelf [0/1]
+       - [ ] Adding new shelf shows up in list
+         ==>Probably not adding to shelf database
+     - [X] Correct amount shows up in =list= when changing
+       (the original shelf)
+   - [X] Update Storage list
+ - [X] Show Stock
  - [ ] Replenish
+   - [ ] Working through edit merch
 
 ** User Interface [/]
 ** Cart [0/8]
@@ -420,6 +468,8 @@ We can then use our hash table from Assignment 1 using
  stored, and the amount stored at each location
 
  _Need to keep HTn→S and HTs→n in sync_
+
+
 
 
 

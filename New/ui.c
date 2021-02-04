@@ -78,7 +78,7 @@ void unicode_merch_menu(webstore_t *store){
     } while (true));
   SWE(do {
       puts("┏──╸Webb Butik ╺──────┓");
-      puts("┃ [N]y Vara           ┃");
+      puts("| [N]y Vara           ┃");
       puts("┃ [R]adera Vara       ┃");
       puts("┃ [E]dita Vara        ┃");
       puts("┃ [S]ök ID            ┃");
@@ -473,6 +473,11 @@ void update_shelf_stock_menu(webstore_t *store, char *name){
   }
   int current_amount = merch_stock_on_shelf(store, name, location);
   // Ask for stock amount
+
+  
+  // Add name to shelf if it already doesnt not contain it. If
+  // consumer chooses to do so.
+  
   ENG(printf("\n┏──╸ Update Stock [-1 för att avbryta].\n"));
   SWE(printf("\n┏──╸ Updatera Antal [-1 to cancel].\n"));
 
@@ -490,7 +495,24 @@ void update_shelf_stock_menu(webstore_t *store, char *name){
   } while ((amount > MAX_ALLOWED_STOCK) ||
 	   (amount < MIN_ALLOWED_STOCK));
 
-  set_merch_stock(store, name, amount, location);
+  // Update stock if there is a shelf with stock
+  if ((amount == 0) && (current_amount == 0)){
+    perror("update_shelf_stock_menu: Cannot add empty shelf!");
+    return;
+  }
+
+  //remove_from_storage(store, name, location);
+  //remove_name_from_shelf(store, location, name);
+
+
+      // Add / Update shelf to both the merch database and the
+  // storage database. If it already exists, update amount.
+  
+
+
+  set_shelf(store, name, location, amount);
+
+
 }
 
 void add_new_merch_prompt(webstore_t *store){
@@ -621,9 +643,7 @@ int main(int argc, char *argv[]) {
   parse_args(store, argc, argv);
 
   event_loop_menu(store); 
-
-    
-  current_cart_id = -1;
+   
   store_destroy(store);
   return 0; 
 }

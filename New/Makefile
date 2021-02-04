@@ -4,7 +4,7 @@
 
 main: merch.h main.c webstore.c webstore.h merch.c merch.h
 	gcc -g -Wall -pedantic -std=c11 list_linked.c common.c iterator.c \
-	hash_table.c webstore.c utils.c merch.c main.c -o ./bin
+	hash_table.c webstore.c utils.c cart2.c merch.c main.c -o ./bin
 	@echo "::::::::::: Finished :::::::::::"
 
 

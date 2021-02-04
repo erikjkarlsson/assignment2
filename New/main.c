@@ -7,7 +7,8 @@
 #include "utils.h"
 #include "webstore.h"
 #include "merch.h"
-
+#include "cart2.h"
+#include "ui.h"
 
 int main(int argc, char *argv[]) {
   

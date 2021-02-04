@@ -144,7 +144,7 @@ bool valid_index(webstore_t *store, int index);
 char *get_merch_name_in_storage(webstore_t *store, int nr_merch);
 char *get_shelf_after_shelf_nr(webstore_t *store, int shelf_nr, char *name);
 
-
+void remove_from_storage(webstore_t *store, char *name, char *shelf);
 //void locs_delete(ioopm_list_t *locs);
 //void merch_delete(merch_t *merch_data);
 
