@@ -508,11 +508,13 @@ void update_shelf_stock_menu(webstore_t *store, char *name){
       // Add / Update shelf to both the merch database and the
   // storage database. If it already exists, update amount.
   
+  if (amount == 0){
+    printf("############# Rem shelf");
+    remove_name_from_shelf(store, location, name);
+    return;
+  }
 
-
-  set_shelf(store, name, location, amount);
-
-
+  set_merch_stock(store, name, amount, location);
 }
 
 void add_new_merch_prompt(webstore_t *store){

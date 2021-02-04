@@ -21,7 +21,7 @@ void destroy_storage(webstore_t *store);
 
 void remove_shelf(webstore_t *store, char *shelf);
 ioopm_list_t *get_locations(webstore_t *store, char *shelf);
-bool storage_contains(webstore_t *store, char *shelf, char *name);
+bool storage_contains(webstore_t *store, char *name, char *shelf);
 
 void list_shelfs(webstore_t *store, char *name);
 void display_shelf(webstore_t *store, char *shelf);
@@ -881,13 +881,14 @@ void add_to_storage(webstore_t *store, char *name, char *shelf){
 }
 
 
-bool storage_contains(webstore_t *store, char *shelf, char *name){
+bool storage_contains(webstore_t *store, char *name, char *shelf){
   if ((store == NULL) | (shelf == NULL) | (name == NULL)){
     perror("storage_contains: Unallowed NULL argument.\n");
     return false;
   }
   // If shelf does not exist, it cannot contain item  
   if (!ioopm_hash_table_has_key(store->storage_db, ptr_elem(shelf))){
+    perror("storage_contains: Non-Existing Shelf..");
     return false;    
   } 
 
