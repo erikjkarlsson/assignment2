@@ -870,12 +870,12 @@ void add_to_storage(webstore_t *store, char *name, char *shelf){
   ioopm_list_t *db_names = get_locations(store, shelf);
   ioopm_link_t *db_item  = db_names->first;
 
-  do {
+  while (db_item != NULL) {
     // Already exists in database
     if (STR_EQ((char *) get_elem_ptr(db_item->element), name)) return;
 					      
     db_item = db_item->next;           
-  } while (db_item != NULL);
+  }
 
   ioopm_linked_list_append(db_names, ptr_elem(name));
 }
@@ -892,15 +892,12 @@ bool storage_contains(webstore_t *store, char *name, char *shelf){
     return false;    
   } 
 
-
-  
   // Names stored at requested shelf location
   ioopm_list_t *db_names = get_locations(store, shelf);
   ioopm_link_t *db_item  = db_names->first;
 
   do {
     // Already exists in database
-    printf("%s == %s", get_elem_ptr((char *) db_item->element), name);
     if (STR_EQ((char *) get_elem_ptr(db_item->element), name))
       return true;
 					      
