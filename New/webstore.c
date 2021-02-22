@@ -504,6 +504,7 @@ void store_destroy(webstore_t *store){
     perror("store_destroy: Webstore is NULL.\n");
     return;
   }
+
   
   destroy_arg_opt(store->opt);
 
@@ -723,30 +724,34 @@ void list_shelfs(webstore_t *store, char *name){
 
 void remove_name_from_shelf(webstore_t *store, char *shelf, char *name){ // rename
 
-
   if (!ioopm_hash_table_has_key(store->storage_db, ptr_elem(shelf))){
     perror("remove_name_from_shelf: Non existing shelf name.\n");
+    return;
+  }else if (!ioopm_hash_table_has_key(store->merch_db, ptr_elem(name))){
+    perror("remove_name_from_shelf: Non existing merch name.\n");
     return;
   }
   ioopm_list_t *list         =
     get_elem_ptr(ioopm_hash_table_lookup(store->storage_db,
 					 ptr_elem(shelf)));
-  
+  ioopm_list_iterator_t *iter = ioopm_list_iterator(list);
 
-
-  int size = (int)ioopm_linked_list_size(list);
+  char *current_name = get_elem_ptr(ioopm_iterator_current(iter));
   
-  int i = 0;
-  char *current_name = (char *)(ioopm_linked_list_get(list, i).c);
-  for (;i < size; i++){
-        if(STR_EQ(current_name, name)){
-      ioopm_linked_list_remove(list, i);      
+  for (int i = 1;; i++){
+    
+    if(STR_EQ(current_name, name)){
+      ioopm_iterator_remove(iter);
+      ioopm_iterator_destroy(iter);
       return;
     }
-    
-  current_name = (char *)(ioopm_linked_list_get(list, i).c);
-  }
-  
+    if(ioopm_iterator_has_next(iter)){
+        
+      shelf = get_elem_ptr(ioopm_iterator_next(iter));
+
+    }else { break; }    
+  }    
+  ioopm_iterator_destroy(iter); 
 }
 
 char *get_shelf_after_shelf_nr(webstore_t *store, int shelf_nr, char *name){
