@@ -13,11 +13,6 @@
 #include "cart.h"
 
 
-#define SAFESET(what, check, error)				\
-  do { what; } while (!choice_prompt("Satisfied?"));		\
-  if (!(check)) error; 
-
-
 void event_loop_webstore(webstore_t *store);
 void event_loop_cart(webstore_t *store);
 int final_cost_menu(webstore_t *store);
@@ -333,15 +328,16 @@ void change_cart_id_prompt(webstore_t *store){
   ENG(puts("┏──╸ Change Active Cart"));
   SWE(puts("┏──╸ Ändra Aktiv Kundvagn"))
 
-  SAFESET(SWE(new_id = ask_question_int("┃ Byt till ID: "))
-	  ENG(new_id = ask_question_int("┃ Change to ID: ")),
-	  valid_id(store, new_id), return);
-  
 
-  store->active_cart = new_id;
-  //  display_cart_id_prompt(store);
-  //  if (choice_prompt("Show Active ID?"))
-  //    print_cart_id(store);
+
+    SWE(new_id = ask_question_int("┃ Byt till ID: "));
+
+  ENG(new_id = ask_question_int("┃ Change to ID: "));
+
+  if (valid_id(store, new_id))
+    store->active_cart = new_id;
+  else
+    printf("┃ Invalid ID.");
   
   puts("┗──────────────────────────╸");
 }

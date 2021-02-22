@@ -90,7 +90,7 @@ void remove_merchendise(webstore_t *store, char *name){
             The name to be removed does not exist.\n");
     return; // ERROR
   }else if (!ioopm_hash_table_has_key(store->merch_db, ptr_elem(name))){
-    perror("remove_name_from_shelf: Non existing merch name.\n");
+    perror(": Non existing merch name.\n");
     return;
   }
 
@@ -900,7 +900,6 @@ bool storage_contains(webstore_t *store, char *name, char *shelf){
 
   do {
     // Already exists in database
-    printf("%s == %s", get_elem_ptr((char *) db_item->element), name);
     if (STR_EQ((char *) get_elem_ptr(db_item->element), name))
       return true;
 					      
