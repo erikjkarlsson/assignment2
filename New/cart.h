@@ -63,19 +63,20 @@ void remove_cart(webstore_t *store, int id);
 void add_to_cart(webstore_t *store, char *merch_to_add_name, int amount);
 
 void remove_from_cart(webstore_t *store, int id, char *merch_to_remove_name, int amount_to_remove);
+void remove_from_active_cart(webstore_t *store, char *merch_to_remove_name, int amount_to_remove);
 int active_cart_cost(webstore_t *store);
 
 int calculate_cost(webstore_t *store, int id);
 
 void checkout(webstore_t *store); 
-
+void carts_destroy(webstore_t *store);
 void display_cart(cart_t *cart); 
 
 
-bool is_merch(webstore_t *store, int id);
-bool is_money(int size);
-bool valid_id(webstore_t *store, int id);
-bool valid_merch_index(webstore_t *store, int id);
+bool valid_merch_id(webstore_t *store, int id);
+bool valid_sum(int size);
+bool valid_cart_id(webstore_t *store,     int id);
+
 
 void list_all_cart_id(webstore_t *store); 
 
@@ -84,7 +85,7 @@ void list_all_cart_id(webstore_t *store);
 //
 
 size_t nr_of_merch_in_cart(cart_t *cart);
-int get_amount_of_merch_in_cart(cart_t *cart, char *merch_name); 
+
 char *get_merch_name_in_cart(cart_t *cart, int nr_merch);
   
 bool merch_in_cart(cart_t *cart, char *merch_name);
@@ -96,8 +97,6 @@ cart_t *get_cart(webstore_t *store, int id);
 //
 /*PROMPT FUNCTIONS*/
 //
-
-
 
 void remove_from_cart_prompt(webstore_t *store); 
 void remove_from_active_cart_prompt(webstore_t *store);

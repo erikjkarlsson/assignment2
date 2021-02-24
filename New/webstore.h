@@ -132,17 +132,17 @@ void destroy_locs(webstore_t *store, char *name);
 
 void add_merchendise(webstore_t *store, char *name, char *desc, size_t price);
 void destroy_all_merch(webstore_t *store);
-void remove_merchendise(webstore_t *store, char *name);
+bool remove_merchendise(webstore_t *store, char *name);
 merch_t *create_merch(char *name, char *desc, size_t price, ioopm_list_t *locs);
 
 shelf_t *create_shelf(char *shelf, size_t amount);
 void destroy_shelf(shelf_t *shelf);
 
 bool continue_printing();
-bool valid_index(webstore_t *store, int index);
-
+bool valid_merch_id(webstore_t *store, int index);
+bool valid_shelf_id(webstore_t *store, int id);
 char *get_merch_name_in_storage(webstore_t *store, int nr_merch);
-char *get_shelf_after_shelf_nr(webstore_t *store, int shelf_nr, char *name);
+char *get_shelf_after_shelf_nr(webstore_t *store,  size_t shelf_nr, char *name);
 
 void remove_from_storage(webstore_t *store, char *name, char *shelf);
 //void locs_delete(ioopm_list_t *locs);

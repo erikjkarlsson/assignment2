@@ -14,6 +14,21 @@
 
 
 
+#define PROMPT(str) \
+  ENG(printf("┃ %s", str));			\
+  ENG(printf("┃ %s", str))
+
+#define READ_INT(str) \
+  printf("┃ ");   \
+  ask_question_int(str)			
+
+#define READ_STR(str)				\
+  printf("┃ ");    \
+  ask_question_str(str)
+    
+#define TITLE(str)	      \
+  ENG(printf("┏──╸%s", str)); \
+  SWE(printf("┏──╸%s", str))
 
 void event_loop_webstore(webstore_t *store);
 void event_loop_cart(webstore_t *store);
@@ -33,7 +48,7 @@ void remove_merch_prompt(webstore_t *store);
 void lookup_merch_prompt(webstore_t *store);
 void edit_merch_prompt(webstore_t *store);
 int unicode_edit_merch_menu(webstore_t *store, char *name);
-
+void remove_cart_by_id(webstore_t *store);
 void unicode_cart_menu(webstore_t *store);
 void unicode_merch_menu(webstore_t *store);
 
@@ -50,14 +65,14 @@ void unicode_merch_menu(webstore_t *store){
   char command[10];
 
   ENG(do {
-      puts("┏──╸Webstore ╺────────┓");
-      puts("┃ [N]ew Merch         ┃");
-      puts("┃ [R]emove Merch      ┃");
-      puts("┃ [I]nspect Merch ID  ┃");
-      puts("┃ [E]dit Merch        ┃");
-      puts("┃ [L]ist Database     ┃");
-      puts("┃ [B]ack              ┃");
-      puts("┗━━━━━━━━━━━━━━━━━━━━━┛");
+      puts("┏──╸Webstore ╺─────────┓");
+      puts("┃ [N]ew Merch          ┃");
+      puts("┃ [R]emove Merch       ┃");
+      puts("┃ [I]nspect Merch ID   ┃");
+      puts("┃ [E]dit Merch         ┃");      
+      puts("┃ [L]ist Database      ┃");
+      puts("┃ [B]ack               ┃");
+      puts("┗━━━━━━━━━━━━━━━━━━━━━━┛");
       printf("> ");
       read_string(command, 10);
     
@@ -67,6 +82,8 @@ void unicode_merch_menu(webstore_t *store){
 	remove_merch_prompt(store);
       else if ((command[0] == 'E') || (command[0] == 'e')) 
 	edit_merch_prompt(store);
+      else if ((command[0] == 'D') || (command[0] == 'd'))
+	remove_cart_by_id(store);
       else if ((command[0] == 'I') || (command[0] == 'i'))
 	lookup_merch_prompt(store);
       else if ((command[0] == 'L') || (command[0] == 'l'))
@@ -81,7 +98,7 @@ void unicode_merch_menu(webstore_t *store){
       puts("| [N]y Vara           ┃");
       puts("┃ [R]adera Vara       ┃");
       puts("┃ [E]dita Vara        ┃");
-      puts("┃ [S]ök ID            ┃");
+      puts("┃ [S]ök Merch ID      ┃");
       puts("┃ [L]ista Databasen   ┃");
       puts("┃ [B]akåt             ┃");
       puts("┗━━━━━━━━━━━━━━━━━━━━━┛");
@@ -97,6 +114,7 @@ void unicode_merch_menu(webstore_t *store){
       else if ((command[0] == 'S') || (command[0] == 's'))
 	lookup_merch_prompt(store);
       else if ((command[0] == 'L') || (command[0] == 'l')) 
+
 	show_stock(store);     
       else if ((command[0] == 'B') || (command[0] == 'b') ||
 	       (command[0] == 'Q') || (command[0] == 'q'))
@@ -122,6 +140,7 @@ void unicode_cart_menu(webstore_t *store){
       }else { puts("┃ [N]ew Cart [No Cart]┃");      	
       }
       puts("┃ [R]emove Cart       ┃");
+      puts("┃ [P]urge Cart by ID  ┃");
       puts("┃ [E]dit Cart         ┃");
       puts("┃ [A]ll Items         ┃");
       puts("┃ [D]isplay Cart      ┃");
@@ -136,13 +155,16 @@ void unicode_cart_menu(webstore_t *store){
       if      ((command[0] == 'N') || (command[0] == 'n'))
 	append_cart(store);
       else if ((command[0] == 'R') || (command[0] == 'r'))
-	remove_cart_prompt(store);
+	remove_from_cart_prompt(store);
+      else if ((command[0] == 'P') || (command[0] == 'p'))
+	remove_cart_by_id(store);
+
       else if ((command[0] == 'E') || (command[0] == 'e')) 
 	unicode_edit_cart_menu(store);
       else if ((command[0] == 'l') || (command[0] == 'L'))
 	list_all_cart_id(store);
       else if (((command[0] == 'D') || (command[0] == 'd')) &&
-	       (valid_id(store, store->active_cart)))
+	       (valid_cart_id(store, store->active_cart)))
 	display_cart(get_cart(store, store->active_cart));
       else if ((command[0] == 'A') || (command[0] == 'a'))
 	show_stock(store);
@@ -167,6 +189,7 @@ void unicode_cart_menu(webstore_t *store){
       }else { puts("┃ [N]y Kundvagn  [Inget Id]┃"); }      
 
       puts("┃ [R]adera Kundvagn        ┃");
+      puts("┃ [P]urge Kundvagn med ID  ┃");
       puts("┃ [E]dita Kundvagn         ┃");
       puts("┃ [V]isa Kundvagn          ┃");
       puts("┃ [S]e alla Kundvagnar     ┃");
@@ -186,13 +209,18 @@ void unicode_cart_menu(webstore_t *store){
 	show_stock(store);
       else if ((command[0] == 'E') || (command[0] == 'e'))
 	unicode_edit_cart_menu(store);
+
       else if ((command[0] == 's') || (command[0] == 'S'))
 	list_all_cart_id(store);
 
       else if ((command[0] == 'I') || (command[0] == 'i'))
 	print_cart_id(store);         
+
+      else if ((command[0] == 'P') || (command[0] == 'p'))
+	remove_cart_by_id(store);
+
       else if (((command[0] == 'V') || (command[0] == 'v')) &&
-	       (valid_id(store, store->active_cart)))
+	       (valid_cart_id(store, store->active_cart)))
 	display_cart(get_cart(store, store->active_cart));
       else if ((command[0] == 'T') || (command[0] == 't')) 
 	final_cost_menu(store);
@@ -379,6 +407,7 @@ void change_cart_id_prompt(webstore_t *store){
   ENG(puts("┏──╸ Change Active Cart [-1 to cancel]"));
   SWE(puts("┏──╸ Ändra Aktiv Kundvagn [-1 för att avbryta]"))
 
+
     do {
 
       SWE(new_id = ask_question_int("┃ Byt till Kundvagn ID: "));
@@ -408,6 +437,7 @@ void display_cart_id_prompt(webstore_t *store){
 
 int final_cost_menu(webstore_t *store){
   int cost = calculate_cost(store, current_cart_id);
+
 
   ENG(printf("┏──╸ Total Price\n"));
   ENG(printf("┃ Cart Id.%d\n┃ Total Price: %d SEK\n",
@@ -440,6 +470,7 @@ void set_merch_price_menu(webstore_t *store, char *name){
 
   
   do {
+
     SWE(price = ask_question_int("┃ Pris: "));
     ENG(price = ask_question_int("┃ Price: "));
     // Check for validity of price
@@ -449,27 +480,65 @@ void set_merch_price_menu(webstore_t *store, char *name){
   set_merch_price(store, name, price);
 }
 
+void remove_cart_by_id(webstore_t *store){
+  // Prompt for a cart id, if it exists,
+  // remove it.
+  int id        = 0;
+
+  ENG(puts("┏──╸Remove Cart by ID "));
+  SWE(puts("┏──╸Ta Bort Kundvagn med ID "));
+  do {
+    ENG(id = ask_question_int("┃ Remove ID: "));
+    SWE(id = ask_question_int("┃ Ta Bort ID: "));
+
+    // Incorrect id
+    if(!valid_cart_id(store, id)){
+      SWE(PROMPT("Not a valid "));
+      ENG(PROMPT("Inte ett Korrekt ID!"));
+      ENG(if (!choice_prompt("Try Again?")) return;);
+      SWE(if (!choice_prompt("Försök Igen?")) return;);
+      id = 0;
+      // Correct id
+    } else return;
+    
+  } while (!valid_cart_id(store, id));
+
+
+  
+  remove_cart(store, id);
+
+  ENG(printf("┃──╸ Finished Removing Cart %d", id));
+  ENG(printf("┃──╸ Klar med Borttagning av Kundvagn %d", id));
+  
+}
+
 void update_shelf_stock_menu(webstore_t *store, char *name){
   char *location = NULL;
   int amount     = 0;
   
   while(!location){
     
+
     ENG(puts("┏──╸ All Shelfs Containing the Merch..."));
     SWE(puts("┏──╸ Alla Hyllor Innehållande Varan..."));
 
     
     list_shelfs(store, name);
 	
+
     ENG(puts("\n┏──╸ Enter an Valid Shelf."));
     SWE(puts("\n┏──╸ Skriv en Giltigt Hylla."));
 
     puts("┃ Format: [A-Z][0-9][0-9]");
 
     do {
+
       ENG(location = ask_question_string("┃ Shelf: "));
       SWE(location = ask_question_string("┃ Hylla: "));
     } while (!is_shelf(location));    
+    
+    location = get_shelf_after_shelf_nr(store, shelf_id, name);	  
+
   }
   int current_amount = merch_stock_on_shelf(store, name, location);
   // Ask for stock amount
@@ -486,6 +555,7 @@ void update_shelf_stock_menu(webstore_t *store, char *name){
 
   
   do {
+
     SWE(amount = ask_question_int("┃ Antal: "));
     ENG(amount = ask_question_int("┃ Amount: "));
 
@@ -513,7 +583,6 @@ void update_shelf_stock_menu(webstore_t *store, char *name){
     remove_name_from_shelf(store, location, name);
     return;
   }
-
   set_merch_stock(store, name, amount, location);
 }
 
@@ -545,21 +614,20 @@ void add_new_merch_prompt(webstore_t *store){
 	   (price > MAX_ALLOWED_PRICE));
  
 
+
   do { // Enter shelf until it is valid	  
     SWE(shelf_name = ask_question_string("┃ Hylla: "));
     ENG(shelf_name = ask_question_string("┃ Shelf: "));     
   } while (!is_shelf(shelf_name));
 
 
-  do {
+  do { // Enter amount until it is valid	  
     SWE(amount = ask_question_int("┃ Antal: "));
-    ENG(amount = ask_question_int("┃ Amount: "));
-    // Check for validity of stock
-  } while ((amount > MAX_ALLOWED_STOCK) ||
-	   (amount < MIN_ALLOWED_STOCK));
-
-     
-  new_item(store, name_merch, desc_merch, price, shelf_name, amount);
+    ENG(amount = ask_question_int("┃ Amount: "));     
+  } while (!valid_sum(amount));
+    
+  add_merchendise(store, name_merch, desc_merch, price);
+  set_shelf(store, name_merch, shelf_name, amount);  
 
   puts("┗──────────────────────────╸");  
 }
@@ -568,27 +636,25 @@ void remove_merch_prompt(webstore_t *store){
   char *name_merch = NULL;
   
   show_stock(store);
+  ENG(puts("┏──╸Remove Merch     "));
+  SWE(puts("┏──╸Ta Bort Vara    "));
+
+  do { // Enter shelf until it is valid
+      ENG(id = ask_question_int("┃ Merch ID: "));
+      SWE(id = ask_question_int("┃ Varu-ID: "));
+  } while (!valid_merch_id(store, id));
   
-  ENG(puts("┏──╸Remove Merch   [Type -1 to exit]"));
-  SWE(puts("┏──╸Ta Bort en Vara [Skriv -1 för att avsluta]"));
-
-  do {  
-    ENG(id = ask_question_int("┃ Merch ID: "));
-    SWE(id = ask_question_int("┃ Varu ID: "));
-    if (id == -1) return;
-  } while (!valid_index(store, id) || (id < 1));
-
-    
   name_merch = get_merch_name_in_storage(store, id);
     
   printf("┃ %s Removed!\n", name_merch); 
-    remove_merchendise(store, name_merch);
-  puts("┗───────────────────────────────╸");
-  
+  remove_merchendise(store, name_merch);
+  puts("┗───────────────────────────────╸");  
+
 }
 void lookup_merch_prompt(webstore_t *store){
   int id           = 0;
   char *name_merch = NULL;
+
 
   do {
     ENG(puts("┏──╸Lookup Merch Id   [Type -1 to exit]"));
@@ -615,6 +681,7 @@ void lookup_merch_prompt(webstore_t *store){
     puts("┗───────────────────────────────╸");        
 
   }while (name_merch == NULL);	      
+
 }
   
 
@@ -624,6 +691,7 @@ void edit_merch_prompt(webstore_t *store){
 
   if (choice_prompt("Display Stock?"))
     show_stock(store);
+
 
   do{
     ENG(puts("┏──╸ Edit Merch Id     "));
@@ -641,11 +709,13 @@ void edit_merch_prompt(webstore_t *store){
 
 int main(int argc, char *argv[]) {
   webstore_t *store = store_create();  // --- Load hardcoded test merch
+
   INIT_DATABASE(store);
   parse_args(store, argc, argv);
 
   event_loop_menu(store); 
    
+
   store_destroy(store);
   return 0; 
 }

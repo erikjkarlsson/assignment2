@@ -8,17 +8,18 @@ main: merch.h main.c webstore.c webstore.h merch.c merch.h
 	@echo "::::::::::: Finished :::::::::::"
 
 
-
 dbg: debug.c webstore.c webstore.h merch.h merch.c
-	gcc -g -Wall -pedantic -std=c11list_linked.c common.c iterator.c \
-	hash_table.c webstore.c utils.c debug.c merch.c -o ./dbg 
-	./dbg
-	@echo "::::::::::: Finished :::::::::::"
+=======
+	gcc -g -Wall -pedantic -std=c11 list_linked.c common.c iterator.c \
+	hash_table.c webstore.c utils.c debug.c merch.c cart2.c -o ./dbg 
 
-run:
 	./dbg
 
-dbgt: dbg
+
+run: main
+	./dbg
+
+drun: dbg
 	valgrind --leak-check=full ./dbg
 
 cart:
@@ -51,6 +52,12 @@ memtest: test
 test_cart: 
 	gcc -g -Wall -std=c11 list_linked.c common.c iterator.c \
 	hash_table.c webstore.c utils.c cart.c merch.c test_cart_new.c -lcunit  -o ./bin
+	./bin
+
+all:
+	gcc -g -Wall -std=c11 list_linked.c common.c iterator.c \
+	hash_table.c webstore.c utils.c cart.c merch.c ui.c -o ./full
+	./full
 
 memtest_cart: test_cart
 	valgrind --leak-check=full ./bin
