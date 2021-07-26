@@ -1,0 +1,187 @@
+┏──╸Webstore ╺────┓
+┃ [W]arehouse     ┃
+┃ [C]art          ┃
+┃ [S]et Active ID ┃
+┃ [Q]uit          ┃
+┗━━━━━━━━━━━━━━━━━┛
+>┏──╸Webstore ╺────────┓
+┃ [N]ew Merch         ┃
+┃ [R]emove Merch      ┃
+┃ [I]nspect Merch ID  ┃
+┃ [E]dit Merch        ┃
+┃ [L]ist Database     ┃
+┃ [B]ack              ┃
+┗━━━━━━━━━━━━━━━━━━━━━┛
+> |================= C00 =================|
+┏──╸Id.1 Fake Rolex Watch
+┃ Price: 100Kr
+┃ Stock: 18St
+┃ Desc: A Fake Golden Rolex Watch
+┗──╸
+┏──╸Id.2 Sandals
+┃ Price: 120Kr
+┃ Stock: 36St
+┃ Desc: Simple sandals.
+┗──╸
+|================= C01 =================|
+┏──╸Id.3 Adidas Pants
+┃ Price: 200Kr
+┃ Stock: 6St
+┃ Desc: the Classic Adidas Pants
+┗──╸
+|================= F12 =================|
+┏──╸Id.4 Apple
+┃ Price: 10Kr
+┃ Stock: 128St
+┃ Desc: Edible fruit.
+┗──╸
+┏──╸Id.5 Orange
+┃ Price: 15Kr
+┃ Stock: 64St
+┃ Desc: Imported fruit from Italy.
+┗──╸
+┏──╸Id.6 Mandarin
+┃ Price: 5Kr
+┃ Stock: 16St
+┃ Desc: Not GMO-free.
+┗──╸
+┏──╸Id.7 Coconut
+┃ Price: 30Kr
+┃ Stock: 16St
+┃ Desc: Edible tropical fruit from Congo.
+┗──╸
+|================= C99 =================|
+┏──╸Id.8 Used Jacket
+┃ Price: 8000Kr
+┃ Stock: 1St
+┃ Desc: From the hermes 1999 Summer Collection
+┗──╸
+|================= M01 =================|
+┏──╸Id.9 Mountain Bike
+┃ Price: 1000Kr
+┃ Stock: 28St
+┃ Desc: Prefessional competition bike.
+┗──╸
+┏──╸Id.10 LADA (Car)
+┃ Price: 4000Kr
+┃ Stock: 4St
+┃ Desc: Soviet import, manifactured by AvtoVAZ
+┗──╸
+┏──╸Id.11 Electric Bike
+┃ Price: 800Kr
+┃ Stock: 10St
+┃ Desc: AAA batteries not included.
+┗──╸
+|================= M02 =================|
+┏──╸Id.12 Skateboard
+┃ Price: 40Kr
+┃ Stock: 160St
+┃ Desc: Small Longboard.
+┗──╸
+
+┏──╸Webstore ╺────────┓
+┃ [N]ew Merch         ┃
+┃ [R]emove Merch      ┃
+┃ [I]nspect Merch ID  ┃
+┃ [E]dit Merch        ┃
+┃ [L]ist Database     ┃
+┃ [B]ack              ┃
+┗━━━━━━━━━━━━━━━━━━━━━┛
+> ┏──╸Add New Merch     ╺─────╸
+┃ Name: ┃ Description: ┃ Price: ┃ Shelf: ┃ Amount: ┗──────────────────────────╸
+┏──╸Webstore ╺────────┓
+┃ [N]ew Merch         ┃
+┃ [R]emove Merch      ┃
+┃ [I]nspect Merch ID  ┃
+┃ [E]dit Merch        ┃
+┃ [L]ist Database     ┃
+┃ [B]ack              ┃
+┗━━━━━━━━━━━━━━━━━━━━━┛
+> |================= C00 =================|
+┏──╸Id.1 Fake Rolex Watch
+┃ Price: 100Kr
+┃ Stock: 18St
+┃ Desc: A Fake Golden Rolex Watch
+┗──╸
+┏──╸Id.2 Sandals
+┃ Price: 120Kr
+┃ Stock: 36St
+┃ Desc: Simple sandals.
+┗──╸
+|================= C01 =================|
+┏──╸Id.3 Adidas Pants
+┃ Price: 200Kr
+┃ Stock: 6St
+┃ Desc: the Classic Adidas Pants
+┗──╸
+|================= F12 =================|
+┏──╸Id.4 Apple
+┃ Price: 10Kr
+┃ Stock: 128St
+┃ Desc: Edible fruit.
+┗──╸
+┏──╸Id.5 Orange
+┃ Price: 15Kr
+┃ Stock: 64St
+┃ Desc: Imported fruit from Italy.
+┗──╸
+┏──╸Id.6 Mandarin
+┃ Price: 5Kr
+┃ Stock: 16St
+┃ Desc: Not GMO-free.
+┗──╸
+┏──╸Id.7 Coconut
+┃ Price: 30Kr
+┃ Stock: 16St
+┃ Desc: Edible tropical fruit from Congo.
+┗──╸
+|================= A23 =================|
+┏──╸Id.8 shirt
+┃ Price: 100Kr
+┃ Stock: 10St
+┃ Desc: coolshirt
+┗──╸
+|================= C99 =================|
+┏──╸Id.9 Used Jacket
+┃ Price: 8000Kr
+┃ Stock: 1St
+┃ Desc: From the hermes 1999 Summer Collection
+┗──╸
+|================= M01 =================|
+┏──╸Id.10 Mountain Bike
+┃ Price: 1000Kr
+┃ Stock: 28St
+┃ Desc: Prefessional competition bike.
+┗──╸
+┏──╸Id.11 LADA (Car)
+┃ Price: 4000Kr
+┃ Stock: 4St
+┃ Desc: Soviet import, manifactured by AvtoVAZ
+┗──╸
+┏──╸Id.12 Electric Bike
+┃ Price: 800Kr
+┃ Stock: 10St
+┃ Desc: AAA batteries not included.
+┗──╸
+|================= M02 =================|
+┏──╸Id.13 Skateboard
+┃ Price: 40Kr
+┃ Stock: 160St
+┃ Desc: Small Longboard.
+┗──╸
+
+┏──╸Webstore ╺────────┓
+┃ [N]ew Merch         ┃
+┃ [R]emove Merch      ┃
+┃ [I]nspect Merch ID  ┃
+┃ [E]dit Merch        ┃
+┃ [L]ist Database     ┃
+┃ [B]ack              ┃
+┗━━━━━━━━━━━━━━━━━━━━━┛
+> ┏──╸Webstore ╺────┓
+┃ [W]arehouse     ┃
+┃ [C]art          ┃
+┃ [S]et Active ID ┃
+┃ [Q]uit          ┃
+┗━━━━━━━━━━━━━━━━━┛
+>

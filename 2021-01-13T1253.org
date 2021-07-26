@@ -1,0 +1,22 @@
+#+TITLE: Project 2 
+
+* TODO Working Library Functions 
+** TODO Webstore.c 
+** TODO Cart.c 
+** TODO Ui.c
+- List Merchendise
+
+* TODO Working User Interface
+** TODO Webstore.c 
+** TODO Cart.c 
+- [ ] Verkar ej allokera minne för [[file: cart.h:entry_ht]]
+
+** TODO Ui.c
+
+* TODO Working Tests
+** TODO Webstore.c 
+** TODO Cart.c 
+
+
+ 
+

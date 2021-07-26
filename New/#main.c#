@@ -1,0 +1,33 @@
+#include "common.h"
+#include "hash_table.h"
+#include "list_linked.h"
+#include "stdio.h"
+#include "hash_table.h"
+#include "list_linked.h"
+#include "utils.h"
+#include "webstore.h"
+#include "merch.h"
+#include "cart2.h"
+#include "ui.h"
+
+bool true_(char *c){ return true;}
+int main(int argc, char *argv[]) {
+
+
+  char desc_merch[128] = { '\0'}; 
+  char shelf_name[4] = { '\0'};
+  char name_merch[64] = { '\0'};
+
+  strcpy(desc_merch, "test");
+  printf("Name: %s\n", desc_merch);
+  prompt_string(name_merch,64, "┃ Name:"
+		, "Invalid Name, Try ");
+
+  printf("Desc: %s\n", name_merch);
+  printf("Shelf: %s\n", shelf_name);
+  
+
+
+  return 0;
+}
+

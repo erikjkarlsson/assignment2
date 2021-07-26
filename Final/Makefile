@@ -24,14 +24,40 @@ dbgt: dbg
 cart:
 	gcc cart.c utils.c common.c hash_table.c list_linked.c webstore.c iterator.c
 
-ui:
-	gcc -g -Wall -pedantic -std=c11 ui.c merch.c \
-	cart2.c utils.c common.c hash_table.c list_linked.c \
-	webstore.c iterator.c
-	./a.out
+ui: ui.h merch.h cart2.h utils.h common.h hash_table.h list_linked.h iterator.h webstore.h
+	@printf "Compiling UI Demo to ./bin/ui-demo.out...\n"	
+	gcc -g -Wall -pedantic -std=c11 \
+		ui.c \
+		merch.c \
+		cart2.c \
+		utils.c \
+		common.c \
+		hash_table.c list_linked.c iterator.c \
+		webstore.c \
+		-o ./bin/ui_demo.out
+	@printf "\nFinished compiling.\n Run with 'make run_ui'\n"
+
+
+clean_ui:
+	touch ./bin/ui_demo_old.out
+	rm ./bin/ui_demo_old.out
+
+	@echo "Removing old backup..."
+
+	touch ./bin/ui_demo.out
+	mv ./bin/ui_demo.out ./bin/ui_demo_old.out
+
+	@echo "Backup ==> ./bin/ui-demo-old.out..."
+
+test_ui_mem: ui
+	@echo "Running valgrind, testing for memory leaks ..."
+	valgrind --leak-check=full ./bin/ui_demo.out >> ./test/memory_test_result
+	@echo "Finished running valgrind, dumping result..."
+	cat ./test/memory_test_result
+
 
 run_ui: ui
-	./a.out
+	./bin/ui_demo.out
 
 clean:
 	rm ./main
