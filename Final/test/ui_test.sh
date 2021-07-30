@@ -26,7 +26,7 @@ declare -A PIPE_NAME
 # the created pipe (file) will have this name.
 PIPE_NAME=test.pipe 
 BINARY=$1
-DBG=0
+DBG="false"
 # Directories
 CACHE_DIR=/home/erik/Repos/ass2/Final/cache
 TEST_DIR=/home/erik/Repos/ass2/Final/test
@@ -167,7 +167,7 @@ save_cache(){
 
 
 dbg(){
-    if [ $DBG -eq 0 ]
+    if [ $DBG = "true" ]
     then printf "${RED}${BOLD}DEBUG: ${NC} ${BOLD}${GREEN}$1${NC}\n"
     else record $1
     fi
@@ -175,7 +175,7 @@ dbg(){
 
 dbg_env(){
 
-    if $DBG 
+    if [$DBG -eq "true"]
     then
 	printf "${RED}${BOLD}ACTIVE FILES:${NC}\n\n"
 	dbg "Log    = $LOG_ACTIVE_FILE"
@@ -239,9 +239,10 @@ run_test(){
     # while being redirected through a pipe.
     dbg "Program has started running"
     
-     valgrind --leak-check=full ./$1 <  ./$PIPE_NAME >> $OUTPUT_ACTIVE_FILE &
+    echo < /usr/bin/valgrind --leak-check=full ./$1 < ./$PIPE_NAME > $OUTPUT_ACTIVE_FILE & 
 
     dbg "Program has finished running"
+
 
     return 0
 }
@@ -322,6 +323,126 @@ new_merch(){
     inputnl "l"
     inputnl "q" 
 }
+
+
+
+
+     # the created pipe (file) will have this name.
+     
+PIPE_NAME=test.pipe
+BINARY=$1
+DBG="false"
+# Directories
+CACHE_DIR=/home/erik/Repos/ass2/Final/cache
+TEST_DIR=/home/erik/Repos/ass2/Final/test
+INPUT_DELAY=0.025 # Time to sleep after one input being sent
+START_DATE="$(date '+%Y-%m-%d')";
+LAST_DATE="$(date '+%Y-%m-%d')";
+while [[ $# -gt 0 ]] && [[ "$1" == "--"* ]] ;
+do
+    opt="$1";
+    shift;              #expose next argument
+    case "$opt" in
+	"--help" | "-h" )
+
+printf "${RED}${BOLD}> Options ${NC}\n\n"
+printf "${ITALIC}    Simulate user input through redirection\n"
+printf "    of file descriptors, and run valgrind on\n"
+printf "    preconfigurable, scriptable fake input. ${NC}\n"
+printf "\n"
+printf "    Show this menu.      [ --help  [ -h ]]\n"
+printf "     \n"
+printf "${BOLD}${RED}    ./test [Options] <file path> ${NC}\n"
+printf " \n"
+printf "${BOLD}${GREEN}🔰${NC}) ${BOLD}Enable debugging tools${NC}\n"
+printf "    [ --debug                    [ -dbg [ -d ]]]\n"
+printf "\n"
+printf "${BOLD}${GREEN}🗋${NC}) ${BOLD}Specify path to the binary file ${NC}\n"
+printf "    [ --binary       <path>      [ -bin [ -b ]]]\n"
+printf "\n"
+printf "${BOLD}${GREEN}🗋${NC}) ${BOLD}Specify the path to the binary file${NC}\n"
+printf "    [ --file         <path>      [        -f ]]]\n"
+printf "\n"
+printf "${BOLD}${GREEN} ⏧${NC})${BOLD} Specify which file is used as a pipe${NC}\n"
+printf "    [ --pipe         <path>      [        -p ]]        \n"
+printf "\n"
+printf "${BOLD}${GREEN} 𝄏${NC}) ${BOLD}The delay added after simulated input${NC}\n"
+printf "    [ --input-delay  <float>     [ -lag [ -l ]]\n"
+printf "\n"
+printf "${BOLD}${GREEN} 🚮${NC}) ${BOLD}Directory for all runtime Cache files${NC}\n"
+printf "    [ --cache-dir    <path>      [        -c ]]\n"
+printf "\n"
+printf "${BOLD}${GREEN} 📂${NC})${BOLD} Directory for all test related files${NC}\n"
+printf "    [ --test-dir     <path>      [        -t ]]\n"
+printf "\n"
+printf "${BOLD}${GREEN} 🗎${NC}) ${BOLD} The output filepath for the runtime-log.${NC}\n"
+printf "    [ --log-file     <file-path> [ -log [ -L ]]\n"
+printf "\n"
+printf "${BOLD}${GREEN} 🗎${NC}) ${BOLD}The output filepath for the captured stdout.${NC}\n"
+printf "    [ --output-file  <file-path> [ -out [ -O ]]]\n"
+printf "\n"
+printf "${BOLD}${GREEN} 🗎${NC}) ${BOLD} The output filepath for the recorded keystrokes sent. ${NC}\n"
+printf "${NC}    [ --keylog-file  <file-path> [ -key [ -K ]]]${NC}\n"
+
+
+
+;;
+	"--" )
+	    break 2
+	    ;;
+    	"--debug"        | "-dbg"       | "-d")
+	    DBG="true"
+	    ;;
+
+        "--binary"       | "-bin"       | "-b")
+	    BINARY="$1"
+	    shift
+	    ;;
+
+        "--file"       | "-f")
+	    BINARY="$1"
+	    shift
+	    ;;
+
+        "--path-to-pipe" | "-pipe"      | "-p")     
+	    PIPE_NAME="$1"
+	    shift
+	    ;;
+	
+        "--input-delay"  | "-lag"       | "-l")
+	    INPUT_DELAY="$1"
+	    shift
+	    ;;
+
+	"--cache-dir"    |  "-c") 
+	    CACHE_DIR="$1"
+	    shift
+	    ;;
+
+	"--test-dir"     |  "-t") 
+	    TEST_DIR="$1"
+	    shift
+	    ;;
+
+	"--log-file" | "--logfile"  | "-log")
+	    LOG_ACTIVE_FILE="$1"
+	    shift
+	    ;;
+	"--output-file"  | "--outfile"  | "-out")
+	    OUTPUT_ACTIVE_FILE="$1"
+	    shift
+	    ;;
+	"--keylog-file"  | "--keyfile"  | "-key")
+	    KEY_ACTIVE_FILE="$1"
+	    shift
+	    ;;
+	    *)
+	      echo >&2 "Invalid option: $@";
+	      exit 1
+	      
+	      esac
+    done
+
 init_test
 run_test $1
 new_merch shirt coolshirt 100 A23 10
