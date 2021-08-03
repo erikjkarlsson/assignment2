@@ -15,9 +15,6 @@ dbg: debug.c webstore.c webstore.h merch.h merch.c
 	./dbg
 	@echo "::::::::::: Finished :::::::::::"
 
-run:
-	./dbg
-
 dbgt: dbg
 	valgrind --leak-check=full ./dbg
 
@@ -50,10 +47,13 @@ clean_ui:
 	@echo "Backup ==> ./bin/ui-demo-old.out..."
 
 test_ui_mem: ui
-	@echo "Running valgrind, testing for memory leaks ..."
-	valgrind --leak-check=full ./bin/ui_demo.out >> ./test/memory_test_result
-	@echo "Finished running valgrind, dumping result..."
-	cat ./test/memory_test_result
+	@echo "#================# Running Tests #================#"
+	@echo "> Testing for memory leaks via UI Input in the merch section..."
+	@echo "> Testing all functionalities in the merch section.."
+	./test/ui_test.sh ./bin/ui-demo.out
+
+	@echo "#======# Finished!\n"
+
 
 
 run_ui: ui

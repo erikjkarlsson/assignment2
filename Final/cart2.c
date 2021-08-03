@@ -155,7 +155,8 @@ bool cart_is_empty(cart_t *cart){
 size_t cart_db_size(cart_t *cart){
   if (!cart){
     perror("cart_db_size: No active cart.\n");
-    return false;
+    return -1;
+       
   }
   return ioopm_hash_table_size(cart->merch_in_cart);
 }

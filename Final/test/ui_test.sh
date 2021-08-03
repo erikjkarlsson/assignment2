@@ -30,7 +30,11 @@ DBG=0
 # Directories
 CACHE_DIR=/home/erik/Repos/ass2/Final/cache
 TEST_DIR=/home/erik/Repos/ass2/Final/test
+
 INPUT_DELAY=0.025 # Time to sleep after one input being sent
+OUTPUT_ACTIVE_FILE=output.txt
+KEY_ACTIVE_FILE=keys.txt
+
 dofile(){
     # dofile <filename> [<action>  [filename>]]
     case $2 in # File exists
@@ -195,17 +199,17 @@ dbg_env(){
 # Create pipe
 init_test(){
 
-    dbg "Remove previous pipe if it exists (INIT)"
+#    dbg "Remove previous pipe if it exists (INIT)"
 
     touch $PIPE_NAME
     rm    $PIPE_NAME
 
-    dbg "Initialize logs etc (INIT)"
-    init_cache
+#    dbg "Initialize logs etc (INIT)"
+#    init_cache
     
-    dbg "<pipe filename> = $PIPE_NAME (INIT)"
+ #   dbg "<pipe filename> = $PIPE_NAME (INIT)"
 
-    dbg "Create pipe file descriptor (INIT)" 
+  #  dbg "Create pipe file descriptor (INIT)" 
 
     mkfifo $PIPE_NAME
 
@@ -213,12 +217,12 @@ init_test(){
     # When the sleep process is closed, the pipe close.
     # so we save the PID for that later.
 
-    dbg "Starting infinity loop (INIT)"
+#    dbg "Starting infinity loop (INIT)"
 
     sleep infinity > $PIPE_NAME &
-    PID=$(pidof sleep)§
+    PID=$(pidof sleep)
 
-    dbg "Infinity loop has PID = $PID (INIT)"
+#    dbg "Infinity loop has PID = $PID (INIT)"
 
     return 0
 }
@@ -230,18 +234,18 @@ record() {
 
 
 run_test(){    
-    dbg "Running tests"
+  #  dbg "Running tests"
     
-    record "Connecting $1 to $PIPE_NAME"
-    record "Checking for memory leaks within the program running"
+   # record "Connecting $1 to $PIPE_NAME"
+    #record "Checking for memory leaks within the program running"
     
     # Check for memory leaks within the program running
     # while being redirected through a pipe.
-    dbg "Program has started running"
+#    dbg "Program has started running"
     
-     valgrind --leak-check=full ./$1 <  ./$PIPE_NAME >> $OUTPUT_ACTIVE_FILE &
+    valgrind --leak-check=full ./$1 <  ./$PIPE_NAME >> $OUTPUT_ACTIVE_FILE &
 
-    dbg "Program has finished running"
+ #   dbg "Program has finished running"
 
     return 0
 }
@@ -249,49 +253,55 @@ run_test(){
 
 exit_test(){
     
-    record "Saving Cache"
-    save_cache
+  #  record "Saving Cache"
+#    save_cache
              
-    record "Send TERN signal to sleep process"
-    kill -s SIGTERM $PID
+    #record "Send TERN signal to sleep process"
+    kill -9 $PID
 
-    record "Closing $PIPE_NAME away from $1"
+    #record "Closing $PIPE_NAME away from $1"
+
+
+
     rm $PIPE_NAME
     
     # BUG: This kills the running process before it has had time
     # to garbage collect?
     # 
-    # kill -9 $(pidof $1)
+    
 
     return 0
 }
 
 # Send input to pipe
 input(){
-    dbg "Typing Input() = \"$1\""
+ #   dbg "Typing Input() = \"$1\""
 
     echo $1 >> $KEY_ACTIVE_FILE
+    printf "$1\n" >> $OUTPUT_ACTIVE_FILE
     echo $1 >> $PIPE_NAME
 
-    dbg "Sleeping $INPUT_DELAY"
+    #dbg "Sleeping $INPUT_DELAY"
     sleep $INPUT_DELAY
-    dbg "Finished sleeping"
+#    dbg "Finished sleeping"
     
-    return 0
+    
+eturn 0
 }
 # Send input to pipe w. nl
 inputnl(){
 #    printf " "
 #    echo "Sending: $1" 
-    dbg "Typing Inputnl() = \"$1\""
+ #   dbg "Typing Inputnl() = \"$1\""
 
     # Send string into test
     printf "$1\n" >> $KEY_ACTIVE_FILE
+    printf "$1\n" >> $OUTPUT_ACTIVE_FILE
     printf "$1\n" >> $PIPE_NAME
 
-    dbg "Sleeping $INPUT_DELAY"
+#    dbg "Sleeping $INPUT_DELAY"
     sleep $INPUT_DELAY
-    dbg "Finished sleeping"
+#    dbg "Finished sleeping"
 
     return 0
 }
@@ -322,16 +332,91 @@ new_merch(){
     inputnl "l"
     inputnl "q" 
 }
+
+
+
+rem_merch(){
+    # rem_merch id
+    inputnl "r"
+    inputnl "$1"
+}
+
+edit_merch(){ # Correct
+    # edit_merch id
+    inputnl "e"
+    inputnl "n"
+    inputnl "$1"
+    # stock = 123
+    inputnl "s"
+    inputnl "123"
+    # desc = desc 123
+    inputnl "d"
+    inputnl "desc 123"
+    # price = 123
+    inputnl "p"
+    inputnl "123"
+    # exit edit menu
+    inputnl "b"
+}
+list_merch(){
+    inputnl "l"    
+}
+inspect_merch(){
+    # inspect_merch id
+    inputnl "i"
+    inputnl "$1"
+}
+
+
+
+
 init_test
 run_test $1
-new_merch shirt coolshirt 100 A23 10
+list_merch
+
+new_merch shirt coolshirt 100 A01 10
+new_merch shirt2 coolshirt2 200 A02 20
+new_merch shirt3 coolshirt3 300 A03 30
+
+inspect_merch 0 # Error
+inspect_merch 1
+#inspect_merch "-1" # Error
+inspect_merch 2
+
+inspect_merch 3
+inspect_merch 4
+
+rem_merch 1
+rem_merch 2
+rem_merch 3
+rem_merch 4
+rem_merch 5
+rem_merch 6
+rem_merch 7
+rem_merch 8
+rem_merch 9
+rem_merch 10
+rem_merch 11
+rem_merch 12
+rem_merch 13
+rem_merch 14
+rem_merch 15
+
+inspect_merch 0 # Error
+inspect_merch 1 # Error
+#inspect_merch "-1" # Error
+
+list_merch
+
 inputnl "q"
 exit_test $1 
 
-
-
-
-
+echo "Finished Running!"
+function kill_binary(){
+    killall $1 &> /dev/null 
+    return 0
+}
+kill_binary
 
 # INITIALIZATION
 
