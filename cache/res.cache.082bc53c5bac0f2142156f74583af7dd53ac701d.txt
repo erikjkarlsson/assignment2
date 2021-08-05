@@ -1,0 +1,8 @@
+
+┏──╸Webstore ╺────┓
+┃ [W]arehouse     ┃
+┃ [C]art          ┃
+┃ [S]et Active ID ┃
+┃ [Q]uit          ┃
+┗━━━━━━━━━━━━━━━━━┛
+>
