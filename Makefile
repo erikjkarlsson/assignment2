@@ -31,7 +31,7 @@ clean_ui:
 # "¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨" Tests "¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨"
 
 
-make_tests: ${LIBS_HEADERS} ./src/test_merch.h
+tests: ${LIBS_HEADERS} ./src/test_merch.h
 	@echo "> Compiling test binary..."
 	gcc -g -Wall -pedantic -std=c11  ${LIBS} ./src/test_merch.c -lcunit -o ./bin/run_test
 	@echo "> Done!\n"
@@ -42,7 +42,7 @@ clean_tests:
 	rm    ./bin/run_test
 	@echo "> Done!\n"
 
-build_and_run_tests: clean_tests make_tests  
+build_and_run_tests: clean_tests tests  
 	@echo "#================# Running Tests #================#"
 	@echo "> Testing for memory leaks using stdin and out..."
 	@echo "> Testing all functionalities in the merch section.."
@@ -66,8 +66,7 @@ clean:
 	@echo "Removed Binary"
 
 
-run: main
-	./bin
+run: run_ui
 
 test_cart: 
 	gcc -g -Wall -std=c11 list_linked.c common.c iterator.c \
