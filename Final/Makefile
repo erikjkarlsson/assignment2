@@ -10,7 +10,7 @@ main: merch.h main.c webstore.c webstore.h merch.c merch.h
 
 
 dbg: debug.c webstore.c webstore.h merch.h merch.c
-	gcc -g -Wall -pedantic -std=c11list_linked.c common.c iterator.c \
+	gcc -g -Wall -pedantic -std=c11 list_linked.c common.c iterator.c \
 	hash_table.c webstore.c utils.c debug.c merch.c -o ./dbg 
 	./dbg
 	@echo "::::::::::: Finished :::::::::::"
@@ -46,13 +46,39 @@ clean_ui:
 
 	@echo "Backup ==> ./bin/ui-demo-old.out..."
 
-test_ui_mem: ui
+# "¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨" Tests "¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨"
+
+
+make_tests:
+	@echo "> Compiling test binary..."
+	gcc -g -Wall -pedantic -std=c11           \
+		list_linked.c common.c iterator.c \
+		hash_table.c webstore.c utils.c   \
+		cart2.c merch.c test_merch.c      \
+		-lcunit  -o ./bin/run_test
+	@echo "> Done!\n"
+
+clean_tests: 
+	@echo "> Removing test binary..."
+	touch ./bin/run_test
+	rm    ./bin/run_test
+	@echo "> Done!\n"
+
+build_and_run_tests: clean_tests make_tests  
 	@echo "#================# Running Tests #================#"
-	@echo "> Testing for memory leaks via UI Input in the merch section..."
+	@echo "> Testing for memory leaks using stdin and out..."
 	@echo "> Testing all functionalities in the merch section.."
 	./test/ui_test.sh ./bin/ui-demo.out
+	@echo "> Finished!\n"
+	@echo "> Running Unit Tests...\n"
+#	valgrind --leak-check=full ./bin/run_test
+	./bin/run_test	
 
-	@echo "#======# Finished!\n"
+	@echo "> Finished!\n"
+
+
+	@echo "#================# Tests Complete #================#"
+# "¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨" 
 
 
 

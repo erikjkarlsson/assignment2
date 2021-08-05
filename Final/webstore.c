@@ -9,7 +9,7 @@
 #include "utils.h"
 #include "cart2.h"
 #include "webstore.h"
-
+#include "merch.h"
 
 bool valid_index(webstore_t *store, int index);
 char *lookup_merch_name(webstore_t *store, int index); 
@@ -68,6 +68,7 @@ void destroy_shelf(shelf_t *shelf);
 /// /// /// /// /// /// /// /// /// /// /// /// /// /// 
 // MERCH                                            ///
 /// /// /// /// /// /// /// /// /// /// /// /// /// ///
+
 
 merch_t *create_merch(char *name, char *desc,
 		      size_t price, ioopm_list_t *locs){
@@ -204,7 +205,23 @@ void free_saved_strs(webstore_t *store){
   }
 }
 
-// change merch on shelf   
+// change merch on shelf
+bool shelf_exists(webstore_t *store, char *shelf){
+  // Unallocated webstore or shelf database
+  if (store->storage_db == NULL){
+    printf("Storage_db == NULL\n");
+    return false;
+  }
+  // Invalid Shelf
+  else if (!shelf || (!is_shelf(shelf))){	   
+    printf("Storage_db == NULL\n");
+    return false;
+  }
+  
+  return ioopm_hash_table_has_key(store->storage_db, ptr_elem(shelf));
+
+}
+		  
 void set_merch_stock(webstore_t *store, char *name,
 		     size_t amount, char* location){
   // Look in the merch db for the location (shelf)
@@ -543,8 +560,10 @@ void store_destroy(webstore_t *store){
   destroy_all_carts(store);  
   //  ioopm_linked_list_destroy(store->all_shopping_carts);  
   destroy_arg_opt(store->opt);
+
   free_saved_strs(store);
   ioopm_linked_list_destroy(store->heap_strs);  
+
   free(store);
 }
 
@@ -820,8 +839,8 @@ char *get_shelf_after_shelf_nr(webstore_t *store, int shelf_nr, char *name){
 ioopm_list_t *get_locations(webstore_t *store, char *shelf){
   // Return the associated list to a shelf in storage
   
-  if ((store == NULL) || (shelf == NULL)){
-    perror("get_locations: Unallowed NULL arguments.\n");
+  if (!store || !shelf || !is_shelf(shelf)){
+    //    perror("get_locations: Unallowed NULL arguments.\n");
     return NULL; // Can this be a problem??
   }else 
     return get_elem_ptr(ioopm_hash_table_lookup(store->storage_db,
@@ -912,27 +931,28 @@ void add_to_storage(webstore_t *store, char *name, char *shelf){
 
 
 bool storage_contains(webstore_t *store, char *name, char *shelf){
-  if ((store == NULL) | (shelf == NULL) | (name == NULL)){
+  if (!store || !shelf || !name){
     perror("storage_contains: Unallowed NULL argument.\n");
     return false;
-  }
-  // If shelf does not exist, it cannot contain item  
-  if (!ioopm_hash_table_has_key(store->storage_db, ptr_elem(shelf))){
-    //    perror("storage_contains: Non-Existing Shelf..");
-    return false;    
   } 
+  // If shelf does not exist, it cannot contain item  
+  else if (!shelf_exists(store, shelf)){
+    //    perror("storage_contains: Non-Existing Shelf..");
+    return false;
+  }  
+
   
   // Names stored at requested shelf location
   ioopm_list_t *db_names = get_locations(store, shelf);
   ioopm_link_t *db_item  = db_names->first;
 
-  do {
+  while (db_item != NULL) {
     // Already exists in database
     if (STR_EQ((char *) get_elem_ptr(db_item->element), name))
       return true;
 					      
     db_item = db_item->next;           
-  } while (db_item != NULL);
+  } 
   // Does not exist in database
   return false;
 }

@@ -149,6 +149,12 @@ char *get_shelf_after_shelf_nr(webstore_t *store, int shelf_nr, char *name);
 
 void remove_from_storage(webstore_t *store, char *name, char *shelf);
 void save_str(webstore_t *store, char *str_ptr);
+
+
+// shelf_exists(store,  shelf)
+// returns: True if shelf exists in the storage (store->storage_db).
+bool shelf_exists(webstore_t *store, char *shelf);
+
 //void locs_delete(ioopm_list_t *locs);
 //void merch_delete(merch_t *merch_data);
 
