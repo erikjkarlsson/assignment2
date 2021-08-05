@@ -1,16 +1,19 @@
 SOURCED=./src
 
-LIBS=./src/ui.c ./src/merch.c ./src/cart2.c \
+LIBS= ./src/merch.c ./src/cart2.c \
      ./src/utils.c ./src/common.c ./src/hash_table.c \
      ./src/list_linked.c ./src/iterator.c ./src/webstore.c
-LIBS_HEADERS=./src/ui.h ./src/merch.h ./src/cart2.h \
+
+UI=./src/ui.c
+UI_HEADER=./src/ui.h 
+LIBS_HEADERS=./src/merch.h ./src/cart2.h \
      ./src/utils.h ./src/common.h ./src/hash_table.h \
      ./src/list_linked.h ./src/iterator.h ./src/webstore.h
 
 
-ui: ${LIBS_HEADERS}
+ui: ${LIBS_HEADERS} ${UI_HEADER}
 	@printf "Compiling UI Demo to ./bin/ui-demo.out...\n"	
-	gcc -g -Wall -pedantic -std=c11 ${LIBS} -o ./bin/ui_demo.out
+	gcc -g -Wall -pedantic -std=c11 ${LIBS} ${UI} -o ./bin/ui_demo.out
 	@printf "\nFinished compiling.\n Run with 'make run_ui'\n"
 
 
@@ -30,7 +33,7 @@ clean_ui:
 
 make_tests: ${LIBS_HEADERS} ./src/test_merch.h
 	@echo "> Compiling test binary..."
-	gcc -g -Wall -pedantic -std=c11  ${LIBS} test_merch.c -lcunit -o ./bin/run_test
+	gcc -g -Wall -pedantic -std=c11  ${LIBS} ./src/test_merch.c -lcunit -o ./bin/run_test
 	@echo "> Done!\n"
 
 clean_tests: 
