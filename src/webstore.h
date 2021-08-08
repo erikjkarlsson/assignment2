@@ -132,7 +132,7 @@ void set_merch_description(webstore_t *store, char *name, char *desc);
 ioopm_list_t *merch_locs(webstore_t *store, char *name);
 void destroy_locs(webstore_t *store, char *name);
 
-
+void destroy_merchendise(merch_t *merch);
 void add_merchendise(webstore_t *store, char *name, char *desc, size_t price);
 void destroy_all_merch(webstore_t *store);
 void remove_merchendise(webstore_t *store, char *name);

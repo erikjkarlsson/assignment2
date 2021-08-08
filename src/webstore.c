@@ -84,51 +84,57 @@ merch_t *create_merch(char *name, char *desc,
   return item;
 }
 
+
+void destroy_merchendise(merch_t *merch){ // test
+  merch->name = NULL;
+  merch->desc = NULL;
+  merch->price = (size_t)NULL;
+
+
+  ioopm_link_t *shelf = merch->locs->first;
+  shelf_t *shelf_data = NULL;
+
+  while (shelf) {
+    shelf_data = get_elem_ptr(shelf->element);
+    destroy_shelf(shelf_data); 
+    shelf_data = NULL;
+    shelf      = shelf->next;                                   
+    
+  }
+//  ioopm_linked_list_destroy(merch->locs);
+
+  ioopm_linked_list_destroy(merch->locs);
+  merch->locs = NULL;
+  free(merch);  
+
+}
+
+
 void remove_merchendise(webstore_t *store, char *name){
   if (!ioopm_hash_table_has_key(store->merch_db, ptr_elem(name))){
     perror("remove_merchendise: Non existing item, \
             The name to be removed does not exist.\n");
     return; // ERROR
-  }else if (!ioopm_hash_table_has_key(store->merch_db, ptr_elem(name))){
-    perror(": Non existing merch name.\n");
-    return;
   }
-
-  shelf_t *shelf = NULL;
-  // Free Locs  
-  
-
+ 
   merch_t *merch_data =
-    get_elem_ptr(ioopm_hash_table_lookup(store->merch_db,
+    get_elem_ptr(ioopm_hash_table_lookup(store->merch_db, 
 					 ptr_elem(name)));
-
 
   ioopm_link_t *merch_data_locs = merch_data->locs->first;
 
+// Remove merch from the shelfs containing its name
   while (merch_data_locs) {
-    shelf = get_elem_ptr(merch_data_locs->element);
-
+    shelf_t *shelf = get_elem_ptr(merch_data_locs->element);      
+    remove_name_from_shelf(store, shelf->shelf,  name);
     merch_data_locs = merch_data_locs->next;              
 
-    SLOG(store, "rm_merch Amount");
-      
-    remove_name_from_shelf(store, shelf->shelf,  name);
-
-    free(shelf); shelf = NULL;
-    merch_data->locs->size--;
   } 
 
-  ioopm_linked_list_destroy(merch_data->locs);
-  merch_data->locs = NULL;
-  ioopm_hash_table_remove(store->merch_db,
-			  ptr_elem(name));
-    
 
-
-    
-  // Free Merchendise
-  free(merch_data);
-
+  destroy_merchendise(merch_data);
+  ioopm_hash_table_remove(store->merch_db, ptr_elem(name));
+      
 }
 void parse_args(webstore_t *store, int argc, char *argv[]){
   arg_parse(argc, argv, store->opt);
@@ -667,8 +673,10 @@ void destroy_shelf(shelf_t *shelf){
     perror("destroy_shelf: Unallowed NULL argument.\n");
     return;
   }
-  shelf->shelf = NULL;
+  shelf->shelf  = NULL;
+  shelf->amount = (size_t)NULL;
   free(shelf);
+  shelf = (shelf_t *) NULL;
 }
 
 

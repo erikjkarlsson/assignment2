@@ -180,6 +180,52 @@ void str_memory_management_system_test(void){
   store_destroy(store);
 }
 
+
+void create_shelf_test(void){
+  shelf_t *new_shelf = create_shelf("A23", 123);    
+
+  CU_ASSERT_TRUE(STR_EQ(new_shelf->shelf, "A23"));
+  CU_ASSERT_EQUAL(new_shelf->amount, 123);
+
+  destroy_shelf(new_shelf);
+}
+void create_merch_test_empty_locs(void){
+  ioopm_list_t *new_locs  = ioopm_linked_list_create();
+  merch_t      *new_merch = 
+    create_merch("Tuna", "Raw Tuna", 123, new_locs);    
+
+  CU_ASSERT_TRUE(STR_EQ(new_merch->name, "Tuna"));
+  CU_ASSERT_TRUE(STR_EQ(new_merch->desc, "Raw Tuna"));
+  CU_ASSERT_EQUAL(new_merch->price, 123);
+  CU_ASSERT_EQUAL(new_merch->total_amount, 0);
+  CU_ASSERT_EQUAL(new_merch->locs->size, 0);
+
+  destroy_merchendise(new_merch);
+}
+void create_merch_test_populated_locs(void){
+  ioopm_list_t *new_locs  = ioopm_linked_list_create();
+  merch_t      *new_merch = 
+    create_merch("Tuna", "Raw Tuna", 123, new_locs);    
+
+  CU_ASSERT_TRUE(STR_EQ(new_merch->name, "Tuna"));
+  CU_ASSERT_TRUE(STR_EQ(new_merch->desc, "Raw Tuna"));
+  CU_ASSERT_EQUAL(new_merch->price, 123);
+  CU_ASSERT_EQUAL(new_merch->total_amount, 0);
+  CU_ASSERT_EQUAL(new_merch->locs->size, 0);
+
+
+  char *shelfs[5] = {"A01", "A02", "A03", "A04", "A05"};
+  size_t amounts[5] = {20, 21, 22, 23, 24};
+  for (int i = 0; i < 5; i++){
+    shelf_t *shelf = create_shelf(shelfs[i], amounts[i]);
+    ioopm_linked_list_append(new_merch->locs, ptr_elem(shelf));
+  }
+
+
+  destroy_merchendise(new_merch);
+}
+
+
 /////////////////////////////////////////////////////////////
 int main()
 {
@@ -200,7 +246,12 @@ int main()
   if ((NULL == CU_add_test(merch_test_suite,
 			   "Create and Remove Merch: Creation and Deletion of merch\n",
 			   create_destroy_merch_test)) ||
-
+      (NULL == CU_add_test(merch_test_suite,
+      "Construct Merch: Creation and Deletion of merch (empty location db) without adding to store.\n",
+			   create_merch_test_empty_locs)) ||
+      (NULL == CU_add_test(merch_test_suite,
+      "Construct Merch: Creation and Deletion of merch (with location db) without adding to store.\n",
+			   create_merch_test_populated_locs)) ||
       (NULL == CU_add_test(merch_test_suite,
 			   "Create and Remove Merch: Shelf correct creation, stock and deletion\n",
 			   create_destroy_merch_shelf_test)) ||
@@ -212,6 +263,9 @@ int main()
       (NULL == CU_add_test(merch_test_suite,
 			   "Create and Remove Merch: Automatic deallocation of merch\n",
 			   create_autodestroy_merch_test)) ||
+      (NULL == CU_add_test(merch_test_suite,
+			   "Create Shelf: Creation of shelf.\n",
+			   create_shelf_test)) ||
       
       (NULL == CU_add_test(merch_test_suite,
 			   "Memory Management: Auto-deallocation of strings\n",
