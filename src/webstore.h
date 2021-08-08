@@ -113,7 +113,7 @@ int merch_stock_on_shelf(webstore_t *store, char *name, char *shelf);
 bool sync_merch_stock(webstore_t *store, char *name);
 size_t increase_stock(webstore_t *store, char *name,
 		      char *shelf_name, size_t amount);
-
+bool is_saved_str(webstore_t *store, char *str);
 void show_stock(webstore_t *store);
 void rename_merch(webstore_t *store, char *name, char *new_name);
 
@@ -148,7 +148,7 @@ char *get_merch_name_in_storage(webstore_t *store, int nr_merch);
 char *get_shelf_after_shelf_nr(webstore_t *store, int shelf_nr, char *name);
 
 void remove_from_storage(webstore_t *store, char *name, char *shelf);
-void save_str(webstore_t *store, char *str_ptr);
+
 
 
 // shelf_exists(store,  shelf)
@@ -157,6 +157,25 @@ bool shelf_exists(webstore_t *store, char *shelf);
 
 //void locs_delete(ioopm_list_t *locs);
 //void merch_delete(merch_t *merch_data);
+
+//  free_saved_strs(store)
+//  free all of the saved strings
+//  returns: Nothing
+// 
+void free_saved_strs(webstore_t *store);
+
+
+// bool free_str(store, str)
+// free any string equal to str if saved
+// returns: true if a string was freed
+bool free_str(webstore_t *store, char *str);
+
+// bool free_str(store, str)
+// save any heap allocated strings pointer.
+// which will be freed later with free_str or
+// free_saved_strs
+// returns: true if a string was saved
+bool save_str(webstore_t *store, char *str_ptr);
 
 //This should list all items in the store.
 //Items should preferably (soft requirement) be printed in alphabetical order on their names.

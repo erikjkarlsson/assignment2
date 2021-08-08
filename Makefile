@@ -49,8 +49,8 @@ build_and_run_tests: clean_tests tests
 	./test/ui_test.sh ./bin/ui-demo.out
 	@echo "> Finished!\n"
 	@echo "> Running Unit Tests...\n"
-#	valgrind --leak-check=full ./bin/run_test
-	./bin/run_test	
+	valgrind --leak-check=full ./bin/run_test
+#	./bin/run_test	
 
 	@echo "> Finished!\n"
 	@echo "#================# Tests Complete #================#"

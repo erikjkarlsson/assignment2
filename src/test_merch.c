@@ -3,6 +3,7 @@
 #include <stdbool.h>
 #include <CUnit/Basic.h>
 #include <stdlib.h>
+
 #include "hash_table.h"
 #include "list_linked.h"
 #include "webstore.h"
@@ -25,7 +26,8 @@ void test(){
     CU_ASSERT_TRUE(true);
 }
 
-void create_destroy_merch(){
+// ################################### CREATE AND DESTROY MERCH
+void create_destroy_merch_test(void){
   char  *new_item_name  = "Eggs";
   char  *new_item_desc  = "Yummy!";
   size_t new_item_price = (size_t)16.99;
@@ -38,61 +40,195 @@ void create_destroy_merch(){
     
   webstore_t *store = store_create();
 
-//  save_str(store, new_item_name);
-//  save_str(store, new_item_desc);
-//
-//  save_str(store, new_item_shelf);
-//  save_str(store, eggs);
-//  save_str(store, eggs_shelf);  
   CU_ASSERT_FALSE(shelf_exists(store, eggs_shelf));
   // Add eggs as merchendise 
   new_item(store, new_item_name, new_item_desc, new_item_price,
 	   new_item_shelf, new_item_stock);
-
-  // Eggs remain
-  CU_ASSERT_FALSE(merch_stock_on_shelf(store, eggs, eggs_shelf) == 0);
-  CU_ASSERT_TRUE(merch_in_stock(store, eggs));
-  // Was the shelf created?
-  CU_ASSERT_TRUE(shelf_exists(store, eggs_shelf));
-  //  CU_ASSERT_TRUE(storage_contains(store, eggs, eggs_shelf));
-
+  
   // Remove eggs using a differently allocated, but equal string.
+  remove_merchendise(store, eggs);
+
+  store_destroy(store);
+}
+
+void create_destroy_merch_shelf_test(void){
+  char  *new_item_name  = "Eggs";
+  char  *new_item_desc  = "Yummy!";
+  size_t new_item_price = (size_t)16.99;
+
+  char  *new_item_shelf = "G03";
+  int    new_item_stock =  2000;
+  
+  char *eggs            = "Eggs";
+  char *eggs_shelf      = "G03";
+    
+  webstore_t *store = store_create();
+
+  // Shelf does not exist prior to adding item
+  CU_ASSERT_FALSE(shelf_exists(store, eggs_shelf));  
+
+  // Add eggs as merchendise 
+  new_item(store, new_item_name, new_item_desc, new_item_price,
+	   new_item_shelf, new_item_stock);
+
+  // Shelf was created after adding merch
+  CU_ASSERT_TRUE(shelf_exists(store, eggs_shelf));  
+
+  // Correct amount of the merch stock was added on the correct shelf
+  CU_ASSERT_TRUE(merch_stock_on_shelf(store, eggs, eggs_shelf) == new_item_stock);
+  
+  // Remove eggs using a differently allocated, but equal string.n
   remove_merchendise(store, eggs);
 
   // No eggs remain
   CU_ASSERT_TRUE(merch_stock_on_shelf(store, eggs, eggs_shelf) == 0);
   CU_ASSERT_FALSE(merch_in_stock(store, eggs));
+
   // Test if the shelf was deleted upon deletion of merch
+  CU_ASSERT_TRUE(shelf_exists(store, eggs_shelf));
+  
+  store_destroy(store);
+}
+
+
+void create_autodestroy_merch_test(void){
+  // Add merchendise, but let the store destroy function remove the merch
+  char  *new_item_name  = "Eggs";
+  char  *new_item_desc  = "Yummy!";
+  size_t new_item_price = (size_t)16.99;
+
+  char  *new_item_shelf = "G03";
+  int    new_item_stock =  2000;
+    
+  webstore_t *store = store_create();
+
+  // Add eggs as merchendise 
+  new_item(store, new_item_name, new_item_desc, new_item_price,
+	   	   new_item_shelf, new_item_stock);
+
+  // Dont Remove eggs
+  // remove_merchendise(store, eggs);
+
+  // No eggs remain
+
   // CU_ASSERT_TRUE(shelf_exists(store, eggs_shelf));  
+  store_destroy(store);
+
+}
+
+void create_duplicate_merch_test(void){
+  char  *new_item_name  = "Eggs";
+  char  *new_item_desc  = "Yummy!";
+  size_t new_item_price = (size_t)16.99;
+
+  char  *new_item_shelf = "G03";
+  int    new_item_stock =  2000;
+  
+  char *eggs            = "Eggs";
+
+    
+  webstore_t *store = store_create();
+
+  
+  // Add eggs as merchendise 
+  new_item(store, new_item_name, new_item_desc, new_item_price,
+	   new_item_shelf, new_item_stock);
+
+
+  // Duplicate merch! Error!
+  new_item(store, new_item_name, new_item_desc, new_item_price,
+	   new_item_shelf, new_item_stock);
+
+  
+  // Remove eggs using a differently allocated, but equal string.n
+  remove_merchendise(store, eggs);
+  
+  store_destroy(store);
+}
+
+void str_memory_management_system_test(void){
+  char  *str1  = NULL;
+  char  *str2  = NULL;
+  char  *str3  = NULL;
+  
+  webstore_t *store = store_create();
+  //  str1 = malloc(sizeof(char) * 5);
+  
+  str1 = strdup("heap allocated 1\0");
+  str2 = strdup("heap allocated 2\0");
+  str3 = strdup("heap allocated 3\0");
+
+  CU_ASSERT_FALSE(is_saved_str(store, "heap allocated 1\0"));  
+  CU_ASSERT_FALSE(is_saved_str(store, "heap allocated 2\0"));  
+  CU_ASSERT_FALSE(is_saved_str(store, "heap allocated 3\0"));  
+  
+  save_str(store, str1);
+  save_str(store, str2);
+  save_str(store, str3);
+
+  CU_ASSERT_TRUE(is_saved_str(store, "heap allocated 1\0"));  
+  CU_ASSERT_TRUE(is_saved_str(store, "heap allocated 2\0"));  
+  CU_ASSERT_TRUE(is_saved_str(store, "heap allocated 3\0"));  
+
+//  free_saved_strs(store);
+
+//  CU_ASSERT_FALSE(is_saved_str(store, "heap allocated 1\0"));  
+//  CU_ASSERT_FALSE(is_saved_str(store, "heap allocated 2\0"));  
+//  CU_ASSERT_FALSE(is_saved_str(store, "heap allocated 3\0"));  
+//  
+  // free(str1);  
   store_destroy(store);
 }
 
 /////////////////////////////////////////////////////////////
 int main()
 {
-  CU_pSuite test_suite1 = NULL;
+  CU_pSuite merch_test_suite = NULL;
+
+
 
   if (CUE_SUCCESS != CU_initialize_registry())
     return CU_get_error();
 
-  test_suite1 = CU_add_suite("Tests API", init_suite, clean_suite);
-  if (NULL == test_suite1){
+  merch_test_suite = CU_add_suite("Tests API", init_suite, clean_suite);
+
+  if (NULL == merch_test_suite){
       CU_cleanup_registry();
       return CU_get_error();
   }
 
-  if (NULL == CU_add_test(test_suite1, "Create and Remove Merch",
-			  create_destroy_merch)){
-       
+  if ((NULL == CU_add_test(merch_test_suite,
+			   "Create and Remove Merch: Creation and Deletion of merch\n",
+			   create_destroy_merch_test)) ||
+
+      (NULL == CU_add_test(merch_test_suite,
+			   "Create and Remove Merch: Shelf correct creation, stock and deletion\n",
+			   create_destroy_merch_shelf_test)) ||
+
+      (NULL == CU_add_test(merch_test_suite,
+			   "Create and Remove Merch: Duplicate creation of merch\n",
+			   create_duplicate_merch_test)) ||
+
+      (NULL == CU_add_test(merch_test_suite,
+			   "Create and Remove Merch: Automatic deallocation of merch\n",
+			   create_autodestroy_merch_test)) ||
+      
+      (NULL == CU_add_test(merch_test_suite,
+			   "Memory Management: Auto-deallocation of strings\n",
+			   str_memory_management_system_test))){
+
       CU_cleanup_registry();
       return CU_get_error();
     }
 
   CU_basic_set_mode(CU_BRM_VERBOSE);
+  
   CU_basic_run_tests();
+  
   CU_cleanup_registry();
   return CU_get_error();
 }
+
 
 
 

@@ -183,41 +183,108 @@ void add_merchendise(webstore_t *store,
 }
 
 
-void save_str(webstore_t *store, char *str_ptr){
+bool save_str(webstore_t *store, char *str_ptr){
   // Store the pointer to ‘str_ptr’ in the webstore
   // this to avoid memory leaks, and avoiding alot
   // of copying and freeing.
+
+  if (!store) {
+    perror("save_str: Uninitialized webstore, webstore is NULL");
+    return false;
+    
+  } else if (!str_ptr){
+    perror("save_str: String is NULL, cannot save it.\n");
+    return false;
+  }
+  if (!store->heap_strs){
+    perror("save_str: Uninitialized linked list. Creating...\n");
+    store->heap_strs = ioopm_linked_list_create();
+  }
+  
   
   ioopm_linked_list_append(store->heap_strs,
-			   ptr_elem(str_ptr));  
+			   ptr_elem(str_ptr));
+
+
+  return true;
+}
+bool free_str(webstore_t *store, char *str){
+  // Free the string equal to `str' from the saved strings list
+  // Return true if a string was free'd otherwise false
+  
+  if (!store) {
+    perror("save_str: Uninitialized webstore, webstore is NULL.\n");
+    return false;
+    
+  } else if (!str){
+    perror("save_str: String is NULL, cannot save it.\n");
+    return false;
+
+  } else if (!store->heap_strs){
+    perror("save_str: Uninitialized linked list.\n");
+    return false;
+  }
+  ioopm_link_t *heap_strs = store->heap_strs->first;
+  ioopm_link_t *previous  = store->heap_strs->first;
+
+  while (heap_strs) {
+    char *saved_str = (get_elem_ptr(heap_strs->element));
+
+    if (STR_EQ(str, saved_str)){
+      previous->next = heap_strs->next;      
+      free(saved_str);
+      
+      return true;      
+    }else previous = heap_strs;
+
+    heap_strs = heap_strs->next;           
+  }
+  return false;
+}
+bool is_saved_str(webstore_t *store, char *str){
+  // Free all saved strings 
+  ioopm_link_t *heap_strs = store->heap_strs->first;  
+  // Id already freed, return
+  // Iterate through all strings freeing them
+  while (heap_strs) {
+
+    char *str_ptr = (get_elem_ptr(heap_strs->element));
+    if (STR_EQ(str, str_ptr)) return true;
+    heap_strs = heap_strs->next;           
+
+  }
+
+  return false;
 }
 
 void free_saved_strs(webstore_t *store){
   // Free all saved strings 
-  ioopm_link_t *heap_strs = store->heap_strs->first;  
+  ioopm_link_t *heap_alloc_strs = store->heap_strs->first;  
   // Id already freed, return
-  if (!heap_strs) return; 
-  // Iterate through all strings freeing them
-  while (heap_strs) {
-    char *str = (get_elem_ptr(heap_strs->element));
-    free(str);
-    heap_strs = heap_strs->next;           
+  if (!heap_alloc_strs) {
+    if (store->heap_strs)
+      ioopm_linked_list_destroy(store->heap_strs);  
+    return; 
   }
+
+  // Iterate through all strings freeing them
+  while (heap_alloc_strs) {
+    char *str = (get_elem_ptr(heap_alloc_strs->element));
+
+    free(str); str  = NULL;
+    heap_alloc_strs = heap_alloc_strs->next;           
+  }
+
+  ioopm_linked_list_destroy(store->heap_strs);  
 }
 
 // change merch on shelf
 bool shelf_exists(webstore_t *store, char *shelf){
+
   // Unallocated webstore or shelf database
-  if (store->storage_db == NULL){
-    printf("Storage_db == NULL\n");
-    return false;
-  }
-  // Invalid Shelf
-  else if (!shelf || (!is_shelf(shelf))){	   
-    printf("Storage_db == NULL\n");
-    return false;
-  }
-  
+  if (store->storage_db == NULL)           return false;
+  else if (!shelf || (!is_shelf(shelf)))   return false;
+    
   return ioopm_hash_table_has_key(store->storage_db, ptr_elem(shelf));
 
 }
@@ -562,7 +629,7 @@ void store_destroy(webstore_t *store){
   destroy_arg_opt(store->opt);
 
   free_saved_strs(store);
-  ioopm_linked_list_destroy(store->heap_strs);  
+
 
   free(store);
 }
