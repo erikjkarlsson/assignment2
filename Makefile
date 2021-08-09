@@ -1,15 +1,20 @@
 SOURCED=./src
 
-LIBS= ./src/merch.c ./src/cart2.c \
+LIBS= ./src/merch.c ./src/cart.c \
      ./src/utils.c ./src/common.c ./src/hash_table.c \
      ./src/list_linked.c ./src/iterator.c ./src/webstore.c
 
 UI=./src/ui.c
 UI_HEADER=./src/ui.h 
-LIBS_HEADERS=./src/merch.h ./src/cart2.h \
+LIBS_HEADERS=./src/merch.h ./src/cart.h \
      ./src/utils.h ./src/common.h ./src/hash_table.h \
      ./src/list_linked.h ./src/iterator.h ./src/webstore.h
 
+
+main: ${LIBS_HEADERS} 
+	@printf "Compiling UI Demo to ./bin/ui-demo.out...\n"	
+	gcc -g -Wall -pedantic -std=c11 ${LIBS} ./src/main.c -o ./bin/ui_demo.out
+	@printf "\nFinished compiling.\n Run with 'make run_ui'\n"
 
 ui: ${LIBS_HEADERS} ${UI_HEADER}
 	@printf "Compiling UI Demo to ./bin/ui-demo.out...\n"	

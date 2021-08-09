@@ -7,7 +7,7 @@
 #include "list_linked.h"
 #include "common.h"
 #include "utils.h"
-#include "cart2.h"
+#include "cart.h"
 #include "webstore.h"
 #include "merch.h"
 
@@ -115,8 +115,7 @@ void remove_merchendise(webstore_t *store, char *name){
     perror("remove_merchendise: Non existing item, \
             The name to be removed does not exist.\n");
     return; // ERROR
-  }
- 
+  } 
   merch_t *merch_data =
     get_elem_ptr(ioopm_hash_table_lookup(store->merch_db, 
 					 ptr_elem(name)));

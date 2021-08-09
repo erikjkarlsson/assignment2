@@ -9,7 +9,7 @@
 #include "webstore.h"
 #include "common.h"
 #include "utils.h"
-#include "cart.h"
+#include "cart2.h"
 #include "ui.h"
 #include "merch.h"
 
@@ -214,6 +214,8 @@ void create_merch_test_populated_locs(void){
   CU_ASSERT_EQUAL(new_merch->locs->size, 0);
 
   
+
+  
   char *shelfs[5] = {"A01", "A02", "A03", "A04", "A05"};
   size_t amounts[5] = {20, 21, 22, 23, 24};
   for (int i = 0; i < 5; i++){
@@ -231,7 +233,7 @@ void create_merch_test_populated_locs(void){
 int main()
 {
   CU_pSuite merch_test_suite = NULL;
-
+ ewee
 
 
   if (CUE_SUCCESS != CU_initialize_registry())
