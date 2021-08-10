@@ -1,0 +1,31 @@
+name: C/C++ CI
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  build:
+
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v2
+    - name: configure
+      run: ./configure
+    - name: Compile tests
+      run: make tests
+    - name: Clean tests
+      run: make clean_tests
+    - name: Build Tests
+      run: make run_tests
+    - name: Build and Run Tests 
+      run: make build_and_run_tests
+    - name: Compile Main
+      run: make ain
+    - name: Run Main 
+      run: make run
+    - name: Clean Main 
+      run: make clean
