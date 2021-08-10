@@ -70,7 +70,8 @@ void destroy_shelf(shelf_t *shelf);
 /// /// /// /// /// /// /// /// /// /// /// /// /// ///
 
 
-merch_t *create_merch(char *name, char *desc,
+// Tested 1
+merch_t *create_merch(char *name, char *desc, 
 		      size_t price, ioopm_list_t *locs){
 
   merch_t *item       = calloc(1, sizeof(merch_t));
@@ -84,7 +85,7 @@ merch_t *create_merch(char *name, char *desc,
   return item;
 }
 
-
+// Tested 2
 void destroy_merchendise(merch_t *merch){ // test
   merch->name = NULL;
   merch->desc = NULL;
@@ -110,6 +111,7 @@ void destroy_merchendise(merch_t *merch){ // test
 }
 
 
+// Tested 2
 void remove_merchendise(webstore_t *store, char *name){
   if (!ioopm_hash_table_has_key(store->merch_db, ptr_elem(name))){
     perror("remove_merchendise: Non existing item, \
@@ -133,11 +135,15 @@ void remove_merchendise(webstore_t *store, char *name){
 
   destroy_merchendise(merch_data);
   ioopm_hash_table_remove(store->merch_db, ptr_elem(name));
-      
 }
+
+
+// Test f
 void parse_args(webstore_t *store, int argc, char *argv[]){
   arg_parse(argc, argv, store->opt);
 }
+
+
 void destroy_all_merch(webstore_t *store){
   // Remove all shelfs in storage_db, but not the hash-table.
   if ((store == NULL) || (store->merch_db == NULL)){
@@ -280,7 +286,8 @@ void free_saved_strs(webstore_t *store){
     heap_alloc_strs = heap_alloc_strs->next;           
   }
 
-  ioopm_linked_list_destroy(store->heap_strs);  
+  ioopm_linked_list_destroy(store->heap_strs);
+  store->heap_strs = NULL;
 }
 
 // change merch on shelf
@@ -612,28 +619,30 @@ webstore_t *store_create(){
 void store_destroy(webstore_t *store){
   // Deallocate the argument handler, both hash tables
   // and the shopping cart list. And the whole webstore.
-  if (store == NULL){
+  if (!store){
     perror("store_destroy: Webstore is NULL.\n");
     return;
   }
 
   
+  destroy_all_merch(store); 
+  destroy_storage(store);   // Free all shelfs (with merch names)
 
+  if (store->merch_db)
+      ioopm_hash_table_destroy(store->merch_db);
 
+  if (store->storage_db)
+    ioopm_hash_table_destroy(store->storage_db);
 
-  destroy_all_merch(store);
+  if (store->all_shopping_carts)
+    destroy_all_carts(store);
 
+  //  Ioopm_linked_list_destroy(store->all_shopping_carts);
+  if (store->opt)
+    destroy_arg_opt(store->opt);
 
-  destroy_storage(store);
-  
-  ioopm_hash_table_destroy(store->merch_db);
-  ioopm_hash_table_destroy(store->storage_db);
-
-  destroy_all_carts(store);  
-  //  ioopm_linked_list_destroy(store->all_shopping_carts);  
-  destroy_arg_opt(store->opt);
-
-  free_saved_strs(store);
+  if (store->heap_strs)
+    free_saved_strs(store);
 
 
   free(store);

@@ -25,7 +25,59 @@ int clean_suite(void){
 void test(){
     CU_ASSERT_TRUE(true);
 }
+////////////////////////////////////////////
+// Needs to be tested	     // Is Tested //
+////////////////////////////////////////////
+// add_merchendise	     //
+// add_to_storage	     //
+// create_merch		     // Yes
+// create_shelf		     // Yes
+// destroy_all_merch	     // Yes
+// destroy_locs		     //
+// destroy_merchendise	     // Yes
+// destroy_shelf	     // Yes
+// destroy_storage	     //
+// ? display_shelf	     // ?
+// free_saved_strs	     //
+// free_str		     //
+// get_locations	     //
+// get_merch_name_in_storage //
+// get_shelf_after_shelf_nr  //
+// increase_equal_stock	     //
+// increase_stock	     //
+// is_saved_str		     //
+// list_merchandise	     //
+// list_shelfs		     //
+// lookup_merch_name	     //
+// merch_description	     //
+// merch_in_stock	     //
+// merch_locs		     //
+// merch_stock		     //
+// merch_stock_on_shelf	     //
+// X parse_args		     //
+// print_merch		     //
+// remove_from_storage	     //
+// remove_merchendise	     //
+// remove_name_from_shelf    //
+// remove_shelf		     //
+// rename_merch		     //
+// save_str		     //
+// set_merch_description     //
+// set_merch_price	     //
+// set_merch_stock	     //
+// set_shelf		     //
+// ? show_stock		     //
+// shelf_exists		     //
+// storage_contains	     //
+// store_create		     //
+// store_destroy	     //
+// sync_merch_stock	     //
+// valid_index		     //
+////////////////////////////////////////////
 
+
+
+// 
 // ################################### CREATE AND DESTROY MERCH
 void create_destroy_merch_test(void){
   char  *new_item_name  = "Eggs";
@@ -51,6 +103,17 @@ void create_destroy_merch_test(void){
   store_destroy(store);
 }
 
+
+void destroy_all_merch_test(void) {
+  webstore_t *store = store_create();
+  INIT_DATABASE(store);
+
+  destroy_all_merch(store);
+
+
+  
+  store_destroy(store);  
+}
 void create_destroy_merch_shelf_test(void){
   char  *new_item_name  = "Eggs";
   char  *new_item_desc  = "Yummy!";
@@ -170,7 +233,7 @@ void str_memory_management_system_test(void){
   CU_ASSERT_TRUE(is_saved_str(store, "heap allocated 2\0"));  
   CU_ASSERT_TRUE(is_saved_str(store, "heap allocated 3\0"));  
 
-//  free_saved_strs(store);
+  free_saved_strs(store);
 
 //  CU_ASSERT_FALSE(is_saved_str(store, "heap allocated 1\0"));  
 //  CU_ASSERT_FALSE(is_saved_str(store, "heap allocated 2\0"));  
@@ -231,14 +294,16 @@ void create_merch_test_populated_locs(void){
 int main()
 {
   CU_pSuite merch_test_suite = NULL;
+  CU_pSuite misc_test_suite = NULL;
 
 
 
   if (CUE_SUCCESS != CU_initialize_registry())
     return CU_get_error();
 
-  merch_test_suite = CU_add_suite("Tests API", init_suite, clean_suite);
-
+  merch_test_suite = CU_add_suite("Tests Merch API Features", init_suite, clean_suite);
+  misc_test_suite  = CU_add_suite("Test Misc Features",       init_suite, clean_suite);
+  
   if (NULL == merch_test_suite){
       CU_cleanup_registry();
       return CU_get_error();
@@ -267,6 +332,10 @@ int main()
       (NULL == CU_add_test(merch_test_suite,
 			   "Create Shelf: Creation of shelf.\n",
 			   create_shelf_test)) ||
+      
+      (NULL == CU_add_test(merch_test_suite,
+			   "Create Shelf: Creation of shelf.\n",
+			   destroy_all_merch_test)) ||
       
       (NULL == CU_add_test(merch_test_suite,
 			   "Memory Management: Auto-deallocation of strings\n",
