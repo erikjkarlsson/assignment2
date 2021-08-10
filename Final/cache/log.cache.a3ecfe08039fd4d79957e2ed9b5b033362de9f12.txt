@@ -1,3 +1,0 @@
-
-LOG: [fre 30 jul 2021 16:20:21 CEST] Connecting ../bin/ui-demo.out to test.pipe (In:/home/erik/Repos/ass2/Final/cache/log.cache.a3ecfe08039fd4d79957e2ed9b5b033362de9f12.txt> Out:/home/erik/Repos/ass2/Final/cache/res.cache.082bc53c5bac0f2142156f74583af7dd53ac701d.txt>) ./../bin/ui-demo.out
-LOG: [fre 30 jul 2021 16:20:21 CEST] Checking for memory leaks within the program running (In:/home/erik/Repos/ass2/Final/cache/log.cache.a3ecfe08039fd4d79957e2ed9b5b033362de9f12.txt> Out:/home/erik/Repos/ass2/Final/cache/res.cache.082bc53c5bac0f2142156f74583af7dd53ac701d.txt>) ./../bin/ui-demo.out
