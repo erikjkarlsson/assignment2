@@ -131,6 +131,7 @@ int amount_of_merch_in_cart(cart_t *cart, char *merch_name){
     else return 0;
 }
 
+
 static int cmpstringp(const void *p1, const void *p2)
 {
   return strcmp(* (char * const *) p1, * (char * const *) p2);
@@ -320,7 +321,8 @@ void remove_cart(webstore_t *store){
 }
 
 
-void add_to_cart(webstore_t *store, char *name, int amount){
+void add_to_cart(webstore_t *store, char *name, int amount){ // Needs to save sting before ths 
+  
   if (!store->all_shopping_carts){
     perror("add_to_cart: Cart database is deallocated.\n");
     return;

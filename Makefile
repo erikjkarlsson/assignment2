@@ -13,7 +13,7 @@ LIBS_HEADERS=./src/merch.h ./src/cart.h \
 
 main: ${LIBS_HEADERS} 
 	@printf "Compiling UI Demo to ./bin/ui-demo.out...\n"	
-	gcc -g -Wall -pedantic -std=c11 ${LIBS} ./src/main.c -o ./bin/ui_demo.out
+	gcc -g -Wall -pedantic -std=c11 ${LIBS} ./src/main.c -o ./bin/main.out
 	@printf "\nFinished compiling.\n Run with 'make run_ui'\n"
 
 ui: ${LIBS_HEADERS} ${UI_HEADER}
@@ -47,11 +47,15 @@ clean_tests:
 	rm    ./bin/run_test
 	@echo "> Done!\n"
 
-build_and_run_tests: clean_tests tests  
+
+# Shorthand
+bart: build_and_run_tests
+
+build_and_run_tests: clean_tests tests ui
 	@echo "#================# Running Tests #================#"
 	@echo "> Testing for memory leaks using stdin and out..."
 	@echo "> Testing all functionalities in the merch section.."
-	./test/ui_test.sh ./bin/ui-demo.out
+	./test/ui_test.sh ./bin/ui_demo.out
 	@echo "> Finished!\n"
 	@echo "> Running Unit Tests...\n"
 	valgrind --leak-check=full ./bin/run_test
@@ -67,30 +71,36 @@ run_ui: ui
 	./bin/ui_demo.out
 
 clean:
-	rm ./main
-	@echo "Removed Binary"
+	@printf "Running main.out... \n"	
+	rm ./bin/main.out
 
+run: main
 
-run: run_ui
+	@printf "Running main.out... \n"	
+	./bin/main.out
 
-test_cart: 
+test_cart:
+	@printf "Compiling tests for the cart... \n"	
 	gcc -g -Wall -std=c11 list_linked.c common.c iterator.c \
 	hash_table.c webstore.c utils.c cart.c merch.c test_cart_new.c -lcunit  -o ./bin
 
 runl: main
-	./bin -l
-
-
-rund: main
+	@printf "Running main.out with logging and debugging flag...\n"		
 	./bin --log --debug
 
 help:
 	@printf "=Commands=\t=Description=\n"
-	@printf "make test\tRun with testing\n"
-	@printf "make main\tRemove binary and compile\n"
-	@printf "make clean\tRemove binary\n"
-	@printf "make run\tRun (No Arguments)\n"
-	@printf "make runl\tRun (With Logging)\n"
-	@printf "make rund\tRun (With Logging and Debugging)\n"
+	@printf "make [Option]            \n"
+	@printf "== Options [Shortcut name] ==            \n"
+	@printf "build_and_tests[bart] -- Build and run tests\n"
+	@printf	"main                  -- Build without UI   \n
+	@printf	"clean                 -- Clean the binary without UI\n
+	@printf "ui                    -- Build with UI      \n
+	@printf "clean_ui              -- Clean UI binaries  \n
+	@printf	"run_ui                -- Run UI binary      \n
+	@printf "tests                 -- Build CUnit Tests  \n
+	@printf "clean_tests           -- Clean Test binaries\n
+	@printf "
+	@printf	"
 	@printf "make help\tDisplay this message\n"
 

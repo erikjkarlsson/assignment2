@@ -252,7 +252,10 @@ void create_shelf_test(void){
 
   destroy_shelf(new_shelf);
 }
-void create_merch_test_empty_locs(void){
+
+
+
+void create_merch_test_empty_locs(void){ // (create_merch | destroy_merchendise) 
   ioopm_list_t *new_locs  = ioopm_linked_list_create();
   merch_t      *new_merch = 
     create_merch("Tuna", "Raw Tuna", 123, new_locs);    
@@ -265,6 +268,9 @@ void create_merch_test_empty_locs(void){
 
   destroy_merchendise(new_merch);
 }
+
+
+
 void create_merch_test_populated_locs(void){
   ioopm_list_t *new_locs  = ioopm_linked_list_create();
   merch_t      *new_merch = 
@@ -294,7 +300,7 @@ void create_merch_test_populated_locs(void){
 int main()
 {
   CU_pSuite merch_test_suite = NULL;
-  CU_pSuite misc_test_suite = NULL;
+  //  CU_pSuite misc_test_suite = NULL;
 
 
 
@@ -302,7 +308,7 @@ int main()
     return CU_get_error();
 
   merch_test_suite = CU_add_suite("Tests Merch API Features", init_suite, clean_suite);
-  misc_test_suite  = CU_add_suite("Test Misc Features",       init_suite, clean_suite);
+  //  misc_test_suite  = CU_add_suite("Test Misc Features",       init_suite, clean_suite);
   
   if (NULL == merch_test_suite){
       CU_cleanup_registry();
