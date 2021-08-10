@@ -1,3 +1,0 @@
-
-LOG: [fre 30 jul 2021 17:53:48 CEST] Connecting  to test.pipe (In:/home/erik/Repos/ass2/Final/cache/log.cache.a13a70983edf399a065d1d74c39d5b6a42f5375e.txt> Out:/home/erik/Repos/ass2/Final/cache/res.cache.d9a5e214c78d562f6bb7e6393fd87ce083082404.txt>) ./--help
-LOG: [fre 30 jul 2021 17:53:48 CEST] Checking for memory leaks within the program running (In:/home/erik/Repos/ass2/Final/cache/log.cache.a13a70983edf399a065d1d74c39d5b6a42f5375e.txt> Out:/home/erik/Repos/ass2/Final/cache/res.cache.d9a5e214c78d562f6bb7e6393fd87ce083082404.txt>) ./--help
