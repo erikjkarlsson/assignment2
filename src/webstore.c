@@ -1044,12 +1044,12 @@ void add_to_storage(webstore_t *store, char *name, char *shelf){
   ioopm_list_t *db_names = get_locations(store, shelf);
   ioopm_link_t *db_item  = db_names->first;
 
-  do {
+  while (db_item != NULL) {
     // Already exists in database
     if (STR_EQ((char *) get_elem_ptr(db_item->element), name)) return;
 					      
     db_item = db_item->next;           
-  } while (db_item != NULL);
+  }
 
   ioopm_linked_list_append(db_names, ptr_elem(name));
 }
@@ -1060,6 +1060,7 @@ bool storage_contains(webstore_t *store, char *name, char *shelf){
     perror("storage_contains: Unallowed NULL argument.\n");
     return false;
   } 
+
   // If shelf does not exist, it cannot contain item  
   else if (!shelf_exists(store, shelf)){
     //    perror("storage_contains: Non-Existing Shelf..");
