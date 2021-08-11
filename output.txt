@@ -1,0 +1,936 @@
+l
+w
+l
+n
+shirt
+coolshirt
+100
+A01
+10
+l
+q
+w
+l
+n
+shirt2
+coolshirt2
+200
+A02
+20
+┏──╸Webstore ╺────┓
+┃ [W]arehouse     ┃
+┃ [C]art          ┃
+┃ [S]et Active ID ┃
+┃ [Q]uit          ┃
+┗━━━━━━━━━━━━━━━━━┛
+>┏──╸Webstore ╺────┓
+┃ [W]arehouse     ┃
+┃ [C]art          ┃
+┃ [S]et Active ID ┃
+┃ [Q]uit          ┃
+┗━━━━━━━━━━━━━━━━━┛
+>┏──╸Webstore ╺────────┓
+┃ [N]ew Merch         ┃
+┃ [R]emove Merch      ┃
+┃ [I]nspect Merch ID  ┃
+┃ [E]dit Merch        ┃
+┃ [L]ist Database     ┃
+┃ [B]ack              ┃
+┗━━━━━━━━━━━━━━━━━━━━━┛
+> |================= C01 =================|
+┏──╸Id.1 Adidas Pants
+┃ Price: 200Kr
+┃ Stock: 6St
+┃ Desc: the Classic Adidas Pants
+┗──╸
+|================= F12 =================|
+┏──╸Id.2 Apple
+┃ Price: 10Kr
+┃ Stock: 128St
+┃ Desc: Edible fruit.
+┗──╸
+┏──╸Id.3 Orange
+┃ Price: 15Kr
+┃ Stock: 64St
+┃ Desc: Imported fruit from Italy.
+┗──╸
+┏──╸Id.4 Mandarin
+┃ Price: 5Kr
+┃ Stock: 16St
+┃ Desc: Not GMO-free.
+┗──╸
+┏──╸Id.5 Coconut
+┃ Price: 30Kr
+┃ Stock: 16St
+┃ Desc: Edible tropical fruit from Congo.
+┗──╸
+|================= C99 =================|
+┏──╸Id.6 Used Jacket
+┃ Price: 8000Kr
+┃ Stock: 1St
+┃ Desc: From the hermes 1999 Summer Collection
+┗──╸
+|================= M01 =================|
+┏──╸Id.7 Mountain Bike
+┃ Price: 1000Kr
+┃ Stock: 28St
+┃ Desc: Prefessional competition bike.
+┗──╸
+┏──╸Id.8 LADA (Car)
+┃ Price: 4000Kr
+┃ Stock: 4St
+┃ Desc: Soviet import, manifactured by AvtoVAZ
+┗──╸
+┏──╸Id.9 Electric Bike
+┃ Price: 800Kr
+┃ Stock: 10St
+┃ Desc: AAA batteries not included.
+┗──╸
+|================= M02 =================|
+┏──╸Id.10 Skateboard
+┃ Price: 40Kr
+┃ Stock: 160St
+┃ Desc: Small Longboard.
+┗──╸
+|================= C00 =================|
+┏──╸Id.11 Fake Rolex Watch
+┃ Price: 100Kr
+┃ Stock: 18St
+┃ Desc: A Fake Golden Rolex Watch
+┗──╸
+┏──╸Id.12 Sandals
+┃ Price: 120Kr
+┃ Stock: 36St
+┃ Desc: Simple sandals.
+┗──╸
+
+┏──╸Webstore ╺────────┓
+┃ [N]ew Merch         ┃
+┃ [R]emove Merch      ┃
+┃ [I]nspect Merch ID  ┃
+┃ [E]dit Merch        ┃
+┃ [L]ist Database     ┃
+┃ [B]ack              ┃
+┗━━━━━━━━━━━━━━━━━━━━━┛
+> ┏──╸Add New Merch     ╺─────╸
+┃ Name: ┃ Description: ┃ Price: ┃ Shelf: ┃ Amount: ┗──────────────────────────╸
+┏──╸Webstore ╺────────┓
+┃ [N]ew Merch         ┃
+┃ [R]emove Merch      ┃
+┃ [I]nspect Merch ID  ┃
+┃ [E]dit Merch        ┃
+┃ [L]ist Database     ┃
+┃ [B]ack              ┃
+┗━━━━━━━━━━━━━━━━━━━━━┛
+> |================= C01 =================|
+┏──╸Id.1 Adidas Pants
+┃ Price: 200Kr
+┃ Stock: 6St
+┃ Desc: the Classic Adidas Pants
+┗──╸
+|================= A01 =================|
+┏──╸Id.2 shirt
+┃ Price: 100Kr
+┃ Stock: 10St
+┃ Desc: coolshirt
+┗──╸
+|================= F12 =================|
+┏──╸Id.3 Apple
+┃ Price: 10Kr
+┃ Stock: 128St
+┃ Desc: Edible fruit.
+┗──╸
+┏──╸Id.4 Orange
+┃ Price: 15Kr
+┃ Stock: 64St
+┃ Desc: Imported fruit from Italy.
+┗──╸
+┏──╸Id.5 Mandarin
+┃ Price: 5Kr
+┃ Stock: 16St
+┃ Desc: Not GMO-free.
+┗──╸
+┏──╸Id.6 Coconut
+┃ Price: 30Kr
+┃ Stock: 16St
+┃ Desc: Edible tropical fruit from Congo.
+┗──╸
+|================= C99 =================|
+┏──╸Id.7 Used Jacket
+┃ Price: 8000Kr
+┃ Stock: 1St
+┃ Desc: From the hermes 1999 Summer Collection
+┗──╸
+|================= M01 =================|
+┏──╸Id.8 Mountain Bike
+┃ Price: 1000Kr
+┃ Stock: 28St
+┃ Desc: Prefessional competition bike.
+┗──╸
+┏�l
+�─╸Id.9 LADA (Car)
+┃ Price: 4000Kr
+┃ Stock: 4St
+┃ Desc: Soviet import, manifactured by AvtoVAZ
+┗──╸
+┏──╸Id.10 Electric Bike
+┃ Price: 800Kr
+┃ Stock: 10St
+┃ Desc: AAA batteries not included.
+┗──╸
+|================= M02 =================|
+┏──╸Id.11 Skateboard
+┃ Price: 40Kr
+┃ Stock: 160St
+┃ Desc: Small Longboard.
+┗──╸
+|================= C00 =================|
+┏──╸Id.12 Fake Rolex Watch
+┃ Price: 100Kr
+┃ Stock: 18St
+┃ Desc: A Fake Golden Rolex Watch
+┗──╸
+┏──╸Id.13 Sandals
+┃ Price: 120Kr
+┃ Stock: 36St
+┃ Desc: Simple sandals.
+┗──╸
+
+┏──╸Webstore ╺────────┓
+┃ [N]ew Merch         ┃
+┃ [R]emove Merch      ┃
+┃ [I]nspect Merch ID  ┃
+┃ [E]dit Merch        ┃
+┃ [L]ist Database     ┃
+┃ [B]ack              ┃
+┗━━━━━━━━━━━━━━━━━━━━━┛
+> ┏──╸Webstore ╺────┓
+┃ [W]arehouse     ┃
+┃ [C]art          ┃
+┃ [S]et Active ID ┃
+┃ [Q]uit          ┃
+┗━━━━━━━━━━━━━━━━━┛
+>┏──╸Webstore ╺────────┓
+┃ [N]ew Merch         ┃
+┃ [R]emove Merch      ┃
+┃ [I]nspect Merch ID  ┃
+┃ [E]dit Merch        ┃
+┃ [L]ist Database     ┃
+┃ [B]ack              ┃
+┗━━━━━━━━━━━━━━━━━━━━━┛
+> |================= C01 =================|
+┏──╸Id.1 Adidas Pants
+┃ Price: 200Kr
+┃ Stock: 6St
+┃ Desc: the Classic Adidas Pants
+┗──╸
+|================= A01 =================|
+┏──╸Id.2 shirt
+┃ Price: 100Kr
+┃ Stock: 10St
+┃ Desc: coolshirt
+┗──╸
+|================= F12 =================|
+┏──╸Id.3 Apple
+┃ Price: 10Kr
+┃ Stock: 128St
+┃ Desc: Edible fruit.
+┗──╸
+┏──╸Id.4 Orange
+┃ Price: 15Kr
+┃ Stock: 64St
+┃ Desc: Imported fruit from Italy.
+┗──╸
+┏──╸Id.5 Mandarin
+┃ Price: 5Kr
+┃ Stock: 16St
+┃ Desc: Not GMO-free.
+┗──╸
+┏──╸Id.6 Coconut
+┃ Price: 30Kr
+┃ Stock: 16St
+┃ Desc: Edible tropical fruit from Congo.
+┗──╸
+|================= C99 =================|
+┏──╸Id.7 Used Jacket
+┃ Price: 8000Kr
+┃ Stock: 1St
+┃ Desc: From the hermes 1999 Summer Collection
+┗──╸
+|================= M01 =================|
+┏──╸Id.8 Mountain Bike
+┃ Price: 1000Kr
+┃ Stock: 28St
+┃ Desc: Prefessional competition bike.
+┗──╸
+┏──╸Id.9 LADA (Car)
+┃ Price: 4000Kr
+┃ Stock: 4St
+┃ Desc: Soviet import, manifactured by AvtoVAZ
+┗──╸
+┏──╸Id.10 Electric Bike
+┃ Price: 800Kr
+┃ Stock: 10St
+┃ Desc: AAA batteries not included.
+┗──╸
+|================= M02 =================|
+┏──╸Id.11 Skateboard
+┃ Price: 40Kr
+┃ Stock: 160St
+┃ Desc: Small Longboard.
+┗──╸
+|================= C00 =================|
+┏──╸Id.12 Fake Rolex Watch
+┃ Price: 100Kr
+┃ Stock: 18St
+┃ Desc: A Fake Golden Rolex Watch
+┗──╸
+┏──╸Id.13 Sandals
+┃ Price: 120Kr
+┃ Stock: 36St
+┃ Desc: Simple sandals.
+┗──╸
+
+┏──╸Webstore ╺────────┓
+┃ [N]ew Merch         ┃
+┃ [R]emove Merch      ┃
+┃ [I]nspect Merch ID  ┃
+┃ [E]dit Merch        ┃
+┃ [L]ist Database     ┃
+┃ [B]ack              ┃
+┗━━━━━━━━━━━━━━━━━━━━━┛
+> ┏──╸Add New Merch     ╺─────╸
+┃ Name: ┃ Description: ┃ Price: ┃ Shelf: ┃ Amount: ┗──────────────────────────╸
+┏──╸Webstore ╺────────┓
+┃ [N]ew Merch         ┃
+┃ [R]emove Merch      ┃
+┃ [I]nspect Merch ID  ┃
+┃ [E]dit Merch        ┃
+┃ [L]ist Database     ┃
+┃ [B]ack              ┃
+┗━━━━━━━━━━━━━━━━━━━━━┛
+> |================= C01 =================|
+┏──╸Id.1 Adidas Pants
+┃ Price: 200Kr
+┃ Stock: 6St
+┃ Desc: the Classic Adidas Pants
+┗──╸
+|================= A02 =================|
+┏�q
+w
+l
+�─╸Id.2 shirt2
+┃ Price: 200Kr
+┃ Stock: 20St
+┃ Desc: coolshirt2
+┗──╸
+|================= A01 =================|
+┏──╸Id.3 shirt
+┃ Price: 100Kr
+┃ Stock: 10St
+┃ Desc: coolshirt
+┗──╸
+|================= F12 =================|
+┏──╸Id.4 Apple
+┃ Price: 10Kr
+┃ Stock: 128St
+┃ Desc: Edible fruit.
+┗──╸
+┏──╸Id.5 Orange
+┃ Price: 15Kr
+┃ Stock: 64St
+┃ Desc: Imported fruit from Italy.
+┗──╸
+┏──╸Id.6 Mandarin
+┃ Price: 5Kr
+┃ Stock: 16St
+┃ Desc: Not GMO-free.
+┗──╸
+┏──╸Id.7 Coconut
+┃ Price: 30Kr
+┃ Stock: 16St
+┃ Desc: Edible tropical fruit from Congo.
+┗──╸
+|================= C99 =================|
+┏──╸Id.8 Used Jacket
+┃ Price: 8000Kr
+┃ Stock: 1St
+┃ Desc: From the hermes 1999 Summer Collection
+┗──╸
+|================= M01 =================|
+┏──╸Id.9 Mountain Bike
+┃ Price: 1000Kr
+┃ Stock: 28St
+┃ Desc: Prefessional competition bike.
+┗──╸
+┏──╸Id.10 LADA (Car)
+┃ Price: 4000Kr
+┃ Stock: 4St
+┃ Desc: Soviet import, manifactured by AvtoVAZ
+┗──╸
+┏──╸Id.11 Electric Bike
+┃ Price: 800Kr
+┃ Stock: 10St
+┃ Desc: AAA batteries not included.
+┗──╸
+|================= M02 =================|
+┏──╸Id.12 Skateboard
+┃ Price: 40Kr
+┃ Stock: 160St
+┃ Desc: Small Longboard.
+┗──╸
+|================= C00 =================|
+┏──╸Id.13 Fake Rolex Watch
+┃ Price: 100Kr
+┃ Stock: 18St
+┃ Desc: A Fake Golden Rolex Watch
+┗──╸
+┏──╸Id.14 Sandals
+┃ Price: 120Kr
+┃ Stock: 36St
+┃ Desc: Simple sandals.
+┗──╸
+
+┏──╸Webstore ╺────────┓
+┃ [N]ew Merch         ┃
+┃ [R]emove Merch      ┃
+┃ [I]nspect Merch ID  ┃
+┃ [E]dit Merch        ┃
+┃ [L]ist Database     ┃
+┃ [B]ack              ┃
+┗━━━━━━━━━━━━━━━━━━━━━┛
+> ┏──╸Webstore ╺────┓
+┃ [W]arehouse     ┃
+┃ [C]art          ┃
+┃ [S]et Active ID ┃
+┃ [Q]uit          ┃
+┗━━━━━━━━━━━━━━━━━┛
+>┏──╸Webstore ╺────────┓
+┃ [N]ew Merch         ┃
+┃ [R]emove Merch      ┃
+┃ [I]nspect Merch ID  ┃
+┃ [E]dit Merch        ┃
+┃ [L]ist Database     ┃
+┃ [B]ack              ┃
+┗━━━━━━━━━━━━━━━━━━━━━┛
+> |================= C01 =================|
+┏──╸Id.1 Adidas Pants
+┃ Price: 200Kr
+┃ Stock: 6St
+┃ Desc: the Classic Adidas Pants
+┗──╸
+|================= A02 =================|
+┏──╸Id.2 shirt2
+┃ Price: 200Kr
+┃ Stock: 20St
+┃ Desc: coolshirt2
+┗──╸
+|================= A01 =================|
+┏──╸Id.3 shirt
+┃ Price: 100Kr
+┃ Stock: 10St
+┃ Desc: coolshirt
+┗──╸
+|================= F12 =================|
+┏──╸Id.4 Apple
+┃ Price: 10Kr
+┃ Stock: 128St
+┃ Desc: Edible fruit.
+┗──╸
+┏──╸Id.5 Orange
+┃ Price: 15Kr
+┃ Stock: 64St
+┃ Desc: Imported fruit from Italy.
+┗──╸
+┏──╸Id.6 Mandarin
+┃ Price: 5Kr
+┃ Stock: 16St
+┃ Desc: Not GMO-free.
+┗──╸
+┏──╸Id.7 Coconut
+┃ Price: 30Kr
+┃ Stock: 16St
+┃ Desc: Edible tropical fruit from Congo.
+┗──╸
+|================= C99 =================|
+┏──╸Id.8 Used Jacket
+┃ Price: 8000Kr
+┃ Stock: 1St
+┃ Desc: From the hermes 1999 Summer Collection
+┗──╸
+|================= M01 =================|
+┏──╸Id.9 Mountain Bike
+┃ Price: 1000Kr
+┃ Stock: 28St
+┃ Desc: Prefessional competition bike.
+┗──╸
+┏──╸Id.10 LADA (Car)
+┃ Price: 4000Kr
+┃ Stock: 4St
+┃ Desc: Soviet import, manifactured by AvtoVAZ
+┗──╸
+┏──╸Id.11 Electric Bike
+┃ Price: 800Kr
+┃ Stock: 10St
+┃ Desc: AAA batteries not included.
+┗──╸
+|================= M02 =================|
+┏──╸Id.12 Skateboard
+┃ Price: 40Kr
+┃ Stock: 160St
+┃ Desc: Small Longboard.
+┗──╸
+|================= C00 =================|
+┏──╸Id.13 Fake Rolex Watch
+┃ Price: 100Kr
+┃ Stock: 1n
+shirt3
+coolshirt3
+300
+A03
+30
+l
+q
+i
+0
+i
+1
+8St
+┃ Desc: A Fake Golden Rolex Watch
+┗──╸
+┏──╸Id.14 Sandals
+┃ Price: 120Kr
+┃ Stock: 36St
+┃ Desc: Simple sandals.
+┗──╸
+
+┏──╸Webstore ╺────────┓
+┃ [N]ew Merch         ┃
+┃ [R]emove Merch      ┃
+┃ [I]nspect Merch ID  ┃
+┃ [E]dit Merch        ┃
+┃ [L]ist Database     ┃
+┃ [B]ack              ┃
+┗━━━━━━━━━━━━━━━━━━━━━┛
+> ┏──╸Add New Merch     ╺─────╸
+┃ Name: ┃ Description: ┃ Price: ┃ Shelf: ┃ Amount: ┗──────────────────────────╸
+┏──╸Webstore ╺────────┓
+┃ [N]ew Merch         ┃
+┃ [R]emove Merch      ┃
+┃ [I]nspect Merch ID  ┃
+┃ [E]dit Merch        ┃
+┃ [L]ist Database     ┃
+┃ [B]ack              ┃
+┗━━━━━━━━━━━━━━━━━━━━━┛
+> |================= C01 =================|
+┏──╸Id.1 Adidas Pants
+┃ Price: 200Kr
+┃ Stock: 6St
+┃ Desc: the Classic Adidas Pants
+┗──╸
+|================= A02 =================|
+┏──╸Id.2 shirt2
+┃ Price: 200Kr
+┃ Stock: 20St
+┃ Desc: coolshirt2
+┗──╸
+|================= A01 =================|
+┏──╸Id.3 shirt
+┃ Price: 100Kr
+┃ Stock: 10St
+┃ Desc: coolshirt
+┗──╸
+|================= F12 =================|
+┏──╸Id.4 Apple
+┃ Price: 10Kr
+┃ Stock: 128St
+┃ Desc: Edible fruit.
+┗──╸
+┏──╸Id.5 Orange
+┃ Price: 15Kr
+┃ Stock: 64St
+┃ Desc: Imported fruit from Italy.
+┗──╸
+┏──╸Id.6 Mandarin
+┃ Price: 5Kr
+┃ Stock: 16St
+┃ Desc: Not GMO-free.
+┗──╸
+┏──╸Id.7 Coconut
+┃ Price: 30Kr
+┃ Stock: 16St
+┃ Desc: Edible tropical fruit from Congo.
+┗──╸
+|================= A03 =================|
+┏──╸Id.8 shirt3
+┃ Price: 300Kr
+┃ Stock: 30St
+┃ Desc: coolshirt3
+┗──╸
+|================= C99 =================|
+┏──╸Id.9 Used Jacket
+┃ Price: 8000Kr
+┃ Stock: 1St
+┃ Desc: From the hermes 1999 Summer Collection
+┗──╸
+|================= M01 =================|
+┏──╸Id.10 Mountain Bike
+┃ Price: 1000Kr
+┃ Stock: 28St
+┃ Desc: Prefessional competition bike.
+┗──╸
+┏──╸Id.11 LADA (Car)
+┃ Price: 4000Kr
+┃ Stock: 4St
+┃ Desc: Soviet import, manifactured by AvtoVAZ
+┗──╸
+┏──╸Id.12 Electric Bike
+┃ Price: 800Kr
+┃ Stock: 10St
+┃ Desc: AAA batteries not included.
+┗──╸
+|================= M02 =================|
+┏──╸Id.13 Skateboard
+┃ Price: 40Kr
+┃ Stock: 160St
+┃ Desc: Small Longboard.
+┗──╸
+|================= C00 =================|
+┏──╸Id.14 Fake Rolex Watch
+┃ Price: 100Kr
+┃ Stock: 18St
+┃ Desc: A Fake Golden Rolex Watch
+┗──╸
+┏──╸Id.15 Sandals
+┃ Price: 120Kr
+┃ Stock: 36St
+┃ Desc: Simple sandals.
+┗──╸
+
+┏──╸Webstore ╺────────┓
+┃ [N]ew Merch         ┃
+┃ [R]emove Merch      ┃
+┃ [I]nspect Merch ID  ┃
+┃ [E]dit Merch        ┃
+┃ [L]ist Database     ┃
+┃ [B]ack              ┃
+┗━━━━━━━━━━━━━━━━━━━━━┛
+> ┏──╸Webstore ╺────┓
+┃ [W]arehouse     ┃
+┃ [C]art          ┃
+┃ [S]et Active ID ┃
+┃ [Q]uit          ┃
+┗━━━━━━━━━━━━━━━━━┛
+>┏──╸Webstore ╺────┓
+┃ [W]arehouse     ┃
+┃ [C]art          ┃
+┃ [S]et Active ID ┃
+┃ [Q]uit          ┃
+┗━━━━━━━━━━━━━━━━━┛
+>┏──╸Webstore ╺────┓
+┃ [W]arehouse     ┃
+┃ [C]art          ┃
+┃ [S]et Active ID ┃
+┃ [Q]uit          ┃
+┗━━━━━━━━━━━━━━━━━┛
+>┏──╸Webstore ╺────┓
+┃ [W]arehouse     ┃
+┃ [C]art          ┃
+┃ [S]et Active ID ┃
+┃ [Q]uit          ┃
+┗━━━━━━━━━━━━━━━━━┛
+>┏──╸Webstore ╺────┓
+┃ [W]arehouse     ┃
+┃ [C]art          ┃
+┃ [S]et Active ID ┃
+┃ [Q]uiti
+2
+i
+3
+i
+4
+r
+1
+r
+2
+r
+3
+r
+4
+r
+5
+r
+6
+r
+7
+r
+          ┃
+┗━━━━━━━━━━━━━━━━━┛
+>┏──╸Webstore ╺────┓
+┃ [W]arehouse     ┃
+┃ [C]art          ┃
+┃ [S]et Active ID ┃
+┃ [Q]uit          ┃
+┗━━━━━━━━━━━━━━━━━┛
+>┏──╸Webstore ╺────┓
+┃ [W]arehouse     ┃
+┃ [C]art          ┃
+┃ [S]et Active ID ┃
+┃ [Q]uit          ┃
+┗━━━━━━━━━━━━━━━━━┛
+>┏──╸Webstore ╺────┓
+┃ [W]arehouse     ┃
+┃ [C]art          ┃
+┃ [S]et Active ID ┃
+┃ [Q]uit          ┃
+┗━━━━━━━━━━━━━━━━━┛
+>┏──╸Webstore ╺────┓
+┃ [W]arehouse     ┃
+┃ [C]art          ┃
+┃ [S]et Active ID ┃
+┃ [Q]uit          ┃
+┗━━━━━━━━━━━━━━━━━┛
+>┏──╸Webstore ╺────┓
+┃ [W]arehouse     ┃
+┃ [C]art          ┃
+┃ [S]et Active ID ┃
+┃ [Q]uit          ┃
+┗━━━━━━━━━━━━━━━━━┛
+>┏──╸Webstore ╺────┓
+┃ [W]arehouse     ┃
+┃ [C]art          ┃
+┃ [S]et Active ID ┃
+┃ [Q]uit          ┃
+┗━━━━━━━━━━━━━━━━━┛
+>┏──╸Webstore ╺────┓
+┃ [W]arehouse     ┃
+┃ [C]art          ┃
+┃ [S]et Active ID ┃
+┃ [Q]uit          ┃
+┗━━━━━━━━━━━━━━━━━┛
+>┏──╸Webstore ╺────┓
+┃ [W]arehouse     ┃
+┃ [C]art          ┃
+┃ [S]et Active ID ┃
+┃ [Q]uit          ┃
+┗━━━━━━━━━━━━━━━━━┛
+>┏──╸Webstore ╺────┓
+┃ [W]arehouse     ┃
+┃ [C]art          ┃
+┃ [S]et Active ID ┃
+┃ [Q]uit          ┃
+┗━━━━━━━━━━━━━━━━━┛
+>┏──╸Webstore ╺────┓
+┃ [W]arehouse     ┃
+┃ [C]art          ┃
+┃ [S]et Active ID ┃
+┃ [Q]uit          ┃
+┗━━━━━━━━━━━━━━━━━┛
+>┏──╸Webstore ╺────┓
+┃ [W]arehouse     ┃
+┃ [C]art          ┃
+┃ [S]et Active ID ┃
+┃ [Q]uit          ┃
+┗━━━━━━━━━━━━━━━━━┛
+>┏──╸Webstore ╺────┓
+┃ [W]arehouse     ┃
+┃ [C]art          ┃
+┃ [S]et Active ID ┃
+┃ [Q]uit          ┃
+┗━━━━━━━━━━━━━━━━━┛
+>┏──╸Webstore ╺────┓
+┃ [W]arehouse     ┃
+┃ [C]art          ┃
+┃ [S]et Active ID ┃
+┃ [Q]uit          ┃
+┗━━━━━━━━━━━━━━━━━┛
+>┏──╸Webstore ╺────┓
+┃ [W]arehouse     ┃
+┃ [C]art          ┃
+┃ [S]et Active ID ┃
+┃ [Q]uit          ┃
+┗━━━━━━━━━━━━━━━━━┛
+>┏──╸Webstore ╺────┓
+┃ [W]arehouse     ┃
+┃ [C]art          ┃
+┃ [S]et Active ID ┃
+┃ [Q]uit          ┃
+┗━━━━━━━━━━━━━━━━━┛
+>┏──╸Webstore ╺────┓
+┃ [W]arehouse     ┃
+┃ [C]art          ┃
+┃ [S]et Active ID ┃
+┃ [Q]uit          ┃
+┗━━━━━━━━━━━━━━━━━┛
+>┏──╸Webstore ╺────┓
+┃ [W]arehouse     ┃
+┃ [C]art          ┃
+┃ [S]et Active ID ┃
+┃ [Q]uit          ┃
+┗━━━━━━━━━━━━━━━━━┛
+>┏──╸Webstore ╺────┓
+┃ [W]arehouse     ┃
+┃ [C]art          ┃
+┃ [S]et Active ID ┃
+┃ [Q]uit          ┃
+┗━━━━━━━━━━━━━━━━━┛
+>┏──╸Webstore ╺────┓
+┃ [W]arehouse     ┃
+┃ [C]art          ┃
+┃ [S]et Active ID ┃
+┃ [Q]uit          ┃
+┗━━━━━━━━━━━━━━━━━┛
+>┏──╸Webstore ╺────┓
+┃ [W]arehouse     ┃
+┃ [C]art          ┃
+┃ [S]et Active ID ┃
+┃ [Q]uit          ┃
+┗━━━━━━━━━━━━━━━━━┛
+>┏──╸Webstore ╺────┓
+┃ [W]arehouse     ┃
+┃ [C]art          ┃
+┃ [S]et Active ID ┃
+┃ [Q]uit 8
+r
+9
+r
+10
+r
+11
+r
+12
+r
+13
+r
+14
+r
+15
+i
+0
+i
+1
+l
+q
+         ┃
+┗━━━━━━━━━━━━━━━━━┛
+>┏──╸Webstore ╺────┓
+┃ [W]arehouse     ┃
+┃ [C]art          ┃
+┃ [S]et Active ID ┃
+┃ [Q]uit          ┃
+┗━━━━━━━━━━━━━━━━━┛
+>┏──╸Webstore ╺────┓
+┃ [W]arehouse     ┃
+┃ [C]art          ┃
+┃ [S]et Active ID ┃
+┃ [Q]uit          ┃
+┗━━━━━━━━━━━━━━━━━┛
+>┏──╸Webstore ╺────┓
+┃ [W]arehouse     ┃
+┃ [C]art          ┃
+┃ [S]et Active ID ┃
+┃ [Q]uit          ┃
+┗━━━━━━━━━━━━━━━━━┛
+>┏──╸Webstore ╺────┓
+┃ [W]arehouse     ┃
+┃ [C]art          ┃
+┃ [S]et Active ID ┃
+┃ [Q]uit          ┃
+┗━━━━━━━━━━━━━━━━━┛
+>┏──╸Webstore ╺────┓
+┃ [W]arehouse     ┃
+┃ [C]art          ┃
+┃ [S]et Active ID ┃
+┃ [Q]uit          ┃
+┗━━━━━━━━━━━━━━━━━┛
+>┏──╸Webstore ╺────┓
+┃ [W]arehouse     ┃
+┃ [C]art          ┃
+┃ [S]et Active ID ┃
+┃ [Q]uit          ┃
+┗━━━━━━━━━━━━━━━━━┛
+>┏──╸Webstore ╺────┓
+┃ [W]arehouse     ┃
+┃ [C]art          ┃
+┃ [S]et Active ID ┃
+┃ [Q]uit          ┃
+┗━━━━━━━━━━━━━━━━━┛
+>┏──╸Webstore ╺────┓
+┃ [W]arehouse     ┃
+┃ [C]art          ┃
+┃ [S]et Active ID ┃
+┃ [Q]uit          ┃
+┗━━━━━━━━━━━━━━━━━┛
+>┏──╸Webstore ╺────┓
+┃ [W]arehouse     ┃
+┃ [C]art          ┃
+┃ [S]et Active ID ┃
+┃ [Q]uit          ┃
+┗━━━━━━━━━━━━━━━━━┛
+>┏──╸Webstore ╺────┓
+┃ [W]arehouse     ┃
+┃ [C]art          ┃
+┃ [S]et Active ID ┃
+┃ [Q]uit          ┃
+┗━━━━━━━━━━━━━━━━━┛
+>┏──╸Webstore ╺────┓
+┃ [W]arehouse     ┃
+┃ [C]art          ┃
+┃ [S]et Active ID ┃
+┃ [Q]uit          ┃
+┗━━━━━━━━━━━━━━━━━┛
+>┏──╸Webstore ╺────┓
+┃ [W]arehouse     ┃
+┃ [C]art          ┃
+┃ [S]et Active ID ┃
+┃ [Q]uit          ┃
+┗━━━━━━━━━━━━━━━━━┛
+>┏──╸Webstore ╺────┓
+┃ [W]arehouse     ┃
+┃ [C]art          ┃
+┃ [S]et Active ID ┃
+┃ [Q]uit          ┃
+┗━━━━━━━━━━━━━━━━━┛
+>┏──╸Webstore ╺────┓
+┃ [W]arehouse     ┃
+┃ [C]art          ┃
+┃ [S]et Active ID ┃
+┃ [Q]uit          ┃
+┗━━━━━━━━━━━━━━━━━┛
+>┏──╸Webstore ╺────┓
+┃ [W]arehouse     ┃
+┃ [C]art          ┃
+┃ [S]et Active ID ┃
+┃ [Q]uit          ┃
+┗━━━━━━━━━━━━━━━━━┛
+>┏──╸Webstore ╺────┓
+┃ [W]arehouse     ┃
+┃ [C]art          ┃
+┃ [S]et Active ID ┃
+┃ [Q]uit          ┃
+┗━━━━━━━━━━━━━━━━━┛
+>┏──╸Webstore ╺────┓
+┃ [W]arehouse     ┃
+┃ [C]art          ┃
+┃ [S]et Active ID ┃
+┃ [Q]uit          ┃
+┗━━━━━━━━━━━━━━━━━┛
+>┏──╸Webstore ╺────┓
+┃ [W]arehouse     ┃
+┃ [C]art          ┃
+┃ [S]et Active ID ┃
+┃ [Q]uit          ┃
+┗━━━━━━━━━━━━━━━━━┛
+>┏──╸Webstore ╺────┓
+┃ [W]arehouse     ┃
+┃ [C]art          ┃
+┃ [S]et Active ID ┃
+┃ [Q]uit          ┃
+┗━━━━━━━━━━━━━━━━━┛
+>┏──╸Webstore ╺────┓
+┃ [W]arehouse     ┃
+┃ [C]art          ┃
+┃ [S]et Active ID ┃
+┃ [Q]uit          ┃
+┗━━━━━━━━━━━━━━━━━┛
+>
