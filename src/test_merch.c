@@ -209,52 +209,6 @@ void create_duplicate_merch_test(void){
   store_destroy(store);
 }
 
-void str_memory_management_system_test(void){
-  char  *str1  = NULL;
-  char  *str2  = NULL;
-  char  *str3  = NULL;
-  
-  webstore_t *store = store_create();
-  //  str1 = malloc(sizeof(char) * 5);
-  
-  str1 = strdup("heap allocated 1\0");
-  str2 = strdup("heap allocated 2\0");
-  str3 = strdup("heap allocated 3\0");
-
-  CU_ASSERT_FALSE(is_saved_str(store, "heap allocated 1\0"));  
-  CU_ASSERT_FALSE(is_saved_str(store, "heap allocated 2\0"));  
-  CU_ASSERT_FALSE(is_saved_str(store, "heap allocated 3\0"));  
-  
-  save_str(store, str1);
-  save_str(store, str2);
-  save_str(store, str3);
-
-  CU_ASSERT_TRUE(is_saved_str(store, "heap allocated 1\0"));  
-  CU_ASSERT_TRUE(is_saved_str(store, "heap allocated 2\0"));  
-  CU_ASSERT_TRUE(is_saved_str(store, "heap allocated 3\0"));  
-
-  free_saved_strs(store);
-
-//  CU_ASSERT_FALSE(is_saved_str(store, "heap allocated 1\0"));  
-//  CU_ASSERT_FALSE(is_saved_str(store, "heap allocated 2\0"));  
-//  CU_ASSERT_FALSE(is_saved_str(store, "heap allocated 3\0"));  
-//  
-  // free(str1);  
-  store_destroy(store);
-}
-
-
-void create_shelf_test(void){
-  shelf_t *new_shelf = create_shelf("A23", 123);    
-
-  CU_ASSERT_TRUE(STR_EQ(new_shelf->shelf, "A23"));
-  CU_ASSERT_EQUAL(new_shelf->amount, 123);
-
-  destroy_shelf(new_shelf);
-}
-
-
-
 void create_merch_test_empty_locs(void){ // (create_merch | destroy_merchendise) 
   ioopm_list_t *new_locs  = ioopm_linked_list_create();
   merch_t      *new_merch = 
@@ -294,6 +248,87 @@ void create_merch_test_populated_locs(void){
 
   destroy_merchendise(new_merch);
 }
+
+void str_memory_management_system_test(void){
+  char  *str1  = NULL;
+  char  *str2  = NULL;
+  char  *str3  = NULL;
+  
+  webstore_t *store = store_create();
+  //  str1 = malloc(sizeof(char) * 5);
+  
+  str1 = strdup("heap allocated 1\0");
+  str2 = strdup("heap allocated 2\0");
+  str3 = strdup("heap allocated 3\0");
+
+  CU_ASSERT_FALSE(is_saved_str(store, "heap allocated 1\0"));  
+  CU_ASSERT_FALSE(is_saved_str(store, "heap allocated 2\0"));  
+  CU_ASSERT_FALSE(is_saved_str(store, "heap allocated 3\0"));  
+  
+  save_str(store, str1);
+  save_str(store, str2);
+  save_str(store, str3);
+
+  CU_ASSERT_TRUE(is_saved_str(store, "heap allocated 1\0"));  
+  CU_ASSERT_TRUE(is_saved_str(store, "heap allocated 2\0"));  
+  CU_ASSERT_TRUE(is_saved_str(store, "heap allocated 3\0"));  
+
+  free_saved_strs(store);
+
+//  CU_ASSERT_FALSE(is_saved_str(store, "heap allocated 1\0"));  
+//  CU_ASSERT_FALSE(is_saved_str(store, "heap allocated 2\0"));  
+//  CU_ASSERT_FALSE(is_saved_str(store, "heap allocated 3\0"));  
+//  
+  // free(str1);  
+  store_destroy(store);
+}
+
+void str_memory_management_system_manual_test(void){
+  char  *str1  = NULL;
+  char  *str2  = NULL;
+  char  *str3  = NULL;
+  
+  webstore_t *store = store_create();
+  //  str1 = malloc(sizeof(char) * 5);
+  
+  str1 = strdup("heap allocated 1\0");
+  str2 = strdup("heap allocated 2\0");
+  str3 = strdup("heap allocated 3\0");
+
+  CU_ASSERT_FALSE(is_saved_str(store, "heap allocated 1\0"));  
+  CU_ASSERT_FALSE(is_saved_str(store, "heap allocated 2\0"));  
+  CU_ASSERT_FALSE(is_saved_str(store, "heap allocated 3\0"));  
+  
+  save_str(store, str1);
+  save_str(store, str2);
+  save_str(store, str3);
+
+  CU_ASSERT_TRUE(is_saved_str(store, "heap allocated 1\0"));  
+  CU_ASSERT_TRUE(is_saved_str(store, "heap allocated 2\0"));  
+  CU_ASSERT_TRUE(is_saved_str(store, "heap allocated 3\0"));  
+
+  free_str(store, "heap allocated 1\0");
+  free_str(store, "heap allocated 2\0");
+  free_str(store, "heap allocated 3\0");
+  
+//  CU_ASSERT_FALSE(is_saved_str(store, "heap allocated 1\0"));  
+//  CU_ASSERT_FALSE(is_saved_str(store, "heap allocated 2\0"));  
+//  CU_ASSERT_FALSE(is_saved_str(store, "heap allocated 3\0"));  
+//  
+  // free(str1);  
+  store_destroy(store);
+}
+
+void create_shelf_test(void){
+  shelf_t *new_shelf = create_shelf("A23", 123);    
+
+  CU_ASSERT_TRUE(STR_EQ(new_shelf->shelf, "A23"));
+  CU_ASSERT_EQUAL(new_shelf->amount, 123);
+
+  destroy_shelf(new_shelf);
+}
+
+
 
 
 /////////////////////////////////////////////////////////////
@@ -342,7 +377,9 @@ int main()
       (NULL == CU_add_test(merch_test_suite,
 			   "Create Shelf: Creation of shelf.\n",
 			   destroy_all_merch_test)) ||
-      
+      (NULL == CU_add_test(merch_test_suite,
+			   "Memory Management: Manual-deallocation of strings\n",
+			   str_memory_management_system_manual_test)) ||
       (NULL == CU_add_test(merch_test_suite,
 			   "Memory Management: Auto-deallocation of strings\n",
 			   str_memory_management_system_test))){

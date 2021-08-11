@@ -219,39 +219,59 @@ bool save_str(webstore_t *store, char *str_ptr){
 
   return true;
 }
-bool free_str(webstore_t *store, char *str){
-  // Free the string equal to `str' from the saved strings list
-  // Return true if a string was free'd otherwise false
-  
-  if (!store) {
-    perror("save_str: Uninitialized webstore, webstore is NULL.\n");
-    return false;
-    
-  } else if (!str){
-    perror("save_str: String is NULL, cannot save it.\n");
-    return false;
 
-  } else if (!store->heap_strs){
-    perror("save_str: Uninitialized linked list.\n");
-    return false;
-  }
-  ioopm_link_t *heap_strs = store->heap_strs->first;
-  ioopm_link_t *previous  = store->heap_strs->first;
 
-  while (heap_strs) {
-    char *saved_str = (get_elem_ptr(heap_strs->element));
-
-    if (STR_EQ(str, saved_str)){
-      previous->next = heap_strs->next;      
-      free(saved_str);
-      
-      return true;      
-    }else previous = heap_strs;
-
-    heap_strs = heap_strs->next;           
-  }
-  return false;
-}
+//ioopm_apply_function free_match(elem_t elem, elem_t *elem2, void *extra) {
+//  
+//  
+//}
+////bool free_str(webstore_t *store, char *str){
+//  // Free the string equal to `str' from the saved strings list
+//  // Return true if a string was free'd otherwise false
+//  
+//  if (!store) {
+//    perror("save_str: Uninitialized webstore, webstore is NULL.\n");
+//    return false;
+//    
+//  } else if (!str){
+//    perror("save_str: String is NULL, cannot save it.\n");
+//    return false;
+//
+//  } else if (!store->heap_strs){
+//    perror("save_str: Uninitialized linked list.\n");
+//    return false;
+//  }
+//  ioopm_link_t *heap_strs = store->heap_strs->first;
+//  ioopm_link_t *previous  = store->heap_strs->first;
+//  ioopm_linked_apply_to_all(store->heap_strs,
+//			    , ${3:void *extra})
+//  do {
+//    char *saved_str = (get_elem_ptr(heap_strs->element));
+//
+//    if (STR_EQ(str, saved_str)){
+//      previous->next = heap_strs->next;      
+//
+//      free(saved_str);
+//      
+//      return true;      
+//    }else {
+//      previous = heap_strs;
+//      previous->next = heap_strs->next;  
+//    }
+//
+//    heap_strs = heap_strs->next;           
+//  } while (heap_strs);
+//  
+//
+//  if (!store->heap_strs->first) {
+//    if (store->heap_strs)
+//      ioopm_linked_list_destroy(store->heap_strs);
+//    store->heap_strs = NULL;
+//    return true; 
+//  }
+//  
+//  return false;
+//}
 bool is_saved_str(webstore_t *store, char *str){
   // Free all saved strings 
   ioopm_link_t *heap_strs = store->heap_strs->first;  
@@ -288,6 +308,28 @@ void free_saved_strs(webstore_t *store){
 
   ioopm_linked_list_destroy(store->heap_strs);
   store->heap_strs = NULL;
+}
+
+
+void free_str_fun(elem_t elem, void *str_match) {
+  char *str = get_elem_ptr((char*)elem);
+  if (STR_EQ(str, str_match)){
+    free(str);
+  }  
+}
+
+bool free_str(webstore_t *store, char *str_cmp){
+  // Free all saved strings 
+  
+
+  ioopm_linked_apply_to_all(store->heap_strs, (ioopm_apply_char_function)free_str_fun,(void *)str_cmp);
+
+  if (store->heap_strs->first == NULL){
+    ioopm_linked_list_destroy(store->heap_strs);
+    store->heap_strs = NULL;
+    return true;
+  }
+  return false;
 }
 
 // change merch on shelf
