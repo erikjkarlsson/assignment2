@@ -1,0 +1,31 @@
+name: Assignment 2
+
+on:
+  push:
+    branches: [ tests ]
+  pull_request:
+    branches: [ tests ]
+
+jobs:
+  build:
+
+    runs-on: arch-linux54
+
+    steps:
+    - uses: actions/checkout@v2
+    - name: configure
+      run: ./configure
+    - name: Build TUI
+      run: make ui
+    - name: Run TUI
+      run: make run_ui
+    - name: Clean TUI
+      run: make clean_ui
+    - name: Build and Run Tests
+      run: make bart
+    - name: Build Main
+      run: make 
+    - name: Run Main
+      run: make 
+    - name: Clean Main
+      run: make clean
